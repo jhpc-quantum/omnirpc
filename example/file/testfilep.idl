@@ -1,0 +1,33 @@
+Module testfilep;
+
+Globals { 
+#include <math.h>
+#include <stdio.h>
+#include <time.h>
+}
+
+Define testfilep(IN filepointer infile[2], OUT filepointer outfile[])
+{
+    char tmp[128];
+    int i = 0;
+
+    fprintf(stderr, "stub : routine start\n");
+    fflush(stderr);
+    fprintf(stderr, "inFile[0] =  %p\n", infile[0]);
+    fprintf(stderr, "inFile[1] =  %p\n", infile[1]);
+    for(i = 0; i < 2; i++){
+        while(fgets(tmp, 128, infile[i]) != NULL){
+            fprintf(stderr, "STUB OUTPUT %d: %s", i, tmp);
+            fflush(stderr);
+        }
+    }
+
+    *outfile  = fopen("/tmp/dotdot", "w+");
+    fprintf(stderr, "stub : filepointer = %p\n", *outfile);
+    fflush(stderr);
+    fprintf(*outfile, " hogehoge: %d\n", time(NULL));
+    fflush(*outfile);
+    fprintf(stderr, "stub : routine end\n");
+    fflush(stderr);
+    fflush(stdout);
+}

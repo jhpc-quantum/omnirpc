@@ -1,0 +1,29 @@
+<HTML>
+<HEAD>
+<TITLE> OmniRPC: Tips </TITLE>
+</HEAD>
+<BODY bgcolor="#fffff0">
+
+<h2> Tips </h2>
+<dl>
+<dt> クライアントホストのhostnameがfull nameでセットされていない場合
+</dt>
+<dd> 
+OmniRpcでは、Agentの起動後、リモートホストのプログラムがクライアント
+ホストに対して接続要求を行います。そのため、リモートホストではクライア
+ントホストにアクセス可能なホスト名を知っている必要があります。OmniRpc
+では、デフォールトではhostnameコマンドから得られるホスト名をつかってい
+ますが、設定によっては外部のネットワークからアクセスできないローカルな
+ホスト名であることがあります。この場合には、hostnameコマンドで
+FQDN(Full qualified Domain Name)をセットするか、もしくは環境変数
+OMRPC_HOSTNAMEにFDQNを設定してください。
+<pre>
+% setenv OMRP_HOSTNAME <em> FDQN </em>
+</pre>
+Globus環境の場合もおなじ問題があります。この場合には、環境変数
+GLOBUS_HOSTNAMEに、FDQNをセットします。詳しくは、Globusの情報を参照し
+てください。
+
+</dd>
+
+</dl>

@@ -1,0 +1,59 @@
+
+#define MAX_ENTRY 1024
+#define MAX_BUF   1024
+#define MAX_BUF2  2048000
+#ifndef MAXPATHLEN
+#define MAXPATHLEN 1024
+#endif /* MAXPATHLEN */
+
+typedef uint32_t uint32;
+
+typedef struct reg {
+  char module_name[MAXPATHLEN];
+  char entry_name [MAXPATHLEN];
+  char lang[8];
+  int  nprocs;
+  int  rex_id;
+} reg_t;
+
+reg_t reg_table[MAX_ENTRY];
+
+typedef struct rex {
+  char name[MAXPATHLEN];
+  char rex_path[MAXPATHLEN];
+
+  int  n_entries;
+  reg_t *reg_ptr[MAX_ENTRY];
+
+  int  n_lib;
+  int  n_libtxt;
+  char libtxt[MAX_ENTRY][MAXPATHLEN];
+  char lib[MAX_ENTRY][MAXPATHLEN];
+} rex_t; 
+rex_t rex_table[MAX_ENTRY];
+
+int  omrpc_gets(char **ptr, char *ptr2, const int n);
+void omrpc_error_exit(char *msg,...);
+void omrpc_get_lang(char *fname, char *lang);
+void omrpc_get_libtxt(char *fname, rex_t *rex);
+void omrpc_get_lib(rex_t *rex);
+void omrpc_gsub(const char *in, char *out, const char *s1, const char *s2);
+void omrpc_marge_idl(int id);
+void omprc_print_reg_table();
+void omrpc_put_reg(char **ptr, char *fin_name);
+void omrpc_set_dir();
+void omrpc_rename_func(char *file_name, char *func_name);
+
+
+#define CC         "mpicc"
+#define PREFIX_DIR "@prefix@"
+#define REX_DIR    "var/yml/dr/binaries"
+#define LIB_DIR    "var/yml/DefaultExecutionCatalog/generators/XMP/lib"
+#define INC_DIR    "var/yml/DefaultExecutionCatalog/generators/XMP/include"
+#define IMP_DIR    "var/yml/DefaultDevelopmentCatalog/implementation"
+
+char prefix_dir[MAXPATHLEN];
+char rex_dir[MAXPATHLEN];
+char lib_dir[MAXPATHLEN];
+char inc_dir[MAXPATHLEN];
+char imp_dir[MAXPATHLEN];

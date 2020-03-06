@@ -1,0 +1,159 @@
+<HTML>
+<HEAD>
+<TITLE> OmniRPC: Parallel Programming with OmniRpc </TITLE>
+</HEAD>
+<BODY bgcolor="#fffff0">
+<h2>
+OmniRpcによる並列プログラム
+</h2>
+
+<p>
+OmniRpcの一つの目的は、RPCを用いて並列プログラミングを実行することです。
+並列プログラミングの例として、
+<a href=start.html> 3. OmniRpcによるプログラミング </a>
+で示した例で、calc_sin関数を複数のリモートホストで並列に実行します。
+</p>
+<p>
+OmniRpcで並列プログラミングするには、大きくわけて
+<ol>
+<li> 非同期呼び出しを使う方法
+<li> OpenMPを用いたマルチスレッドプログラミングによる方法
+</ol>
+の2つがあります。
+</p>
+
+<dl>
+<dt> <a href=1> 実行環境 </a> </dt>
+<dt> <a href=2> 非同期呼び出しによる並列プログラム </a> </dt>
+<dt> <a href=2> ホストファイルの作成と実行 </a> </dt>
+<dt> <a href=3> OpenMPによる並列プログラム </a> </dt>
+</dl>
+
+<hr>
+<!-- --------------------------------- -->
+<h3> <a name=1> 実行環境 </a> </h3>
+<p>
+実行環境として、以下のような環境を仮定します。
+<ol>
+<li> クライアントホスト名は、jones
+<li> リモートホストとして、dennis, alice, jackの3つのホストを使う。
+<li> jonesから、リモートホスト、rshをパスワードの認証なしで実行できる。
+すなわち、リモートホスト側の/etc/host.equivもしくはユーザの.rhostにjonesが登録
+されていることが必要です。
+<li> 両方のホストにOmniRpcがデフォールトパス(/usr/local/omrpc/)にイン
+ストールされている。
+<li> また、前の例と同様に、それぞれのリモートホストにはcalc_sin関数のリモー
+ト実行プログラムcalc_sin.rexが登録されているものとします。
+</ol>
+</p>
+
+<!-- --------------------------------- -->
+<h3> <a name=2> 非同期呼び出しによる並列プログラム </a> </h3>
+
+<p>
+以下に、非同期呼び出しの例をしめします。
+</p>
+
+<pre>
+#include &lt;OmniRpc.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;math.h&gt;
+
+int main(int argc,char *argv[]){
+   int i;
+   double x, res[10];
+   OmniRpcRequest req[10];
+
+   OmniRpcInit(&argc,&argv);
+
+   x = 0.0;
+   for(i = 0; i &lt; 10; i++){
+       req[i] = OmniRpcCallAsync("calc_sin",x,&res[i]);
+       x += 1.0;
+   }
+   OmniRpcWaitAll(10,req);
+   for(i = 0; i &lt; 10; i++) 
+      printf("sin(%d)=%g\n",i,res[i]);
+
+  OmniRpcFinalize();
+
+}
+</pre>
+<p>
+OmniRpcCallAsyncは、遠隔呼び出しを起動し、終了を待たずに返ります。
+その返り値として、その遠隔呼び出しに対応するOmniRpcRequest型の値を返し
+ます。これを配列に格納しておき、OmniRpcWaitAllでは全ての関数呼び出しが
+終了するまで待ちます。非同期呼び出しに関連するAPIに関しては、???を参照
+してください。
+</p>
+
+<!-- --------------------------------- -->
+<h3> <a name=3> ホストファイルの作成と実行 </a> </h2>
+<p>
+実行の前に、ホストファイルを準備します。
+</p>
+
+<pre>
+&lt;?xml version="1.0" ?&gt;
+&lt;OmniRpcConfig&gt;
+   &lt;Host name="alice" /&gt;
+   &lt;Host name="dennis" /&gt;
+   &lt;Host name="jack" /&gt;
+&lt;/OmniRpcConfig&gt;
+</pre>
+
+<p>
+あとの手順は、前の例と同じです。
+agentとrexの関係は以下のようになります。
+</p>
+<img src="fig2.gif" alt="fig2">
+
+<!-- --------------------------------- -->
+<h3> <a name=4> OpenMPによる並列プログラム </a> </h3>
+
+<p>
+pthreadを用いて実装したOpenMPの処理系であるOmni OpenMPを用いて、
+マルチスレッドプログラムからOmniRpcCallを行うことによって、並列プログ
+ラミングすることができます。以下に例をしめします。
+</p>
+
+<pre>
+#include &lt;OmniRpc.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;math.h&gt;
+
+int main(int argc,char *argv[]){
+   int i;
+   double x, res[10];
+   OmniRpcRequest req[10];
+
+   OmniRpcInit(&argc,&argv);
+
+   x = 0.0;
+#pragma omp parallel for
+   for(i = 0; i &lt; 10; i++){
+       req[i] = OmniRpcCall("calc_sin",x,&res[i]);
+       x += 1.0;
+   }
+   for(i = 0; i &lt; 10; i++) 
+      printf("sin(%d)=%g\n",i,res[i]);
+
+  OmniRpcFinalize();
+
+}
+</pre>
+
+<p>
+なお、このプログラムを実行する時にはOpenMPのスレッド数を指定する環境変
+数OMP_NUM_THEREASの値をホストの数よりも大きくしておくことをわすれない
+でください。
+</p>
+<hr>
+</BODY>
+</HTML>
+
+
+
+
+
+

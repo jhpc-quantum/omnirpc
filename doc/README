@@ -1,0 +1,143 @@
+
+               OmniRPC Grid RPC system (ver. 1.0)
+             High performance Computing System Lab.
+                      University of Tsukuba
+				JAPAN
+
+This a release 1.0 of OmniRPC system.
+
+1) What is OmniRPC system?
+
+OmniRPC is a Grid RPC system which enables seamless parallel
+programming in cluster and Grid environment. OmniRPC's characteristics
+are as follows.
+
+
+- Supports typical master/worker grid applications such as parametric
+  execution programs.
+
+- OmniRPC provides an automatic-initializable remote module to send
+  and store data to a remote executable invoked in the remote
+  host. Since it may accept several requests for subsequent calls by
+  keeping the connection alive, the data set by the initialization is
+  re-used, resulting in efficient execution by reducing the amount of
+  communication.
+
+- OmniRPC inherits its API from Ninf, and the programmer can use
+  OpenMP for easy-to-use parallel programming because the API is
+  designed to be thread-safe. And OmniRPC supports the persistence
+  feature, which holds the remote executable's state, and makes,
+  programs more effective.
+
+- Using the asynchronous call API, we can parallize a programs calling
+  RPCs. Additionally, OmniRPC is designed to be thread-safe for easy
+  parallel programming. We can easily parallelize existing sequential
+  programs with direct based parallel programming such as OpenMP.
+
+- The OmniRPC system supports local environments with "rsh," grid
+  environments with Globus, and remote hosts with "ssh." Furthermore,
+  the user can use the same program over OmniRPC for both clusters and
+  grids because a typical grid resource is regarded simply as a
+  cluster of clusters distributed geo-graphically.
+
+- For a cluster over a private network, an agent process running the
+  server host functions as a proxy to relay communications between the
+  client and remote executables by multiplexing the communications
+  into one connection to the client. This feature allows a single
+  client to use approximately one-thousand remote computing hosts.
+
+- Support of the job scheduler which considers the administrative
+  policy of each computer resource. Now OmniRPC supports PBS and SGE
+  as job schedulers.
+
+For details or new features, please refer the OmniRPC web.
+
+ http://www.omni.hpcc.jp/OmniRpc/
+
+2) OmniRPC software requires other software.
+
+ - For authentication on the remote systems, you need either the ssh
+ - or the Globus.
+ - gnu bison or yacc to make the parser.
+ - If you want to use our OmniRPC with OpenMP program, you need Omni
+    OpenMP Compiler.
+ - Java Development Kit, JDK, if you want to use the performance profiler.
+
+3) Unpacking this distribution file
+
+When you unpack our distribution file, you will find the following
+directories and files:
+ OmniRPC/                 -- top directory
+   doc/                   -- documentations
+       html/book1.html    -- manual in HTML which is speparated page by chapter
+			 htm/omnirpc.htm    -- manual in HTML which is one page
+			 htdocs.ja/         -- Japanese manual in HTML
+   src/                   -- source files
+       libomrpc/          -- OmniRpc library 
+       omrpc-agent/       -- OmniRpc Agent 
+       omrpc-gen/         -- OmniRpc IDL compiler 
+       omrpc-register/    -- OmniRpc registration tools
+   include/               -- include files
+   test/                  -- test programs
+   examples/              -- examples
+   tools/                 -- tools
+       monitor/           -- OmniRpc monitor
+       tlogview/          -- performance profile viewer
+   utils/                 -- misc.
+   configure		  -- configure command to make and install
+
+4) Platforms
+
+We have tested our software in Linux platform of x86.
+
+5) Installation
+
+Belows are general installation procedures. 
+
+ 1. Get the OmniRPC distribution,"OmniRpc.tar.gz". Unpack the distribution
+    file.
+	% gzip -dc OmniRpc.tar.gz | tar xvf -
+
+ 2. Change the current directory to OmniRpc directory.
+
+	% cd OmniRpc
+
+ 3. Run "configure". 
+
+	% configure 
+    or
+ 	% configure --prefix=<your_install_directory>
+
+   More detailed feature options, see Install.html.
+
+ 4. Run "make" to compile the sources.
+
+	% make
+
+ 5. Run "make install" to install the compiler. When you install the
+   default configuration, you must run as root because the default install
+   directory is /usr/local/omrpc/
+
+	% make install
+
+ 6. Make sure that the command path includes install_directory/bin.
+
+8) Where to Find More Information
+
+The directory "doc" contains the user's manual about the OmniRPC system
+Software. 
+
+You can obtain the most recent documents and software release at our
+web site:
+
+	http://www.omni.hpcc.jp/OmniRPC/
+
+9) Reporting bugs and requesting features
+
+To report bugs or features requests, send E-mail to:
+	omrpc@omni.hpcc.jp
+Your feedback and bug reports will be greatly appreciated.
+
+-- Enjoy!
+
+

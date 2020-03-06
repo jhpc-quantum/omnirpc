@@ -1,0 +1,83 @@
+This file contains any messages produced by compilers while
+running configure, to aid debugging if configure makes a mistake.
+
+configure:689: checking for gcc
+configure:802: checking whether the C compiler (gcc  ) works
+configure:818: gcc -o conftest    conftest.c  1>&5
+configure:844: checking whether the C compiler (gcc  ) is a cross-compiler
+configure:849: checking whether we are using GNU C
+configure:877: checking whether gcc accepts -g
+configure:1090: checking how to run the C preprocessor
+configure:1172: checking for working alloca.h
+configure:1205: checking for alloca
+configure:1414: checking for errno.h
+configure:1451: checking for limits.h
+configure:1488: checking for stdlib.h
+configure:1525: checking for string.h
+configure:1562: checking for strings.h
+configure:1599: checking for unistd.h
+configure:1636: checking for stdarg.h
+configure:1673: checking for locale.h
+configure:1729: checking for ieeefp.h
+configure:1766: checking for float.h
+configure:1803: checking for netdb.h
+configure:1840: checking for sys/socket.h
+configure:1877: checking for netinet/in.h
+configure:1914: checking for arpa/inet.h
+configure:1951: checking for sys/resource.h
+configure:2010: checking for sys/time.h
+configure:2047: checking whether time.h and sys/time.h may both be included
+configure:2087: checking for ANSI C header files
+configure:2191: checking for mode_t
+configure:2224: checking for pid_t
+configure:2257: checking for size_t
+configure:2290: checking for uid_t in sys/types.h
+configure:2328: checking whether byte ordering is bigendian
+configure:2429: checking for BSDgettimeofday
+configure:2478: checking for gettimeofday
+configure:2532: checking for gettimeofday declaration
+configure:2636: checking for connect
+configure:2777: checking for gethostbyname
+configure:2870: checking for main in -linet
+configure:2907: checking for net/errno.h
+configure:2954: checking for inet_aton
+configure:3019: checking has long long
+configure:3028: mpicc -c  -Wall -fPIC   -DOMNI_CPU_X86_64 -DOMNI_OS_LINUX -DNDEBUG  -D__USE_FIXED_PROTOTYPES__ -D_REENTRANT conftest.c 1>&5
+configure: In function 'main':
+configure:3024:15: warning: unused variable 'x' [-Wunused-variable]
+ 
+               ^
+configure:3050: checking has long double
+configure:3059: mpicc -c  -Wall -fPIC   -DOMNI_CPU_X86_64 -DOMNI_OS_LINUX -DNDEBUG  -D__USE_FIXED_PROTOTYPES__ -D_REENTRANT conftest.c 1>&5
+configure: In function 'main':
+configure:3055:13: warning: unused variable 'x' [-Wunused-variable]
+ EOF
+             ^
+configure:3080: checking size of unsigned short
+configure:3119: checking size of unsigned int
+configure:3158: checking size of unsigned long
+configure:3199: checking size of unsigned long long
+configure:3240: checking size of float
+configure:3279: checking size of double
+configure:3320: checking size of long double
+configure:3361: checking size of void *
+configure:3421: checking default align of char
+configure:3421: checking default align of short
+configure:3421: checking default align of int
+configure:3421: checking default align of long
+configure:3415: checking default align of long long int
+configure:3421: checking default align of float
+configure:3421: checking default align of double
+configure:3418: checking default align of long double
+configure:3575: checking 16 bit integer
+configure:3575: checking 32 bit integer
+configure:3575: checking 64 bit integer
+configure:3628: checking integer type enough to hold void pointer
+configure:3653: checking 64 bit virtual address
+configure:3685: checking has quad-precision print format
+configure:3714: checking for ranlib
+configure:3762: checking for bison
+configure:4282: checking for javac
+configure:4320: checking for java
+configure:4358: checking for jar
+configure:3811: checking for xmpcc

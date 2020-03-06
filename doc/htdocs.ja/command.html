@@ -1,0 +1,182 @@
+<HTML>
+<HEAD>
+<TITLE> OmniRPC: Command reference </TITLE>
+</HEAD>
+<BODY bgcolor="#fffff0">
+<h2>コマンド一覧 </h2>
+
+<dl>
+<dt> <a href=#1> omrpc-register </a> </dt>
+<dt> <a href=#2> omrpc-cc </a> <dt>
+<dt> <a href=#3> omrpc-gen </a> <dt>
+</dl>
+
+
+<hr>
+<h3> <a name=1> omrpc-register </a> </h3>
+ 
+<ul>
+<li> 名前
+<pre>
+omrpc-register - OmniRPCレジストリの操作を行います。
+</pre>
+
+<li> 書式
+<pre>
+omnrpc-register [-path <em>reg_path</em>]
+      [-show|-help|-clear|[-register|-remove] <em>rex_prog</em>]
+</pre>
+
+<li> 説明
+<p>
+リモート実行プログラムのレジストリへの登録、レジストリから削除を行いま
+す。また、現在のレジストリを表示することもできます。
+</p>
+
+<li> オプション
+</pre>
+<dl>
+<dt> -path <em>reg_path</em> </dt>
+<dd>
+レジストリのパスを指定します。デフォールトのレジストリパスは
+~/.omrpc-registryです。
+</dd>
+<dt> -show </dt>
+<dd> 
+現在のレジストリの内容を表示します。
+</dd>
+<dt> -clear </dt>
+<dd>
+現在のレジストリの内容を全て消去します。
+</dd>
+<dt> -register <em>rex_prog</em> </dt>
+<dd> レジストリに対し、リモート実行プログラム<em>rex_prog</em>を登録し
+ます。
+</dd>
+<dt> -remove <em>rex_prog</em> </dt>
+<dd>
+レジストリから、リモート実行プログラム<em>rex_prog</em>を消去します。
+</dd>
+<dt> -help </dt>
+<dd>
+コマンドの引数について表示します。
+</dd>
+</dl>
+</ul>
+
+<hr>
+<h3> <a name=2> omrpc-cc </a> </h3>
+
+<ul>
+<li> 名前
+<pre>
+omrpc-cc - OmniRPCプログラム コンパイルドライバ
+</pre>
+<li> 書式
+<pre>
+omrpc-cc [options] [<em>file.idl</em>][<em>file.c</em> ...]
+</pre>
+
+<li> 説明
+<p>
+OmniRPCプログラム用のコンパイルドライバーです。
+OmniRPCに必要なライブラリをリンクする他、引数中にIDLファイルがある場合
+には、そのILDファイルに対するリモート実行プログラムを作成します。
+</p>
+<p> クライアントプログラムを作成する場合には、Cコンパイラと同様に使う
+ことができます。例えば
+<pre>
+omrpc-cc -o foo foo.c goo.o
+</pre>
+Cコンパイラにより、foo.cをコンパイル、goo.oとリンクし、fooという実行ファ
+イルを作ります。この際、OmniRPCに必要なincudeファイル、およびライブラ
+リは自動的に設定されます。なお、Cコンパイラと同様に-oが指定されない場
+合には、オブジェクトはa.outになります。
+</p>
+
+<p>
+引数のファイル中に、.idlの拡張子を持つIDLファイルがある場合には、これ
+からOmniRPCのリモート実行プログラムが生成されます。r名前は、同じ名前に
+.rexの拡張子がついたものになります。例えば、
+<pre>
+omrpc-cc bar.idl goo.o
+</pre>
+この場合は、bar.idlからbar.rexが生成されます。goo.oは、リモート実行プ
+ログラムにリンクされるライブラリです。
+</p>
+
+<li> オプション
+<dl>
+<dt> -c </dt>
+<dd> コンパイルしオブジェクトファイルの生成を行いますが、リンクはしま
+せん。
+</dd>
+<dt> -c </dt>
+<dd>
+オブジェクトファイルを指定します。
+</dd>
+<dt> -l<em>lib_dir</em> </dt>
+<dd>
+ライブラリのディレクトリのパスを指定します。
+</dd>
+<dt> -show </dt>
+<dd>
+実行されるべきコマンドを表示します。実行はしません。
+</dd>
+<dt> -echo </dt>
+<dd>
+実行するコマンドを表示します。
+</dd>
+<dt> -liner <em>link_command</em> </dt>
+<dd>
+リンクに用いるコマンドを指定します。
+指定しなかった場合のデフォールトのコマンドは、Cコンパイラのドライバcc
+となります。例えば、fortranなどを言語を用いる場合には、f77などのコマン
+ドを指定することができます。
+</dd>
+</dl>
+</dl>
+</ul>
+<hr>
+<h3> <a name=3> omrpc-gen </a> </h3>
+
+<ul>
+<li> 名前
+<pre>
+omrpc-gen - OmniRPCスタブ生成プログラム
+</pre>
+<li> 書式
+<pre>
+omrpc-gen [<em>file.idl</em>][<em>file.c</em>]
+</pre>
+
+<li> 説明
+<p>
+IDLファイル<em>file.idl</em>から、スタブプログラム(C言語)
+<em>file.c</em>を生成します。
+IDLファイルが省略された場合には標準入力から、スタブプログラムの引数が
+省略された場合には標準入力に出力します。
+通常、IDLファイルは拡張子.idlを使います。スタブプログラムのソースは、
+拡張子.rex.cを用いて、スタブプログラムをコンパイルして得られるリモート
+実行プログラムは拡張子.rexを用います。
+</p>
+<p>
+このプログラムは通常、OmniRPCコンパイルドライバomrpc-ccから呼び出され、
+直接使うことはありません。スタブソースプログラムを直接コンパイルする場
+合には、install directoryの下にあるinclude directoryをインクルードパス
+に指定しなくてはなりません。また、リモート実行プログラムを作るにはスタ
+ブ用のライブラリlibomrpc_stub.aとlibomrpc_io.aをリンクする必要がありま
+す。したがって、INSTALL_DIRをinstall directoryとすると、以下のコマンド
+でコンパイルしなくてはなりません。
+</p>
+<pre>
+cc -o foo.rex -I<em>INSTALL_DIR</em>/include foo.rex.c
+    ... -L<em>INSTALL_DIR</em>/lib -lomrpc_stub.a -lomrpc_io
+</pre>
+</ul>
+
+<hr>
+</BODY>
+</HTML>
+
+

@@ -1,0 +1,22 @@
+Module calc_sin;
+
+Globals { 
+#include <stdio.h>
+#include <math.h>
+}
+
+Define calc_sin(IN double d, OUT double result[])
+{
+    *result = sin(d);
+    omrpc_prf("IN val: %lf, OUT val: %lf\n", d, *result);
+    fflush(stdin);
+    fflush(stdout);
+}
+
+Define calc_cos(IN double d, OUT double result[])
+{
+    *result = cos(d);
+    omrpc_prf("IN val: %lf, OUT val: %lf\n", d, *result);
+    fflush(stdin);
+    fflush(stdout);
+}

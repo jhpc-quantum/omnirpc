@@ -1,0 +1,27 @@
+
+NAS Parallel Benchmarks 2 EP in C: a sample program using OmniRpc in
+OpenMP
+
+-- How to build
+
+ - Before building the application, install OmniRpc
+ - Make clients
+      % make
+ - Make remote executables and register them
+      % make reg_stub
+
+-- Clients
+
+  ep-normal -- squential version
+  ep-omrpc -- OpenMP version, using OmniRpcModuleInit and OmniRpcCallAsyn
+
+-- How to run
+
+  To run, squential version
+     % ep-normal
+
+  Before OmniRpc version, make sure your environment setting such as hosts.xml
+     %  ep-omrpc
+    
+-- enjoy! ---
+

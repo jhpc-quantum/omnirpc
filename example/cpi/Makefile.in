@@ -1,0 +1,36 @@
+#
+# sample program: cpi, borrowed from cpi example in MPICH
+# 
+OMRPC_DIR = @prefix@
+
+OMRPC_CC = omrpc-cc
+OMRPC_REG = omrpc-register
+
+CC = cc
+CFLAGS = -g -I$(OMRPC_DIR)/include
+
+OMRPC_CLIENT_LIBS = -L$(OMRPC_DIR)/lib -lomrpc_client -lomrpc_io -lpthread
+OMRPC_STUB_LIBS = -L$(OMRPC_DIR)/lib -lomrpc_stub -lomrpc_io -lpthread
+
+PROGRAM = cpi-omrpc
+REX = cpi.rex
+
+all: $(PROGRAM) $(REX)
+
+# client
+cpi-omrpc: cpi-omrpc.c
+	$(OMRPC_CC) $(CFLAGS) -o cpi-omrpc cpi-omrpc.c $(OMRPC_CLIENT_LIBS)
+
+reg_stub: $(REX)
+	$(OMRPC_REG) -register cpi.rex
+
+cpi.rex: cpi.idl cpi-lib.o
+	$(OMRPC_CC) cpi.idl cpi-lib.o
+
+clean:
+	/bin/rm -f $(PROGRAM) $(REX) *.rex.c *.o *~
+
+distclean: clean
+	/bin/rm -f Makefile
+
+

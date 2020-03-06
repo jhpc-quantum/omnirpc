@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+<OmniRpcConfig>
+	   <Host name="localhost" user="ynaka" > 
+			 <Agent invoker="ssh" mxio="off" path="/home/ynaka/64bit/lib"/>
+		 </Host>
+	   <Host name="localhost" user="ynaka" > 
+			 <Agent invoker="ssh" mxio="off" path="/home/ynaka/64bit/lib"/>
+		 </Host>
+	   <Host name="localhost" user="ynaka" > 
+			 <Agent invoker="ssh" mxio="off" path="/home/ynaka/64bit/lib"/>
+		 </Host>
+	   <Host name="localhost" user="ynaka" > 
+			 <Agent invoker="ssh" mxio="off" path="/home/ynaka/64bit/lib"/>
+		 </Host>
+	   <Host name="localhost" user="ynaka" > 
+			 <Agent invoker="ssh" mxio="off" path="/home/ynaka/64bit/lib"/>
+		 </Host>
+	   <Host name="localhost" user="ynaka" > 
+			 <Agent invoker="ssh" mxio="off" path="/home/ynaka/64bit/lib"/>
+		 </Host>
+	   <Host name="localhost" user="ynaka" > 
+			 <Agent invoker="ssh" mxio="off" path="/home/ynaka/64bit/lib"/>
+		 </Host>
+	   <Host name="localhost" user="ynaka" > 
+			 <Agent invoker="ssh" mxio="off" path="/home/ynaka/64bit/lib"/>
+		 </Host>
+	   <Host name="localhost" user="ynaka" > 
+			 <Agent invoker="ssh" mxio="off" path="/home/ynaka/64bit/lib"/>
+		 </Host>
+	   <Host name="localhost" user="ynaka" > 
+			 <Agent invoker="ssh" mxio="off" path="/home/ynaka/64bit/lib"/>
+		 </Host>
+	   <Host name="localhost" user="ynaka" > 
+			 <Agent invoker="ssh" mxio="off" path="/home/ynaka/64bit/lib"/>
+		 </Host>
+</OmniRpcConfig>
+

@@ -1,0 +1,57 @@
+;; Object omrpc-gen/
+;; SEMANTICDB Tags save file
+(semanticdb-project-database-file "omrpc-gen/"
+  :tables (list 
+   (semanticdb-table "omrpc_gen_stub.c"
+    :major-mode 'c-mode
+    :tags '(("rcsid" variable (:dereference 1 :typemodifiers ("static") :default-value "\"$Id: semantic.cache,v 1.1.1.1 2004-11-03 21:01:21 yoshihiro Exp $\"" :type "char") nil [1 89]) ("string.h" include (:system-flag t) nil [265 284]) ("ctype.h" include (:system-flag t) nil [285 303]) ("omrpc_gen.h" include nil nil [304 326]) ("FORTRAN" variable (:constant-flag t :default-value (nil)) nil [328 353]) ("GET_VAL_STRING" variable (:constant-flag t :default-value (nil)) nil [355 407]) ("value_type_string" variable (:pointer 1 :dereference 1 :typemodifiers ("static") :default-value "{
+  \"VALUE_ERROR\",
+  \"VALUE_NONE\",
+  \"VALUE_CONST\",
+  \"VALUE_IN_ARG\",
+  \"VALUE_BY_EXPR\",
+  \"VALUE_OP\",
+  \"VALUE_END_OF_OP\",
+  \"VALUE_IN_HEADER\",
+}" :type "char") nil [408 591]) ("GET_MODE_STRING" variable (:constant-flag t :default-value (nil)) nil [593 641]) ("mode_type_string" variable (:pointer 1 :dereference 1 :typemodifiers ("static") :default-value "{
+  \"MODE_NONE\",
+  \"MODE_IN\",
+  \"MODE_OUT\",
+  \"MODE_INOUT\",
+  \"MODE_WORK\",
+  \"MODE_DUMMY\",
+  \"MODE_DUMMY\",
+  \"MODE_DUMMY\",
+  \"MODE_CALL_BACK_FUNC\"
+}" :type "char") nil [642 826]) ("GET_DATA_STRING" variable (:constant-flag t :default-value (nil)) nil [828 876]) ("data_type_string" variable (:pointer 1 :dereference 1 :typemodifiers ("static") :default-value "{
+    \"DT_UNDEF\",
+    \"DT_VOID\",
+    \"DT_CHAR\",
+    \"DT_SHORT\",
+    \"DT_INT\",
+    \"DT_LONG\",
+    \"DT_LONGLONG\",
+    \"DT_UNSIGNED_CHAR\",
+    \"DT_UNSIGNED_SHORT\",
+    \"DT_UNSIGNED\",
+    \"DT_UNSIGNED_LONG\",
+    \"DT_UNSIGNED_LONGLONG\",
+    \"DT_FLOAT\",
+    \"DT_DOUBLE\",
+    \"DT_LONG_DOUBLE\",
+    \"DT_SCOMPLEX\",
+    \"DT_DCOMPLEX\",
+    \"DT_STRING_TYPE\",
+    \"DT_FILENAME\",
+    \"DT_FILEPOINTER\",
+    \"DT_FUNC_TYPE\",
+    \"BASIC_TYPE_END\",
+}" :type "char") nil [877 1344]) ("current_fortran_format" variable (:pointer 1 :typemodifiers ("extern") :type "char") nil [1346 1383]) ("C_type_name" function (:prototype-flag t :pointer 1 :typemodifiers ("static") :arguments (("type" variable (:type ("DATA_TYPE" type (:type "class") nil nil)) (reparse-symbol arg-sub-list) [1443 1458])) :type "char") nil [1418 1459]) ("nead_and" function (:prototype-flag t :typemodifiers ("static") :arguments (("name" variable (:pointer 1 :type "char") (reparse-symbol arg-sub-list) [1480 1492]) ("ep" variable (:pointer 1 :type ("stub_gen_entry" type (:type "struct") nil nil)) (reparse-symbol arg-sub-list) [1493 1519])) :type "int") nil [1460 1520]) ("nead_and_sub" function (:prototype-flag t :typemodifiers ("static") :arguments (("body_expr" variable (:type ("expr" type (:type "class") nil nil)) (reparse-symbol arg-sub-list) [1545 1560]) ("type" variable (:type ("DATA_TYPE" type (:type "class") nil nil)) (reparse-symbol arg-sub-list) [1561 1576]) ("ndim" variable (:type "int") (reparse-symbol arg-sub-list) [1577 1586]) ("param_inout" variable (:type ("mode_spec" type (:type "enum") nil nil)) (reparse-symbol arg-sub-list) [1587 1614])) :type "int") nil [1521 1615]) ("make_function_name" function (:prototype-flag t :pointer 1 :typemodifiers ("static") :arguments (("body_expr" variable (:type ("expr" type (:type "class") nil nil)) (reparse-symbol arg-sub-list) [1648 1663]) ("fformat" variable (:pointer 1 :type "char") (reparse-symbol arg-sub-list) [1664 1679])) :type "char") nil [1616 1680]) ("generate_stub_info" function (:prototype-flag t :typemodifiers ("static") :arguments (("fp" variable (:pointer 1 :type ("FILE" type (:type "class") nil nil)) (reparse-symbol arg-sub-list) [1713 1723]) ("ep" variable (:pointer 1 :type ("stub_gen_entry" type (:type "struct") nil nil)) (reparse-symbol arg-sub-list) [1724 1751]) ("index" variable (:type "int") (reparse-symbol arg-sub-list) [1751 1761])) :type "void") nil [1682 1762]) ("generate_stub_prog" function (:prototype-flag t :typemodifiers ("static") :arguments (("fp" variable (:pointer 1 :type ("FILE" type (:type "class") nil nil)) (reparse-symbol arg-sub-list) [1794 1803]) ("ep" variable (:pointer 1 :type ("stub_gen_entry" type (:type "struct") nil nil)) (reparse-symbol arg-sub-list) [1804 1830])) :type "void") nil [1763 1831]) ("generate_stub_param_desc" function (:prototype-flag t :typemodifiers ("static") :arguments (("fp" variable (:pointer 1 :type ("FILE" type (:type "class") nil nil)) (reparse-symbol arg-sub-list) [1869 1879]) ("ep" variable (:pointer 1 :type ("stub_gen_entry" type (:type "struct") nil nil)) (reparse-symbol arg-sub-list) [1880 1907])) :type "void") nil [1832 1908]) ("ninf_expression_print" function (:prototype-flag t :typemodifiers ("static") :arguments (("fp" variable (:pointer 1 :type ("FILE" type (:type "class") nil nil)) (reparse-symbol arg-sub-list) [1943 1953]) ("exp" variable (:pointer 1 :type ("NINF_EXPRESSION" type (:type "class") nil nil)) (reparse-symbol arg-sub-list) [1954 1976])) :type "void") nil [1909 1977]) ("generate_rpc_executable" function (:arguments (("fp" variable (:pointer 1 :type ("FILE" type (:type "class") nil nil)) (reparse-symbol arg-sub-list) [2039 2048])) :type "void") nil [2009 4311]) ("generate_stub_info" function (:arguments (("fp" variable (:pointer 1 :type ("FILE" type (:type "class") nil nil)) (reparse-symbol arg-sub-list) [4337 4346]) ("ep" variable (:pointer 1 :type ("stub_gen_entry" type (:type "struct") nil nil)) (reparse-symbol arg-sub-list) [4346 4372]) ("index" variable (:type "int") (reparse-symbol arg-sub-list) [4373 4383])) :type "void") nil [4313 5700]) ("ninf_expression_print" function (:arguments (("fp" variable (:pointer 1 :type ("FILE" type (:type "class") nil nil)) (reparse-symbol arg-sub-list) [5730 5740]) ("exp" variable (:pointer 1 :type ("NINF_EXPRESSION" type (:type "class") nil nil)) (reparse-symbol arg-sub-list) [5741 5763])) :type "void") nil [5703 6131]) ("generate_stub_param_desc" function (:arguments (("fp" variable (:pointer 1 :type ("FILE" type (:type "class") nil nil)) (reparse-symbol arg-sub-list) [6163 6173]) ("ep" variable (:pointer 1 :type ("stub_gen_entry" type (:type "struct") nil nil)) (reparse-symbol arg-sub-list) [6174 6201])) :type "void") nil [6133 7286]) ("generate_stub_body" function (:arguments (("ep" variable (:pointer 1 :type ("stub_gen_entry" type (:type "struct") nil nil)) (reparse-symbol arg-sub-list) [7312 7338]) ("fp" variable (:pointer 1 :type ("FILE" type (:type "class") nil nil)) (reparse-symbol arg-sub-list) [7339 7349])) :type "void") nil [7288 7855]) ("generate_stub_prog" function (:arguments (("fp" variable (:pointer 1 :type ("FILE" type (:type "class") nil nil)) (reparse-symbol arg-sub-list) [7881 7890]) ("ep" variable (:pointer 1 :type ("stub_gen_entry" type (:type "struct") nil nil)) (reparse-symbol arg-sub-list) [7890 7916])) :type "void") nil [7857 8581]) ("function_name_buffer" variable (:dereference 1 :typemodifiers ("static") :type "char") nil [8583 8621]) ("fortran_format" function (:pointer 1 :arguments (("buf" variable (:pointer 1 :type "char") (reparse-symbol arg-sub-list) [8645 8656]) ("fformat" variable (:pointer 1 :type "char") (reparse-symbol arg-sub-list) [8657 8672]) ("fname" variable (:pointer 1 :type "char") (reparse-symbol arg-sub-list) [8673 8686])) :type "char") nil [8623 9291]) ("make_function_name" function (:pointer 1 :typemodifiers ("static") :arguments (("body_expr" variable (:type ("expr" type (:type "class") nil nil)) (reparse-symbol arg-sub-list) [9327 9342]) ("fformat" variable (:pointer 1 :type "char") (reparse-symbol arg-sub-list) [9343 9358])) :type "char") nil [9294 9632]) ("nead_and" function (:typemodifiers ("static") :arguments (("name" variable (:pointer 1 :type "char") (reparse-symbol arg-sub-list) [9654 9666]) ("ep" variable (:pointer 1 :type ("stub_gen_entry" type (:type "struct") nil nil)) (reparse-symbol arg-sub-list) [9667 9693])) :type "int") nil [9634 10013]) ("nead_and_sub" function (:typemodifiers ("static") :arguments (("body_expr" variable (:type ("expr" type (:type "class") nil nil)) (reparse-symbol arg-sub-list) [10039 10054]) ("type" variable (:type ("DATA_TYPE" type (:type "class") nil nil)) (reparse-symbol arg-sub-list) [10055 10070]) ("ndim" variable (:type "int") (reparse-symbol arg-sub-list) [10071 10080]) ("param_inout" variable (:type ("mode_spec" type (:type "enum") nil nil)) (reparse-symbol arg-sub-list) [10081 10108])) :type "int") nil [10015 10423]) ("C_type_name" function (:pointer 1 :typemodifiers ("static") :arguments (("type" variable (:type ("DATA_TYPE" type (:type "class") nil nil)) (reparse-symbol arg-sub-list) [10450 10465])) :type "char") nil [10425 11354]))
+    :file "omrpc_gen_stub.c"
+    :pointmax 11358
+    )
+   )
+  :file "semantic.cache"
+  :semantic-tag-version "2.0beta3"
+  :semanticdb-version "2.0beta3"
+  )

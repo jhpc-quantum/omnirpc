@@ -1,0 +1,78 @@
+# $Id: Makefile.in,v 1.2 2006-01-25 16:06:18 ynaka Exp $
+# $Release: omnirpc-2.0.1 $
+# $Copyright:
+#  OmniRPC Version 1.0
+#  Copyright (C) 2002-2004 HPCS Laboratory, University of Tsukuba.
+#  
+#  This software is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU Lesser General Public License version
+#  2.1 published by the Free Software Foundation.
+#  
+#  Please check the Copyright and License information in the files named
+#  COPYRIGHT and LICENSE under the top  directory of the OmniRPC Grid PRC 
+#  System release kit.
+#  
+#  
+#  $
+
+TOPDIR		=	../..
+prefix		=	@prefix@
+exec_prefix	=	@exec_prefix@
+
+bindir		=	$(exec_prefix)/bin
+libdir		=	$(prefix)/lib
+classdir	=	$(prefix)/class
+
+INSTALLDIR	=	$(bindir)
+INSTALL		= 	@INSTALLCOM@
+MKDIR		=	@MKDIRCOM@
+
+OMRPC_DIR = $(prefix)
+
+TARGET = tlogview.jar omrpc-tlogview
+
+JAR_SRCS = ColorMapFrame.java tlogDataFile.java tlogInit.java \
+	tlogview.java tlogData.java tlogDump.java tlogPanel.java
+
+all: $(TARGET)
+
+tlogview.jar: $(JAR_SRCS)
+	@JAVACCOM@ *.java
+	rm -f $@
+	@JARCOM@ -cvf $@ *.class 
+
+omrpc-tlogview:	tlogview.in
+	sed -e "s:%OMRPC_DIR%:$(OMRPC_DIR):g" \
+		-e 's:%JAVACOM%:@JAVACOM@:g' tlogview.in > $@
+	chmod 755 $@
+
+install: $(TARGET)
+	@if [ ! -d $(INSTALLDIR) ] ; then \
+		(echo "Making directory $(INSTALLDIR)" ; \
+		$(MKDIR) $(INSTALLDIR) ; \
+		chmod 775 $(INSTALLDIR)); \
+	else \
+		true ; \
+	fi
+	$(INSTALL) -c -m 755 omrpc-tlogview $(INSTALLDIR)
+	@if [ ! -d $(classdir) ] ; then \
+		(echo "Making directory $(classdir)" ; \
+		$(MKDIR) $(classdir) ; \
+		chmod 775 $(classdir)); \
+	else \
+		true ; \
+	fi
+	$(INSTALL) -c -m 644 tlogview.jar $(classdir)
+
+clean:
+	rm -f $(TARGET) core *~ *.class
+
+distclean:	clean
+	rm -f config.* Makefile .depend*
+
+depend:
+
+test:
+
+Makefile::
+	(cd $(TOPDIR); sh ./config.status)

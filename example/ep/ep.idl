@@ -1,0 +1,115 @@
+/* 
+ * $Id: ep.idl,v 1.1.1.1 2004-11-03 21:01:22 yoshihiro Exp $
+ * $Release: omnirpc-2.0.1 $
+ * $Copyright:
+ *  OmniRPC Version 1.0
+ *  Copyright (C) 2002-2004 HPCS Laboratory, University of Tsukuba.
+ *  
+ *  This software is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License version
+ *  2.1 published by the Free Software Foundation.
+ *  
+ *  Please check the Copyright and License information in the files named
+ *  COPYRIGHT and LICENSE under the top  directory of the OmniRPC Grid PRC 
+ *  System release kit.
+ *  
+ *  
+ *  $
+ */
+Module ep;
+
+Globals {
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+#include <unistd.h>
+
+#include "npb-C.h"
+#include "npbparams.h"
+
+
+#define MK  16
+#define MM  (M - MK)
+#define NN  (1 << MM)
+#define NK  (1 << MK)
+#define NQ  10
+#define A   1220703125.0
+#define S   271828183.0
+
+int k_offset;
+double an;
+static double x[(2*NK)+1];      /* x[1:2*NK] */
+static double q[NQ];            /* q[0:NQ-1] */
+}
+
+Define Initialize(IN int k_offset_in, 
+		  IN double an_in)
+"EP initializer"
+{
+  int i;
+
+  k_offset = k_offset_in;
+  an = an_in;
+
+  for (i = 0; i < NQ; i++){
+    q[i] = 0.0;
+  }
+}
+
+Define epOmrpc(IN int k,
+	       IN int nq,
+	       OUT double r_sx[],
+	       OUT double r_sy[],
+	       OUT double r_q[nq])
+"generage random number"
+{
+  int i, kk, ik, l;
+  double t1, t2, t3, t4, x1, x2;
+  double sx = 0.0;
+  double sy = 0.0;
+  
+  kk = k_offset + k;
+  t1 = S;
+  t2 = an;
+  
+  /*      Find starting seed t1 for this kk. */
+  
+  for (i = 1; i <= 100; i++) {
+    ik = kk / 2;
+    if (2 * ik != kk) t3 = randlc(&t1, t2);
+    if (ik == 0) break;
+    t3 = randlc(&t2, t2);
+    kk = ik;
+  }
+  
+  /*      Compute uniform pseudorandom numbers. */
+  vranlc(2*NK, &t1, A, x);
+  
+  /*
+    c       Compute Gaussian deviates by acceptance-rejection method and 
+    c       tally counts in concentric square annuli.  This loop is not 
+    c       vectorizable.
+  */
+  
+  for ( i = 1; i <= NK; i++) {
+    x1 = 2.0 * x[2*i-1] - 1.0;
+    x2 = 2.0 * x[2*i] - 1.0;
+    t1 = x1 * x1 + x2 * x2;
+    if (t1 <= 1.0) {
+      t2 = sqrt(-2.0 * log(t1) / t1);
+      t3 = (x1 * t2);				/* Xi */
+      t4 = (x2 * t2);				/* Yi */
+      l = max(abs(t3), abs(t4));
+      q[l] = q[l] + 1.0;			/* counts */
+      sx = sx + t3;				/* sum of Xi */
+      sy = sy + t4;				/* sum of Yi */
+    }
+  }
+
+  *r_sx = sx;
+  *r_sy = sy;
+  for(i = 0; i < nq; i++){
+    r_q[i] = q[i];
+  }
+}

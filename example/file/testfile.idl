@@ -1,0 +1,40 @@
+Module testfile;
+
+Globals { 
+#include <math.h>
+#include <stdio.h>
+}
+
+Define testfile(IN filename infile[2], OUT filename outfile[])
+{
+    FILE *infp, *outfp;
+    char tmp[128];
+    fprintf(stderr, "STUB : infile[0] : %s\n", infile[0]);
+    fprintf(stderr, "STUB : infile[1] : %s\n", infile[1]);
+    int i;
+
+    fflush(stderr);
+    if(*outfile == NULL)
+        *outfile = "hogehoge";
+    fprintf(stdout, "outfile : %s\n", *outfile);
+
+    if((outfp = fopen(*outfile, "w+")) == NULL){
+        perror("fopen");
+        exit(1);
+    }
+    for(i = 0; i < 2; i++){
+        if((infp = fopen(infile[i], "r+")) == NULL){
+            perror("fopen");
+            exit(1);
+        }
+
+        while(fgets(tmp, sizeof(tmp), infp) != NULL){
+            fprintf(outfp, "%s", tmp);
+        }
+        fclose(infp);
+    }
+
+    fclose(outfp);
+    fprintf(stderr, "STUB : END\n");
+    fflush(stderr);
+}

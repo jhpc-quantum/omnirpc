@@ -1,0 +1,77 @@
+/* 
+ * $Id: sample.idl,v 1.1.1.1 2004-11-03 21:01:38 yoshihiro Exp $
+ * $Release: omnirpc-2.0.1 $
+ * $Copyright:
+ *  OmniRPC Version 1.0
+ *  Copyright (C) 2002-2004 HPCS Laboratory, University of Tsukuba.
+ *  
+ *  This software is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License version
+ *  2.1 published by the Free Software Foundation.
+ *  
+ *  Please check the Copyright and License information in the files named
+ *  COPYRIGHT and LICENSE under the top  directory of the OmniRPC Grid PRC 
+ *  System release kit.
+ *  
+ *  
+ *  $
+ */
+Module sample;
+
+Globals { 
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+
+void mmul(int n, double *A, double *B, double *C);
+extern void omrpc_prf(char *msg,...);
+
+int x,y,z; 
+}
+
+Define sin(IN double d, OUT double result[])
+" This is test ..."
+{	
+	double sin();
+	extern int omrpc_debug_flag;
+	if(omrpc_debug_flag) 
+	    printf("sin called: sin(%g) = %g\n",d,sin(d));
+	*result = sin(d);
+}
+
+Define mmul(mode_in int n, mode_in double A[n][n], 
+	mode_in double B[n][n],
+	mode_out double C[n][n])
+Required "sample.o"
+Calls "C" mmul(n,A,B,C);
+
+Define work(IN int d, OUT int result[])
+" This is test ..."
+{	
+	omrpc_prf("work begin...\n");
+	sleep(d); /* do some work */
+	*result = d;
+	omrpc_prf("work end...\n");
+}
+
+Define echo(IN int in_size, IN int in_buf[in_size], 
+	    IN int out_size, OUT int out_buf[out_size])
+{
+    /* do nothing */
+}
+
+Define echo1(IN int in_size, IN int in_buf[in_size], OUT int out_buf[in_size])
+{
+    int i;
+    for(i = 0; i < in_size; i++) out_buf[i] = in_buf[i];
+}
+
+Define hostname(OUT string ss[],OUT int r[])
+" this is to get hostname on which execute this stub"
+{
+	char s[100];
+	*r = gethostname(s,100);
+	printf("sample: %s\n",s);
+	*ss = s;
+}
+

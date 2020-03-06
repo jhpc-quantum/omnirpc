@@ -1,0 +1,72 @@
+# $Id: Makefile.in,v 1.1.1.1 2004-11-03 21:01:36 yoshihiro Exp $
+# $Release: omnirpc-2.0.1 $
+# $Copyright:
+#  OmniRPC Version 1.0
+#  Copyright (C) 2002-2004 HPCS Laboratory, University of Tsukuba.
+#  
+#  This software is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU Lesser General Public License version
+#  2.1 published by the Free Software Foundation.
+#  
+#  Please check the Copyright and License information in the files named
+#  COPYRIGHT and LICENSE under the top  directory of the OmniRPC Grid PRC 
+#  System release kit.
+#  
+#  
+#  $
+
+TOPDIR		=	..
+prefix		=	@prefix@
+exec_prefix	=	@exec_prefix@
+
+bindir		=	$(exec_prefix)/bin
+libdir		=	$(prefix)/lib
+incdir		=	$(prefix)/include
+
+INSTALLDIR	=	$(incdir)
+INSTALL		= 	@INSTALLCOM@
+MKDIR		=	@MKDIRCOM@
+
+GCCINC		=	-I`case "$(CC)" in *gcc) echo \`$(CC) -v 2>&1 | grep specs | sed 's/specs$$/include/' | awk '{ print $$NF }'\`;; esac`
+
+
+CC_OPT_SWITCH	=	@CFLAGS@
+CPPFLAGS	=	-I. -I$(TOPDIR)/include @DEFS@ @CPPFLAGS@
+CFLAGS		=	$(CC_OPT_SWITCH) $(CPPFLAGS)
+
+CC		=	@CC@ 
+AR		=	@AR@
+RANLIB		=	@RANLIB@
+
+YACC		=	@YACCCOM@
+
+DEPEND_SWITCH	=	$(CPPFLAGS)
+
+HDRS		= OmniRpc.h ninf_stub_info.h omni_platform.h omrpc_stub_lib.h omrpc_mpi_lib.h omrpc_xmp_lib.h
+
+all:
+	@true
+
+install:
+	@if [ ! -d $(INSTALLDIR) ] ; then \
+		(echo "Making directory $(INSTALLDIR)" ; \
+		$(MKDIR) $(INSTALLDIR) ; \
+		chmod 775 $(INSTALLDIR)); \
+	else \
+		true ; \
+	fi
+	for i in $(HDRS) ; do \
+	     $(INSTALL) -m 644 $$i $(INSTALLDIR); \
+	done
+
+clean:
+	rm -f *.o *~ core
+
+distclean:	clean
+	rm -f config.* Makefile .depend*
+
+depend:
+	true
+
+Makefile::
+	(cd $(TOPDIR); sh ./config.status)

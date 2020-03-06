@@ -1,0 +1,66 @@
+#
+# sample program: knapsack problem using OmniRPC in OpenMP
+# 
+OMRPC_DIR = @prefix@
+
+OMRPC_CC = omrpc-cc
+OMRPC_REG = omrpc-register
+
+CC = cc
+OPENMP_CC = omcc
+CFLAGS = -g -I$(OMRPC_DIR)/include
+
+OMRPC_CLIENT_LIBS = -L$(OMRPC_DIR)/lib -lomrpc_client -lomrpc_io -lpthread 
+OMRPC_STUB_LIBS = -L$(OMRPC_DIR)/lib -lomrpc_stub -lomrpc_io -lpthread 
+GLOBUS_LIBS= @GLOBUS_LIBS@
+PROGRAM = knap knap-par knap-rpc knap-prpc knap1-rpc knap1-prpc
+REX = knap.rex knap1.rex
+
+all: $(PROGRAM)
+
+# squential version
+knap: knap-par.c second.o
+	$(CC) $(CFLAGS) -o knap knap-par.c second.o
+
+# OpenMP version
+knap-par: knap-par.c second.o
+	$(OPENMP_CC) $(CFLAGS) -o knap-par knap-par.c second.o
+
+# OmniRpc version
+knap-rpc: knap-par.c second.o
+	$(OMRPC_CC) -DUSE_OMRPC $(CFLAGS) -o knap-rpc knap-par.c \
+	second.o $(OMRPC_CLIENT_LIBS)
+
+# OmniRpc version in OpenMP
+knap-prpc: knap-par.c second.o
+	$(OPENMP_CC) $(CFLAGS) -omniconfig=mutex -DUSE_OMRPC $(CFLAGS) \
+	 -o knap-prpc knap-par.c second.o $(OMRPC_CLIENT_LIBS) \
+	$(GLOBUS_LIBS)
+
+# OmniRpc version with OmniRpcModuleInit
+knap1-rpc: knap1-par.c second.o
+	$(OMRPC_CC) -DUSE_OMRPC $(CFLAGS) -o knap1-rpc knap1-par.c second.o \
+	$(OMRPC_CLIENT_LIBS)
+
+# OmniRpc version in OpenMP with OmniRpcModuleInit
+knap1-prpc: knap1-par.c second.o
+	$(OPENMP_CC) $(CFLAGS) -omniconfig=mutex -DUSE_OMRPC $(CFLAGS)\
+	 -o knap1-prpc knap1-par.c second.o $(OMRPC_CLIENT_LIBS) \
+	$(GLOBUS_LIBS)
+
+reg_stub: $(REX)
+	$(OMRPC_REG) -register knap.rex
+	$(OMRPC_REG) -register knap1.rex
+
+knap.rex: knap.idl knap_dfs.o
+	$(OMRPC_CC) knap.idl knap_dfs.o
+
+knap1.rex: knap1.idl knap_dfs.o
+	$(OMRPC_CC) $(CFLAGS) knap1.idl knap_dfs.o
+
+clean:
+	/bin/rm -f $(PROGRAM) $(REX) *.rex.c *.o *~
+
+distclean: clean
+	/bin/rm -f Makefile
+

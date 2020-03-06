@@ -1,0 +1,177 @@
+<HTML>
+<HEAD>
+<TITLE> OmniRPC: hostfile </TITLE>
+</HEAD>
+<BODY bgcolor="#fffff0">
+<h2>
+hostfileの記述
+</h2>
+<p>
+ホストファイルは、実行可能なホストを記述するxmlファイルです。
+ここでは、その記述の方法について説明します。
+</p>
+<dl>
+<dt> <a href=#1> ホストファイルの指定の方法 </a> </dt>
+<dt> <a href=#2> 記述例 </a> </dt>
+<dt> <a href=#3> 詳細 </a> </dt>
+<dt> <a href=#4> ホストファイルのDTD定義 </a> </dt>
+</dl>
+
+<hr>
+<h3> <a name=1> ホストファイルの指定の方法 </a> </h3>
+<p>
+ホストファイルにより、クライアントプログラムがどのホストを使うのかを指
+定します。指定は、クライアントプログラムの--hostfileコマンド引数で指定します。
+</p>
+<pre>
+ % a.out --hostfile <em> host_file </em> <it> args .. </it>
+</pre>
+<p>
+--hostfileが指定されていない場合には、defaultとして、各ユーザの
+レジストリにあるhosts.xmlが使われます。すなわち、デフォールトの設定で
+は、~/.omrpc-registry/hosts.xmlが使われます。
+</p>
+
+<h3> <a name=2> 記述例 </a> </h3>
+<p>
+以下に例をしめします。
+</p>
+<pre>
+&lt;?xml version="1.0" ?&gt;
+&lt;OmniRpcConfig&gt;
+   &lt;Host name="jones.is.tsukuba.ac.jp"&gt;
+   &lt;Host name="alice.hpcc.jp" arch="i386" os="linux"&gt;
+	&lt;Agent invoker="globus" mxio="on" path="/usr/local/omrpc"/&gt;
+	&lt;JobScheduler type="rr" maxjob="6" /&gt;
+	&lt;Registry path="/home/msato/app/stubs" /&gt;
+	&lt;Description&gt;
+	This is a sample host description.
+	&lt;/Description&gt;
+   &lt;/Host&gt;
+&lt;/OmniRpcConfig&gt;
+</pre>
+<p>
+上の例では、2つのホストjones.is.tsukuba.ac.jpとalice.hpcc.jpを指定して
+います。jones.is.tsukuba.ac.jpは全てデフォールトの設定ですので、Agent
+の起動はrshによって行われ、一つのリモート実行プログラムが割り当てられ
+ます。alice.hpcc.jpはクラスタのリモートサーバノードで、Agentはglobusの
+GRAMを使って行われます。レジストリはデフォルトではなく、
+/home/msato/app/stubsにあります。リモート実行プログラムは内蔵のジョブ
+スケジューラであるround-robinスケジューラで行われます。リモート実行プ
+ログラムは6つまで起動されます。
+</p>
+
+<h3> <a name=3> 詳細 </a> </h3>
+<p>
+ホストファイルは、OmniRpcConfigをtop-levelに持つxmlです。
+OmniRpcConfigの要素は、Hostです。
+</p>
+<p>
+Host要素では、利用するホストの情報を記述します。
+</p>
+<dl>
+<dt> name属性: (Required) <dt>
+<dd> その属性nameに、ホスト名を指定します。<dd>
+<dt> arch属性、os属性：(Option) </dt> 
+<dd>
+その他、属性にアーキテクチャ(arch)やオペレーティングシステム(os)を指定
+できますが、現在、使われていません。
+</dd>
+</dl>
+
+<p>
+Hostにおいて、以下の要素を記述することができます。
+</p>
+
+<h4> Agent要素: (Option) </h4>
+<p>OmniRpcでは、初期化時にomrpc-agentを起動します。Agent要素はこの
+Agentに関する指定です。要素はありません。以下の属性を指定することがで
+きます。
+</p>
+<dl>
+<dt> invoker属性: rsh, ssh, gram, globusのいずれか (Required) </dt>
+<dd> Agentの起動をどうやって行うかを指定します。gramはglobusの別名です。 
+Agent要素が、省略された場合にはinvokerはrshとなります。
+</dd> 
+<dt>mxio属性: on, off (Option, 省略時 on) </dt>
+<dd>
+通信を多重化するかどうかの指定を行います。Agentによる通信の中継が必要
+な場合は、この値をonにします。この値は、onまたはoffでなくてはなりませ
+ん。属性mxioを指定しない場合には、値はoffとなります。
+</dd>
+<dt> path属性: (Option, 省略時 /usr/local/omrpc/) </dt>
+<dd>
+また、このホストにおいて、OmniRpcがdefaultのインストールパ
+ス(/usr/local/omrpc)と異なる場合には、そのインストールパスを属性pathに
+指定します。
+</dd>
+</dl>
+
+<h4> JobScheduler要素: (Option) </h4> 
+<p>
+omrpc-agentがremote executableを起動する時に用いるジョ
+ブスケジューラを指定します。以下の属性を指定できます。
+要素が省略された場合は、typeはfork、maxjobは1となります。
+</p>
+<dl> 
+<dt> type属性:  fork, round_robin, rr, pbs, sgeのいずれか (Required) </dt>
+<dd>
+ジョブスケジューラのタイプを指定します。
+rrは、round_robinの別名です。<font color=red> 現在サポートされているの
+は round_roubinのみです。</font>
+</dd>
+<dt> maxjob属性： (Option, 省略時 1) </dt>
+<dd> リモートホストに起動できる最大のジョブ数を指定します。
+省略された場合には1です。
+</dd>
+</dl>
+
+<h4> Registry要素： (Option) </h4>
+<p>
+リモートホストでのレジストリへのpathを指定します。
+この要素が省略された場合には、リモートホストにおけるユーザのhome
+directoryがレジストリへのpathになります。
+</p>
+
+<dl> 
+<dt> path属性: (Required) </dt>
+<dd>
+レジストリへのパスを指定します。
+</dd>
+</dl>
+
+<h4> Description属性: (Option) </h4> 
+<p> hostに対する任意の情報を記述します。 </p>
+
+
+<h3> <a name=4> ホストファイルのDTD定義 </a> </h3>
+<pre>
+&lt;!ELEMENT OmniRpcConfiguration (Host+)&gt;
+&lt;!ATTLIST OmniRpcConfiguration version CDATA&gt;
+
+&lt;!ELEMENT Host (Agent?, JobScheduler?, Registry?, Description?&gt;
+&lt;!ATTLIST Host name CDATA #REQUIRED&gt;
+&lt;!ATTLIST Host arch CDATA&gt;
+&lt;!ATTLIST Host os CDATA&gt;
+
+&lt;!ELEMENT Agent EMPTY&gt;
+&lt;!ATTLIST Agent invoker (rsh|ssh|globus|gram) #REQUIRED&gt;
+&lt;!ATTLIST Agent mxio (on|off)&gt;
+&lt;!ATTLIST Agent path CDATA&gt;
+
+&lt;!ELEMENT JobScheduler EMPTY&gt;
+&lt;!ATTLIST JobScheduler type (fork|rr|round_robin|pbs|sge) #REQUIRED&gt;
+&lt;!ATTLIST JobScheduler maxjob CDATA&gt;
+
+&lt;!ELEMENT Registry EMPTY&gt;
+&lt;!ATTLIST Registry path CDATA #REQUIRED&gt;
+
+&lt;!ELEMENT Description (#PCDATA)&gt;
+</pre>
+
+<hr>
+</BODY>
+</HTML>
+
+
+

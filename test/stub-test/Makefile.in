@@ -1,0 +1,93 @@
+# $Id: Makefile.in,v 1.1.1.1 2004-11-03 21:01:38 yoshihiro Exp $
+# $Release: omnirpc-2.0.1 $
+# $Copyright:
+#  OmniRPC Version 1.0
+#  Copyright (C) 2002-2004 HPCS Laboratory, University of Tsukuba.
+#  
+#  This software is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU Lesser General Public License version
+#  2.1 published by the Free Software Foundation.
+#  
+#  Please check the Copyright and License information in the files named
+#  COPYRIGHT and LICENSE under the top  directory of the OmniRPC Grid PRC 
+#  System release kit.
+#  
+#  
+#  $
+
+TOPDIR		=	../..
+prefix		=	@prefix@
+exec_prefix	=	@exec_prefix@
+
+bindir		=	$(exec_prefix)/bin
+libdir		=	$(prefix)/lib
+
+INSTALLDIR	=	$(bindir)
+INSTALL		= 	@INSTALLCOM@
+MKDIR		=	@MKDIRCOM@
+
+GCCINC		=	-I`case "$(CC)" in *gcc) echo \`$(CC) -v 2>&1 | grep specs | sed 's/specs$$/include/' | awk '{ print $$NF }'\`;; esac`
+
+
+CC_OPT_SWITCH	=	@CFLAGS@
+CPPFLAGS	=	-I. -I$(TOPDIR)/include @DEFS@ @CPPFLAGS@
+CFLAGS		=	$(CC_OPT_SWITCH)
+
+CC		=	@CC@ 
+AR		=	@AR@
+RANLIB		=	@RANLIB@
+
+YACC		=	@YACCCOM@
+
+DEPEND_SWITCH	=	$(CPPFLAGS)
+
+OMRPC_GEN = ../../src/omrpc-gen/omrpc-gen 
+OMRPC_REG = ../../src/omrpc-register/omrpc-register
+
+LIBS = -L../../src/libomrpc -lomrpc_client -lomrpc_io -lm -lpthread @SOCK_LIBS@ @GLOBUS_LIBS@
+STUB_LIBS = -L../../src/libomrpc -lomrpc_stub -lomrpc_io -lm -lpthread @SOCK_LIBS@ @GLOBUS_LIBS@
+
+SRCS = local-exec-test.c sample-lib.c
+OBJS = local-exec-test.o sample-lib.o
+
+TARGET = local-exec-test sample.rex init_sample.rex
+
+all: $(TARGET)
+
+local-exec-test: $(OBJS)
+	$(CC) $(CC_OPT_SWITCH) -o $@ $(OBJS) $(LIBS)
+
+sample.rex: sample.idl sample-lib.o
+	$(OMRPC_GEN) sample.idl sample.rex.c
+	$(CC) $(CFLAGS) $(CPPFLAGS) -o sample.rex sample.rex.c sample-lib.o $(STUB_LIBS)
+
+init_sample.rex: init_sample.idl 
+	$(OMRPC_GEN) init_sample.idl init_sample.rex.c
+	$(CC) $(CFLAGS) $(CPPFLAGS) -o init_sample.rex init_sample.rex.c $(STUB_LIBS)
+
+reg_stub: sample.rex init_sample.rex
+	$(OMRPC_REG) -register sample.rex 
+	$(OMRPC_REG) -register init_sample.rex
+
+install:
+	true
+
+clean:
+	rm -f *.o *~ core $(TARGET)
+
+distclean:	clean
+	rm -f config.* Makefile .depend* *.rex *.rex.c
+
+depend: $(SRCS)
+	touch .depend.tmp
+	makedepend -f ./.depend.tmp -a -- $(GCCINC) $(DEPEND_SWITCH) -- $(SRCS)
+	sed 's:^$(PLATFORMDIR)/:./:' ./.depend.tmp > ./.depend
+	cat Makefile ./.depend > ./Makefile.tmp
+	mv Makefile.tmp Makefile
+	rm -f ./.depend ./.depend.tmp .depend.tmp.bak
+
+Makefile::
+	(cd $(TOPDIR); sh ./config.status)
+
+
+

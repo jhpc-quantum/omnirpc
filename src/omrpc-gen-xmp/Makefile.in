@@ -1,0 +1,127 @@
+# $Id: Makefile.in,v 1.1.1.1 2004-11-03 21:01:19 yoshihiro Exp $
+# $Release: omnirpc-2.0.1 $
+# $Copyright:
+#  OmniRPC Version 1.0
+#  Copyright (C) 2002-2004 HPCS Laboratory, University of Tsukuba.
+#  
+#  This software is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU Lesser General Public License version
+#  2.1 published by the Free Software Foundation.
+#  
+#  Please check the Copyright and License information in the files named
+#  COPYRIGHT and LICENSE under the top  directory of the OmniRPC Grid PRC 
+#  System release kit.
+#  
+#  
+#  $
+
+TOPDIR		=	../..
+prefix		=	@prefix@
+exec_prefix	=	@exec_prefix@
+
+bindir		=	$(exec_prefix)/bin
+libdir		=	$(prefix)/lib
+
+INSTALLDIR	=	$(bindir)
+INSTALL		= 	@INSTALLCOM@
+MKDIR		=	@MKDIRCOM@
+LIBINSTALLDIR   =	$(libdir)
+
+GCCINC		=	-I`case "$(CC)" in *gcc) echo \`$(CC) -v 2>&1 | grep specs | sed 's/specs$$/include/' | awk '{ print $$NF }'\`;; esac`
+
+CC_OPT_SWITCH	=	@CFLAGS@
+CPPFLAGS	=	-I. -I$(TOPDIR)/include -I../libomrpc @DEFS@ @CPPFLAGS@ -DCOMPILER="\"@CC@\"" -DCPP_FILE="\"$(CPP_FILE)\""
+CFLAGS		=	$(CC_OPT_SWITCH) 
+
+CC		=	@CC@ 
+AR		=	@AR@
+RANLIB		=	@RANLIB@
+
+YACC		=	@YACCCOM@
+
+DEPEND_SWITCH	=	$(CPPFLAGS)
+
+SRCS = omrpc_gen_main.c ninf_IDL.c omrpc_gen_mem.c omrpc_gen_misc.c \
+	omrpc_gen_compile.c omrpc_gen_stub.c omrpc_xmp_lib.c
+
+OBJS = omrpc_gen_main.o ninf_IDL.o omrpc_gen_mem.o omrpc_gen_misc.o \
+	omrpc_gen_compile.o omrpc_gen_stub.o 
+
+XMP_LIB_OBJS = omrpc_xmp_lib.o
+
+TARGET = omrpc-gen-xmp omrpc-cc-xmp libomrpcxmp.a
+
+all: $(TARGET)
+
+# 
+#  OmniRPC Ninf stub program generator
+#
+
+omrpc-gen-xmp: $(OBJS)
+	$(CC) $(CC_OPT_SWITCH) -o omrpc-gen-xmp $(OBJS)
+
+omrpc-cc-xmp:
+
+libomrpcxmp.a: $(XMP_LIB_OBJS)
+	rm -f $@
+	$(AR) $@ $(XMP_LIB_OBJS)
+	$(RANLIB) $@
+
+ninf_IDL.c: ninf_IDL.y ninf_IDL_lex.c
+	$(YACC) -d -v ninf_IDL.y 
+	mv y.tab.c ninf_IDL.c
+
+install: all
+	make install-bin install-lib
+#	@if [ ! -d $(INSTALLDIR) ] ; then \
+#		(echo "Making directory $(INSTALLDIR)" ; \
+#		$(MKDIR) $(INSTALLDIR) ; \
+#		chmod 775 $(INSTALLDIR)); \
+#	else \
+#		true ; \
+#	fi
+#	for i in $(TARGET) ; do \
+#		$(INSTALL) -m 755 $$i $(INSTALLDIR); \
+#	done
+
+install-bin: omrpc-gen-xmp omrpc-cc-xmp
+	@if [ ! -d $(INSTALLDIR) ] ; then \
+               (echo "Making directory $(INSTALLDIR)" ; \
+               $(MKDIR) $(INSTALLDIR) ; \
+               chmod 775 $(INSTALLDIR)); \
+	else \
+               true ; \
+	fi
+	$(INSTALL) -m 755 omrpc-gen-xmp $(INSTALLDIR);\
+	$(INSTALL) -m 755 omrpc-cc-xmp $(INSTALLDIR); \
+
+install-lib: libomrpcxmp.a
+	@if [ ! -d $(INSTALLDIR) ] ; then \
+               (echo "Making directory $(INSTALLDIR)" ; \
+               $(MKDIR) $(INSTALLDIR) ; \
+               chmod 775 $(INSTALLDIR)); \
+	else \
+               true ; \
+       	fi
+	$(INSTALL) -m 644 libomrpcxmp.a $(LIBINSTALLDIR)
+
+
+clean:
+	rm -f *.o *~ core $(TARGET) ninf_IDL.c y.tab.h y.output
+
+distclean: clean
+	rm -f config.* Makefile .depend* 
+
+depend: $(SRCS)
+	touch .depend.tmp
+	makedepend -f ./.depend.tmp -a -- $(GCCINC) $(DEPEND_SWITCH) -- $(SRCS)
+	sed 's:^$(PLATFORMDIR)/:./:' ./.depend.tmp > ./.depend
+	cat Makefile ./.depend > ./Makefile.tmp
+	mv Makefile.tmp Makefile
+	rm -f ./.depend ./.depend.tmp .depend.tmp.bak
+
+Makefile::
+	(cd $(TOPDIR); sh ./config.status)
+
+
+

@@ -1,0 +1,7 @@
+Module f_innerprod;
+
+Define f_innerprod(IN int n, IN double a[n], IN double b[n], 
+	OUT double result[1])
+Calls "Fortran" innerprod_(n,a,b,result);
+
+

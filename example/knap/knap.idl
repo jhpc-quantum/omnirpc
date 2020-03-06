@@ -1,0 +1,7 @@
+Module knap;
+
+Define knap_dfs(IN int n, IN int W[n],IN int P[n],
+	IN int i, IN int cp, IN int M, IN int g_lwb[1],OUT int rp[])
+" Knapsack depth first search"
+Required "knap_dfs.o"
+Calls "C" knap_dfs(n,W,P,i,cp,M,g_lwb,rp);

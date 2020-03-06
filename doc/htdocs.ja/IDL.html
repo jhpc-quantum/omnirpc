@@ -1,0 +1,298 @@
+<HTML>
+<HEAD>
+<TITLE> OmniRPC: Interface description language (IDL) </TITLE>
+</HEAD>
+<BODY bgcolor="#fffff0">
+<h2>
+IDL(インタフェース記述言語)の記述
+</h2>
+リモート実行プログラムを作成するためには、各リモート関数のインタフェー
+スを記述したIDLファイルを記述しなくてはなりません。ここでは、そのIDLに
+ついて説明します。
+
+<dl>
+<dt> <a href=#1> IDLファイルとリモート実行プログラムの生成 </a> </dt>
+<dt> <a href=#2> 記述例 </a> </dt>
+<dt> <a href=#3> 詳細 </a> </dt>
+<dt> <a href=#4> Ninf IDLとの違い</a> </dt>
+<dt> <a href=#5> IDLの文法 </a> </dt>
+</dl>
+
+<hr>
+<h3> <a name=1> IDLファイルとリモート実行プログラムの生成 </a> </h3>
+<p>
+IDLでは、リモート実行モジュールを定義します。この記述からstub生成プロ
+グラムomrpc-genにより、リモート実行モジュールに対するリモート実行プロ
+グラムを生成します。コマンドomrpc-ccは、ライブラリのリンクまで行うリモー
+ト実行プログラム生成ドライバです。
+</p>
+
+<h3> <a name=2> 記述例 </a> </h3>
+<p>
+以下に、記述例を示します。
+</p>
+<pre>
+Module mat_mult;
+
+Define dmmul(mode_in int n, mode_in double A[n][n],
+        mode_in double B[n][n],
+        mode_out double C[n][n])
+{
+    double t;
+    int i,j,k;
+    for (i=0;i&lt;n;i++){
+        for (j=0;j&lt;n;j++){
+            t = 0;
+            for (k=0;k&lt;n;k++){
+                t += A[i*n + k] * B[k*n+j];     /* inner product */
+            }
+            C[i*n+j] = t;
+        }
+    }
+}
+</pre>
+<p>
+Module文は、このファイルに記述されているモジュール名を指定します。
+このモジュール内の関数はDefine文で記述します。引数の記述は、C言語に似
+ていますが、以下の点が異なります。
+</p>
+<ul>
+<li> 引数がinput(mode_inもしくはIN)であるか、output(mode_outもしくは
+OUT)であるかを指定している。
+<li> 配列については、inputのパラメータを使って、サイズを指定できる。
+<li> 関数自体の返り値は使うことができない。
+</ul>
+<p>
+Defineでの関数の宣言の後には、{...}において、任意のC言語のプログラムを
+記述することができます。引数の名前はそのまま、C言語の引数の名前として
+使うことができます。
+</p>
+<p>
+また、ライブラリの関数を呼び出す場合には、以下のように記述することもで
+きます。
+</p>
+<pre>
+Define dmmul(mode_in int n, mode_in double A[n][n],
+        mode_in double B[n][n],
+        mode_out double C[n][n])
+Calls "C" mmul(n,A,B,C);
+</pre>
+<p>
+これは、C言語で記述されたmmulという関数を呼び出す例です。
+</p>
+<p>
+なお、一つのモジュールの定義のファイル内に複数の関数を宣言することがで
+きます。これらは、まとめて、一つのリモート実行プログラムになります。
+</p>
+<p>
+現在のところ、基本データタイプとその配列しか指定することができません。
+将来のバージョンにて、構造体などをサポートする予定です。
+</p>
+
+<h3> <a name=3> 詳細 </a> </h3>
+
+<p>
+IDLの記述には以下の要素があります。
+<ul>
+<li> Module文
+<li> Define文
+<li> Globals文
+<li> Fortranformat文
+</ul>
+以下の説明で、<em>識別子</em> とは英文字から始まる英数字と_からなる名前です。
+</p>
+
+<h4> Module文 </h4>
+<p>
+モジュール名を宣言します。
+</p>
+<pre>
+Module <em>module_name</em>;
+</pre>
+<p>
+<em>module_name</em>は、モジュール名の識別子です。
+IDLファイルは、最初に、Module文でモジュール名を宣言しなくてはなりませ
+ん。
+</p>
+
+<h4> Define文</h4>
+<p>
+リモート呼び出しをする関数のインタフェースを定義します。
+</p>
+<pre>
+Define <em>function_name</em> (<em>parameter1</em>,<em>parameter2</em>,...) 
+"<em>...descrpition...</em>"
+<em>interface_body</em>
+</pre>
+<p>
+関数名function_nameは、関数の名前です。parameterは、以下のように記述し
+ます。
+</p>
+<pre>
+<em> mode </em> <em>type_specifier</em> <em> parameter_name</em>
+</pre>
+<p>
+modeは、引数がinputであるか、outputであるかを指定するもので、
+inputの場合は、mode_inまたはIN, outputの場合はmode_out, OUTと記述しま
+す。また、一次的に用いるデータ領域を確保する場合にはworkと指定すること
+ができます。type_specifierはCの基本データ型名と文字列を示すstringを用
+いることができます。
+</p>
+<p>
+配列の引数の場合には、C言語のようにsizeを指定します。
+</p>
+<pre>
+<em> mode </em> <em>type_specifier</em> <em> parameter_name</em>[size]...
+</pre>
+<p>
+多次元の場合には、C言語のようにそれぞれの次元について[]に囲み指定しま
+す。
+</p>
+<p>
+また、sizeには、optionとして、転送する配列領域の下限、上限、ストライドを指定
+することができます。
+</p>
+<pre>
+<em> mode </em> <em>type_specifier</em> <em> parameter_name</em>[size:low,high,stride]...
+</pre>
+<p>
+bodyとの間には、文字列として関数についての情報を文字列として記述するこ
+とができます。
+</p>
+<p>
+bodyには以下のように、C言語で記述します。
+</p>
+<pre>
+Define function_name (...) { C言語のプログラム }
+</pre>
+<p>
+Cの関数記述中では、引数についてはC言語でのパラメータ変数としてアクセス
+することができます。
+</p>
+<p>
+また、単にリンクされる関数を呼び出す場合には、Callsの後に関数呼び出し
+を記述することができます。
+</p>
+<pre>
+Define function_name (...) Calls foo(...);
+</pre>
+
+<h4> Globals文 </h4>
+<p>
+このモジュール内全体で用いるデータ、関数についてC言語でのプログラムを
+記述しておくことができます。例えば、関数の定義をC言語で記述する場合に、
+必要な関数宣言を記述したり、複数の関数共有する変数や関数を記述すること
+ができます。
+</p>
+<pre>
+Globals { ... 任意のプログラム }
+</pre>
+
+<h4> Fortranformat文 </h4>
+<p>
+Fortranプログラムとリンクする場合に、関数のmanglingに関する規則を指定
+します。
+</p>
+
+<h3> <a name=4> Ninf IDLとの違い</a> </h3>
+<p>
+OmniRPCのIDL記述は、NinfのIDLをベースにしています。以下の点で異なって
+います。
+</p>
+<ul>
+<li> Ninfでは、関数定義の一つごとにリモート実行プログラムを作ります。
+それに対し、OmniRPCでは、モジュール全体に対して、一つのリモート実行プ
+ログラムを作ります。
+<li> したがって、Globalsで宣言された変数はモジュール内の関数で共有され
+ます。
+<li> 関数ごとにリンクするライブラリを指定するRequiredの指定はありませ
+ん。
+<li> 現在の所、MPI用のリモート関数定義はできません。
+</ul>
+
+<h3> <a name=5> IDLの文法 </a> </h3>
+<p>
+以下に、IDLの文法についてのinformalな定義を示す。なお、以下において、
+<ul>
+<li> '...'は、リテラルを示す。
+<li> IDENTIFIERは識別子, CONSTANTは定数を示す。
+<li> STRINGは、"で囲まれた文字、OPT_STRINGは省略可能なSTRINGを示す。
+<li> {..}*は、0個以上の繰り返しを示す。
+<li> C_PROGRAMは、任意のCプログラムを示す。
+<li> type_specifierはCの基本データ型と、stringです。
+</ul>
+</p>
+<pre>
+program := {declaration}*
+
+declaration:=
+          'Module' IDENTIFIER ';'
+	| 'Define' interface_definition OPT_STRING interface_body
+        | 'Globals' '{' C_PROGRAM '}'
+        | 'Fortranformat' STRING ';'
+	;
+
+interface_definition:=
+  	  IDENTIFIER '(' parameter {',' parameter}* ')'
+	;
+
+parameter:= decl_specifier declarator ;
+
+decl_specifier: 
+	type_specifier
+	| MODE
+	| MODE type_specifier
+	| type_specifier MODE
+	| type_specifier MODE type_specifier
+	;
+
+MODE := 'mode_in' | 'IN' | 'mode_out' | 'OUT';
+
+declarator=:
+	  IDENTIFIER
+	| '(' declarator ')'
+	| declarator '['expr_or_null ']'
+	| declarator '['expr_or_null ':' range_spec ']'
+	| '*' declarator
+	;
+
+range_spec=:
+  	  expr
+	| expr ',' expr
+	| expr ',' expr ',' expr
+	;
+
+interface_body:
+	'{' C_PROGRAM '}'
+	| CALLS OPT_STRING IDENTIFIER '(' IDENTIFIER {',' IDEFINTIER}* ')' ';'
+	;
+
+expr_or_null:= 	expr | /* null */;
+
+expr:=	  primary_expr
+	| '*' expr	/* pointer reference */ 
+	| '-' expr	/* unary minus */
+	| expr '/' expr
+	| expr '%' expr
+	| expr '+' expr
+	| expr '-' expr
+	| expr '*' expr
+	| expr '^' expr
+	| expr RELOP expr
+        | expr '?' expr ':' expr
+	;
+
+primary_expr:=
+	 primary_expr '[' expr ']'
+	| IDENTIFIER
+	| CONSTANT
+	| '('  expr  ')'
+	;
+</pre>
+
+<hr>
+</BODY>
+</HTML>
+
+
+

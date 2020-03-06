@@ -1,0 +1,35 @@
+
+Knapsack problem: a sample program using OmniRpc in OpenMP
+
+-- How to build
+
+ - Before building the application, install OmniRpc
+ - Make clients
+      % make
+ - Make remote executables and register them
+      % make reg_stub
+
+-- Clients
+
+  knap -- squential version
+  knap-par -- OpenMP version
+  knap-rpc -- OmniRpc version 
+  knap-prpc -- OmniRpc version in OpenMP
+  knap1-rpc -- OmniRpc version with OmniRpcInitModule
+  knap1-prpc -- OmniRpc version with OmniRpcInitModule in OpenMP
+
+-- How to run
+
+  To run, squential version
+     % knap <object_data_file> <#subtree>
+
+  To run OpenMP versions, set environment variable OMP_NUM_THEADS to specify
+  the number of OpenMP threads.
+    
+  Before OmniRpc version, make sure your environment setting such as hosts.xml
+  
+  The argument is the same as the sequential version, like
+     % <client> <object_data_file> <#subtree>
+    
+ -- enjoy! ---
+

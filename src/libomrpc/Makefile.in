@@ -1,0 +1,103 @@
+
+TOPDIR		=	../..
+prefix		=	@prefix@
+exec_prefix	=	@exec_prefix@
+
+bindir		=	$(exec_prefix)/bin
+libdir		=	$(prefix)/lib
+
+INSTALLDIR	=	$(libdir)
+INSTALL		= 	@INSTALLCOM@
+MKDIR		=	@MKDIRCOM@
+
+GCCINC		=	-I`case "$(CC)" in *gcc) echo \`$(CC) -v 2>&1 | grep specs | sed 's/specs$$/include/' | awk '{ print $$NF }'\`;; esac`
+
+
+CC_OPT_SWITCH	=	@CFLAGS@
+CPPFLAGS	=	-I. -I$(TOPDIR)/include @DEFS@ @CPPFLAGS@
+CFLAGS		=	$(CC_OPT_SWITCH)  
+
+CC		=	@CC@ 
+AR		=	@AR@
+RANLIB		=	@RANLIB@
+
+YACC		=	@YACCCOM@
+
+DEPEND_SWITCH	=	$(CPPFLAGS)
+
+all:	libomrpc_io.a libomrpc_stub.a libomrpc_client.a
+
+SRCS = omrpc_io.c omrpc_io_event.c omrpc_io_rw.c omrpc_exec.c \
+	omrpc_call.c omrpc_misc.c ninf_comm_lib.c ninf_misc.c \
+	omrpc_exec_lib.c omrpc_rpc_lib.c omrpc_rpc_flib.c omrpc_local.c \
+	omrpc_client.c omrpc_host.c omrpc_schedule.c omrpc_rpc.c \
+	omrpc_stub_lib.c xml_reader.c \
+	tlog.c tlog-time.c tlog-omrpc.c \
+	omrpc_mon.c \
+	omrpc_globus.c omrpc_io_globus.c omrpc_io_rw_file.c \
+        omrpc_mpi_client.c omrpc_mpi_lib.c omrpc_mpi.c omrpc_mpi_io.c omrpc_mpi_event.c
+
+IO_LIB_OBJS = omrpc_io.o omrpc_io_event.o omrpc_io_rw.o omrpc_exec.o \
+	omrpc_call.o omrpc_misc.o ninf_comm_lib.o ninf_misc.o \
+	omrpc_globus.o omrpc_io_globus.o omrpc_io_rw_file.o \
+	omrpc_mpi_lib.o omrpc_mpi_io.o omrpc_mpi.o
+
+CLIENT_LIB_OBJS = omrpc_exec_lib.o omrpc_rpc_lib.o omrpc_rpc_flib.o \
+	omrpc_local.o tlog.o tlog-time.o tlog-omrpc.o \
+	omrpc_client.o omrpc_host.o omrpc_schedule.o omrpc_rpc.o xml_reader.o \
+        omrpc_mpi_client.o omrpc_mpi.o omrpc_mpi_event.o
+
+
+STUB_LIB_OBJS = omrpc_stub_lib.o \
+	omrpc_globus.o omrpc_io_globus.o omrpc_mon.o
+
+TARGET_LIBS = libomrpc_io.a libomrpc_client.a libomrpc_stub.a
+
+all: $(TARGET_LIBS)
+
+libomrpc_io.a: $(IO_LIB_OBJS) 
+	rm -f $@
+	$(AR) $@ $(IO_LIB_OBJS)
+	$(RANLIB) $@
+
+libomrpc_stub.a: $(STUB_LIB_OBJS)
+	rm -f $@
+	$(AR) $@ $(STUB_LIB_OBJS)
+	$(RANLIB) $@
+
+libomrpc_client.a: $(CLIENT_LIB_OBJS) 
+	rm -f $@
+	$(AR) $@ $(CLIENT_LIB_OBJS)
+	$(RANLIB) $@
+
+install: all
+	@if [ ! -d $(INSTALLDIR) ] ; then \
+		(echo "Making directory $(INSTALLDIR)" ; \
+		$(MKDIR) $(INSTALLDIR) ; \
+		chmod 775 $(INSTALLDIR)); \
+	else \
+		true ; \
+	fi
+	for i in $(TARGET_LIBS) ; do \
+		$(INSTALL) -m 644 $$i $(INSTALLDIR); \
+	done
+
+clean:
+	rm -f *.o *~ core $(TARGET_LIBS)
+
+distclean:	clean
+	rm -f config.* Makefile .depend* ./target.tmpl
+
+depend: $(SRCS)
+	touch .depend.tmp
+	makedepend -f ./.depend.tmp -a -- $(GCCINC) $(DEPEND_SWITCH) -- $(SRCS)
+	sed 's:^$(PLATFORMDIR)/:./:' ./.depend.tmp > ./.depend
+	cat Makefile ./.depend > ./Makefile.tmp
+	mv Makefile.tmp Makefile
+	rm -f ./.depend ./.depend.tmp .depend.tmp.bak
+
+Makefile::
+	(cd $(TOPDIR); sh ./config.status)
+
+
+

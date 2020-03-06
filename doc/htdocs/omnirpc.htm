@@ -1,0 +1,8012 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN""http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+> OmniRPC User's Guide Version 2.0.1</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"></HEAD
+><BODY
+CLASS="BOOK"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="BOOK"
+><A
+NAME="AEN1"
+></A
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="TITLE"
+><A
+NAME="AEN2"
+>OmniRPC User's Guide Version 2.0.1</A
+></H1
+><H2
+CLASS="SUBTITLE"
+>http://www.omni.hpcc.jp/omnirpc/ <CODE
+CLASS="EMAIL"
+>&#60;<A
+HREF="mailto:omnirpc@omni.hpcc.jp"
+>omnirpc@omni.hpcc.jp</A
+>&#62;</CODE
+></H2
+><DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="img/OmniRPC-5.jpg"
+ALIGN="CENTER"></P
+></DIV
+><H3
+CLASS="AUTHOR"
+><A
+NAME="AEN10"
+></A
+>Yoshihiro Nakajima</H3
+><DIV
+CLASS="AFFILIATION"
+><SPAN
+CLASS="ORGNAME"
+>High Performance Computing Laboratory, University of
+            Tsukuba<BR></SPAN
+></DIV
+><H3
+CLASS="AUTHOR"
+><A
+NAME="AEN17"
+></A
+>Mitsuhisa Sato</H3
+><DIV
+CLASS="AFFILIATION"
+><SPAN
+CLASS="ORGNAME"
+>High Performance Computing Laboratory, University of
+            Tsukuba<BR></SPAN
+></DIV
+><P
+CLASS="COPYRIGHT"
+>Copyright &copy; 2003, 2007 High Performance Computing System Laboratory, University
+of Tsukuba</P
+><DIV
+><DIV
+CLASS="ABSTRACT"
+><P
+></P
+><A
+NAME="AEN28"
+></A
+><P
+>        This handbook itself is part of OmniRPC System and is
+        therefore also licensed under the GNU General Public License;
+        see Copyright for more
+        information.
+      </P
+><P
+></P
+></DIV
+></DIV
+><HR></DIV
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+>1. <A
+HREF="#OVERVIEW"
+>Overview of OmniRPC System</A
+></DT
+><DT
+>2. <A
+HREF="#INSTALLATION"
+>Installation</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#REQUIREMENTS"
+>Requirements</A
+></DT
+><DT
+><A
+HREF="#COMPILATIONANDINSTALLATION"
+>Compilation and Installation</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#COMPILEFROMSOURCE"
+>Compilation and Installation form Source File</A
+></DT
+><DT
+><A
+HREF="#COMPILEWITHGLOBUS"
+>Compilation and Installation with the Globus Toolkit
+          library</A
+></DT
+></DL
+></DD
+><DT
+><A
+HREF="#INSTALLTEST"
+>Install Test</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#STUBTEST"
+>stub test (worker program test)</A
+></DT
+><DT
+><A
+HREF="#EXECTEST"
+>exec-test</A
+></DT
+><DT
+><A
+HREF="#CALL-TEST"
+>call-test</A
+></DT
+></DL
+></DD
+></DL
+></DD
+><DT
+>3. <A
+HREF="#GETTINGSTARTED"
+>Getting Started: Programming with OmniRPC</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#SIMPLE-EXAMPLE"
+>Simple example</A
+></DT
+><DT
+><A
+HREF="#GETINGSTARTEDEXECUTIONENVIRONMENT"
+>Execution environment</A
+></DT
+><DT
+><A
+HREF="#OMNIRPCAGENTANDREMOTEEXECUTABLEPROGRAMS"
+>OmniRPC agent and remote executable programs</A
+></DT
+><DT
+><A
+HREF="#WRITEREMOTEEXECUTABLEPROGRAM"
+>Write remote executable program</A
+></DT
+><DT
+><A
+HREF="#REGISTRATIONOFREMOTEEXECUTABLEPROGRAM"
+>Registration of remote executable program</A
+></DT
+><DT
+><A
+HREF="#CLIENTPROGRAM"
+>Client program</A
+></DT
+><DT
+><A
+HREF="#CREATEHOSTFILE.XML"
+>Create hostfile.xml</A
+></DT
+><DT
+><A
+HREF="#EXECUTIONOFCLIENTPROGRAM"
+>Execution of Cleint Program</A
+></DT
+><DT
+><A
+HREF="#STARTSUMMARY"
+>Summary</A
+></DT
+></DL
+></DD
+><DT
+>4. <A
+HREF="#PARALLELPROGRAMMINGWITHOMNIRPC"
+>Parallel Programming with OmniRPC</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#PARALLELEXECUTIONENVIRONMENT"
+>Execution Environment</A
+></DT
+><DT
+><A
+HREF="#PARALLELPROGRAMMINGWITHASYNCHRONOUSCALL"
+>Parallel programming with asynchronous call</A
+></DT
+><DT
+><A
+HREF="#HOSTFILEANDEXECUTION"
+>Hostfile and Execution</A
+></DT
+><DT
+><A
+HREF="#PARALLELPROGRAMMINGWITHOPENMP"
+>Parallel programming with OpenMP</A
+></DT
+></DL
+></DD
+><DT
+>5. <A
+HREF="#USEOFSHAREDMEMORYMULTIPROCESSORSYSTEM"
+>Use of shared memory multiprocessor (SMP) system</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#SETTINGFORSMP"
+>Setting for SMP</A
+></DT
+><DT
+><A
+HREF="#SETTINGOFMAXJOB"
+>Setting of Maxjob</A
+></DT
+><DT
+><A
+HREF="#SMPPARALLELEXECUTIONOFCLIENTPROGRAM"
+>Execution of client progra</A
+></DT
+></DL
+></DD
+><DT
+>6. <A
+HREF="#EXECUTIONINGLOBUSTOOLKITENVIRONMENTS"
+>Execution in Globus Toolkit Environments</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#EXECUTIONENVIRONMENTWITHGLOBUSTOOLKIT"
+>Execution Environment with Globus Toolkit</A
+></DT
+><DT
+><A
+HREF="#PREPARATIONOFGLOBUS"
+>Preparation of Globus</A
+></DT
+><DT
+><A
+HREF="#HOSTFILEFORGLOBUS"
+>Hostfile for Globus</A
+></DT
+><DT
+><A
+HREF="#GLOBUSEXECUTIONOFCLIENTPROGRAM"
+>Execution of client program</A
+></DT
+></DL
+></DD
+><DT
+>7. <A
+HREF="#EXECUTIONOFSSHENVIRONMENT"
+>Execution of ssh Environment</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#PREPARINGFORSSH"
+>Preparing for SSH</A
+></DT
+><DT
+><A
+HREF="#HOSTFILEFORSSH"
+>Hostfile for SSH</A
+></DT
+><DT
+><A
+HREF="#SETTINGFORFIREWALL"
+>Setting for firewall: Using SSH's port forwarding and MXIO option.</A
+></DT
+><DT
+><A
+HREF="#SSHEXECUTIONOFCLIENTPROGRAM"
+>Execution of client program</A
+></DT
+><DT
+><A
+HREF="#SETTINGOFLOGINNAME"
+>Setting of Login name</A
+></DT
+></DL
+></DD
+><DT
+>8. <A
+HREF="#EXECUTIONONCLUSTERS"
+>Execution on Clusters</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#SETTINGOFCLUSTERENVIRONMENT"
+>Setting of cluster environment</A
+></DT
+><DT
+><A
+HREF="#SELECTIONOFJOBSCHEDULER"
+>Selection of job scheduler</A
+></DT
+><DT
+><A
+HREF="#USEOFBUILT-INROUND-ROBINSCHEDULER"
+>Use of built-in round-robin scheduler</A
+></DT
+><DT
+><A
+HREF="#CLUSTERINPRIVATENETWORK"
+>Cluster in private network</A
+></DT
+><DT
+><A
+HREF="#CLUSTEROUTSIDEFIREWALL"
+>Cluster outside firewall</A
+></DT
+><DT
+><A
+HREF="#CLUSTERINSIDEFIREWALL"
+>Cluster inside firewall</A
+></DT
+></DL
+></DD
+><DT
+>9. <A
+HREF="#PROGRAMMINGWITHOMNIRPCHANDLEAPI"
+>Programming with OmniRpcHandle API</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#WHATSOMNIRPCHANDLE"
+>What's OmniRpcHandle</A
+></DT
+><DT
+><A
+HREF="#SEC-PROGRAMMINGWITHOMNIRPCHANDLE"
+>Programming with OmniRpcHandle</A
+></DT
+><DT
+><A
+HREF="#ACQUISITIONOFHOSTINFORMATION."
+>Acquisition of host information.</A
+></DT
+></DL
+></DD
+><DT
+>10. <A
+HREF="#AUTOMATICMODULEINITIALIZATIONWITHOMNIRPCMODULEINITAPI"
+>Automatic module initialization with OmniRpcModuleInit API</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#WHATSAAUTOMATICINITIALIZABLEMODULE"
+>What's auto module initialization</A
+></DT
+><DT
+><A
+HREF="#PROGRAMMINGWITHOMNIRPCMODULEINITAPI"
+>Programming with OmniRpcModuleInit API</A
+></DT
+></DL
+></DD
+><DT
+>11. <A
+HREF="#DIRECTEXECUTIONOFREMOTEPROGRAM"
+>Direct Execution of Remote Program</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#THECASEOFDIRECTACTIVATIONOFREMOTOEXECUTABLEPROGRAM"
+>The case of direct activation of remote executable program</A
+></DT
+><DT
+><A
+HREF="#SETTINGENVIRONMENTFORREMOTENODES"
+>Setting environment for remote nodes.</A
+></DT
+><DT
+><A
+HREF="#APIFORDIRECTEXECUTIONOFREMOTEPROGRAM"
+>API for direct execution of remote program</A
+></DT
+><DT
+><A
+HREF="#PROGRAMEXECUTION"
+>Program execution</A
+></DT
+><DT
+><A
+HREF="#THELIMITATIONOFDIRECTACTIVATIONOFREMOTEEXECUTABLEPROGRAMS"
+>The limitation of direct activation of remote executable programs.</A
+></DT
+></DL
+></DD
+><DT
+>12. <A
+HREF="#FILETRANSFER"
+>File Transfer in OmniRPC</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#FILENAME"
+>File Transfer using Filename</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#FILENAMEWORKERPROGRAM"
+>Write Remote Executable Program</A
+></DT
+><DT
+><A
+HREF="#FILENAMECLIENTPROGRAM"
+>Write Client Program</A
+></DT
+><DT
+><A
+HREF="#EXECUTION"
+>Execution of Program</A
+></DT
+></DL
+></DD
+></DL
+></DD
+><DT
+>13. <A
+HREF="#PROGRAMMINGINFORTRAN"
+>Programming in FORTRAN</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#ASIMPLEEXAMPLEINFORTRAN"
+>A simple example in FORTRAN</A
+></DT
+><DT
+><A
+HREF="#CREATEREMOTEEXECUTABLEPROGRAM"
+>Create remote executable program</A
+></DT
+><DT
+><A
+HREF="#CLIENTPROGRAMINFORTRAN"
+>Client program in Fortran</A
+></DT
+><DT
+><A
+HREF="#ANASYNCHRONOUSCALLINFORTRAN"
+>An asynchronous call in FORTRAN</A
+></DT
+></DL
+></DD
+><DT
+>A. <A
+HREF="#DESCRIPTIONOFHOSTFILE"
+>Description of hostfile</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#SPECIFYINGTHEHOSTFILE"
+>Specifying the hostfile</A
+></DT
+><DT
+><A
+HREF="#HOWTODESCRIBE"
+>How to describe</A
+></DT
+><DT
+><A
+HREF="#DETAILSOFHOSTFILE"
+>Details of Hostfile</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#HOSTELEMENT"
+>Host element</A
+></DT
+><DT
+><A
+HREF="#TIMEOUT"
+>TimeOut element: (Optional)</A
+></DT
+><DT
+><A
+HREF="#DEBUG"
+>Debug element: (Optional)</A
+></DT
+></DL
+></DD
+><DT
+><A
+HREF="#DTD"
+>DTD (Document Type Definition) of hostfile.</A
+></DT
+></DL
+></DD
+><DT
+>B. <A
+HREF="#IDL"
+>IDL (Interface Description Language)</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#IDLFILEANDGENERATIONOFREMOTEEXECUTABLEPROGRAMS"
+>IDL file and generation of remote executable programs</A
+></DT
+><DT
+><A
+HREF="#EXAMPLE"
+>Example</A
+></DT
+><DT
+><A
+HREF="#IDLDETALS"
+>Details of IDL</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#MODULESTATEMENT"
+>Module statement</A
+></DT
+><DT
+><A
+HREF="#DEFINESTATEMENT"
+>Define statement</A
+></DT
+><DT
+><A
+HREF="#GLOBALSTATEMENT"
+>Globals statement</A
+></DT
+><DT
+><A
+HREF="#FORTRANFORMATSTATEMENT"
+>Fortranformat statement</A
+></DT
+></DL
+></DD
+><DT
+><A
+HREF="#DIFFERENCESFROMNINFIDL"
+>Differences from Ninf IDL</A
+></DT
+><DT
+><A
+HREF="#IDLGRAMMAR"
+>IDL grammar</A
+></DT
+></DL
+></DD
+><DT
+>C. <A
+HREF="#COMMANDREFERENCE"
+>Command Reference</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN1032"
+>Command Reference</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#OMRPC-REGISTER"
+>omrpc-register</A
+>&nbsp;--&nbsp;Operations about OmniRPC's registry.</DT
+><DT
+><A
+HREF="#OMRPC-CC"
+>omrpc-cc</A
+>&nbsp;--&nbsp;Compile driver for OmniRPC program.</DT
+><DT
+><A
+HREF="#OMRPC-FC"
+>omrpc-fc</A
+>&nbsp;--&nbsp;FORTRAN Compile driver for OmniRPC program.</DT
+><DT
+><A
+HREF="#OMRPC-GEN"
+>omrpc-register</A
+>&nbsp;--&nbsp;A program to generate OmniRPC's stub.</DT
+></DL
+></DD
+></DL
+></DD
+><DT
+>D. <A
+HREF="#OMNIRPCAPI"
+>OmniRPC API index</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#OMNIRPCCAPI"
+>OmniRPC C API</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#OMNIRPCINIT"
+>OmniRpcInit</A
+>&nbsp;--&nbsp; Initialization of OmniRPC system  </DT
+><DT
+><A
+HREF="#OMNIRPCFINALIZE"
+>OmniRpcFinalize</A
+>&nbsp;--&nbsp;Finalize OmniRPC system</DT
+><DT
+><A
+HREF="#OMNIRPCCALL"
+>OmniRpcCall</A
+>&nbsp;--&nbsp;Synchronous call of remote function</DT
+><DT
+><A
+HREF="#OMNIRPCCALLASYNC"
+>OmniRpcCallAsync</A
+>&nbsp;--&nbsp;Asynchronous call of remote function</DT
+><DT
+><A
+HREF="#OMNIRPCWAIT"
+>OmniRpcWait</A
+>&nbsp;--&nbsp;Wait for asynchronous call</DT
+><DT
+><A
+HREF="#OMNIRPCPROBE"
+>OmniRpcProbe</A
+>&nbsp;--&nbsp;Probing asynchronous function call</DT
+><DT
+><A
+HREF="#OMNIRPCWAITALL"
+>OmniRpcWaitAll</A
+>&nbsp;--&nbsp;Wait of multiple asynchronous calls</DT
+><DT
+><A
+HREF="#OMNIRPCWAITANY"
+>OmniRpcWaitAny</A
+>&nbsp;--&nbsp;Wait of multiple asynchronous function calls</DT
+><DT
+><A
+HREF="#OMNIRPCCREATEHANDLE"
+>OmniRpcCreateHandle</A
+>&nbsp;--&nbsp;Invocation of remote executable program</DT
+><DT
+><A
+HREF="#OMNIRPCCALLBYHANDLE"
+>OmniRpcCallByHandle</A
+>&nbsp;--&nbsp;Synchronous function call with OmniRpcHandle</DT
+><DT
+><A
+HREF="#OMNIRPCCALLASYNCBYHANDLE"
+>OmniRpcCallAsyncByHandle</A
+>&nbsp;--&nbsp;Asynchronous call of function with OmniRpcHandle</DT
+><DT
+><A
+HREF="#OMNIRPCDESTROYHANDLE"
+>OmniRpcDestroyHandle</A
+>&nbsp;--&nbsp;Termination of remote executable program by OmniRpcHandle</DT
+><DT
+><A
+HREF="#OMNIRPCMODULEINIT"
+>OmniRpcModuleInit</A
+>&nbsp;--&nbsp;Setting of module initialization</DT
+><DT
+><A
+HREF="#OMNIRPCEXECINIT"
+>OmniRpcExecInit</A
+>&nbsp;--&nbsp;Initialization for direct invocation of remote
+executable program</DT
+><DT
+><A
+HREF="#OMNIRPCEXECFINALIZE"
+>OmniRpcExecFinalize</A
+>&nbsp;--&nbsp;Termination of OmniRPC system for direct
+invocation of remote executable program</DT
+><DT
+><A
+HREF="#OMNIRPCEXECONHOST"
+>OmniRpcExecOnHost</A
+>&nbsp;--&nbsp;Direct invocation of remote executable program</DT
+><DT
+><A
+HREF="#OMNIRPCEXECCALL"
+>OmniRpcExecCall</A
+>&nbsp;--&nbsp;Synchronous call by OmniRpcExecHandle</DT
+><DT
+><A
+HREF="#OMNIRPCEXECTERMINATE"
+>OmniRpcExecTerminate</A
+>&nbsp;--&nbsp;Termination of remote executable program by
+OmniRpcExecHandle</DT
+></DL
+></DD
+><DT
+><A
+HREF="#OMNIRPCFORTRANAPI"
+>OmniRPC FORTRAN API</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#OMNIRPC-INIT"
+>OMNIRPC_INIT</A
+>&nbsp;--&nbsp; Initialization of OmniRPC system  </DT
+><DT
+><A
+HREF="#OMNIRPC-FINALIZE"
+>OMNIRPC_FINALIZE</A
+>&nbsp;--&nbsp;Finalizing OmniRPC system</DT
+><DT
+><A
+HREF="#OMNIRPC-CALL"
+>OMNIRPC_CALL</A
+>&nbsp;--&nbsp;Synchronous call of remote function</DT
+><DT
+><A
+HREF="#OMNIRPC-CALL-ASYNC"
+>OMNIRPC_CALL_ASYNC</A
+>&nbsp;--&nbsp;Asynchronous call of remote function</DT
+><DT
+><A
+HREF="#OMNIRPC-WAIT"
+>OMNIRPC_WAIT</A
+>&nbsp;--&nbsp;Wait for asynchronous call</DT
+><DT
+><A
+HREF="#OMNIRPC-PROBE"
+>OMNIRPC_PROBE</A
+>&nbsp;--&nbsp;Probing asynchronous function call</DT
+><DT
+><A
+HREF="#OMNIRPC-WAIT-ALL"
+>OMNIRPC_WAIT_ALL</A
+>&nbsp;--&nbsp;Wait of multiple asynchronous calls</DT
+><DT
+><A
+HREF="#OMNIRPC-WAIT-ANY"
+>OMNIRPC_WAIT_ANY</A
+>&nbsp;--&nbsp;Wait of multiple asynchronous function calls</DT
+><DT
+><A
+HREF="#OMNIRPC-CREATE-HANDLE"
+>OMNIRPC_CREATE_HANDLE</A
+>&nbsp;--&nbsp;Execution of remote executable program</DT
+><DT
+><A
+HREF="#OMNIRPC-CALL-BY-HANDLE"
+>OMNIRPC_CALL_BY_HANDLE</A
+>&nbsp;--&nbsp;Synchronous function call with OmniRpcHandle</DT
+><DT
+><A
+HREF="#OMNIRPC-CALL-ASYNC-BY-HANDLE"
+>OMNIRPC_CALL_ASYNC_BY_HANDLE</A
+>&nbsp;--&nbsp;Asynchronous call of function with OmniRpcHandle</DT
+><DT
+><A
+HREF="#OMNIRPC-DESTROY-HANDLE"
+>OMNIRPC_DESTROY_HANDLE</A
+>&nbsp;--&nbsp;Termination of remote executable program by OmniRpcHandle</DT
+><DT
+><A
+HREF="#OMNIRPC-MODULE-INIT"
+>OMNIRPC_MODULE_INIT</A
+>&nbsp;--&nbsp;Setting for module initialization</DT
+></DL
+></DD
+></DL
+></DD
+><DT
+>E. <A
+HREF="#FAQ"
+>FAQ</A
+></DT
+></DL
+></DIV
+><DIV
+CLASS="CHAPTER"
+><HR><H1
+><A
+NAME="OVERVIEW"
+></A
+>Chapter 1. Overview of OmniRPC System</H1
+><P
+>OmniRPC is a Grid RPC system which enables seamless parallel
+      programming in cluster and Grid environment.</P
+><P
+>OmniRPC's characteristics are as follows.</P
+><P
+></P
+><UL
+><LI
+><P
+>Supports typical master/worker grid applications such as
+parametric execution programs. </P
+></LI
+><LI
+><P
+>OmniRPC provides an automatic-initializable remote
+            module to send and store data to a remote executable
+            invoked in the remote host. Since it may accept several requests
+            for subsequent calls by keeping the connection alive, the data
+            set by the initialization is re-used, resulting in efficient
+            execution by reducing the amount of communication.</P
+></LI
+><LI
+><P
+>OmniRPC inherits its API from Ninf, and the programmer can use
+            OpenMP for easy-to-use parallel programming because the API is
+            designed to be thread-safe. 
+            And OmniRPC supports the persistence feature, which
+            holds the remote executable's state, and makes, programs more
+            effective. </P
+></LI
+><LI
+><P
+>Using the asynchronous call API, we can parallize a programs
+            calling RPCs.
+            Additionally, OmniRPC is designed to be thread-safe for easy
+            parallel programming. We can easily parallelize existing
+            sequential programs with direct based parallel programming such
+            as OpenMP.</P
+></LI
+><LI
+><P
+>The OmniRPC system supports  local environments with
+            <B
+CLASS="COMMAND"
+>rsh</B
+>, grid environments with Globus, and
+            remote hosts with <B
+CLASS="COMMAND"
+>ssh</B
+>. Furthermore, the user
+            can use the same program over OmniRPC for both clusters and
+            grids because a typical grid resource is regarded simply as a
+            cluster of clusters distributed geo-graphically.</P
+></LI
+><LI
+><P
+> For a cluster over a private network, an agent process running
+            the server host functions as a proxy to relay communications
+            between the client and remote executables by multiplexing the
+            communications into one connection to the client. This feature
+            allows a single client to use approximately one-thousand remote
+            computing hosts.</P
+></LI
+><LI
+><P
+>Support of the job scheduler which considers the administrative
+            policy of  each computer resource. Now OmniRPC supports PBS and
+            SGE as job schedulers.</P
+></LI
+></UL
+></DIV
+><DIV
+CLASS="CHAPTER"
+><HR><H1
+><A
+NAME="INSTALLATION"
+></A
+>Chapter 2. Installation</H1
+><DIV
+CLASS="SECT1"
+><H2
+CLASS="SECT1"
+><A
+NAME="REQUIREMENTS"
+>Requirements</A
+></H2
+><P
+>In order to successfully compile and use OmniRPC system, you
+        need the following programs and libraries which are available
+        on most platforms as distribution packages and thereby can be
+        installed easily.</P
+><P
+><SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>Required:</I
+></SPAN
+>
+        <P
+></P
+><UL
+><LI
+><P
+>gcc 2.95.4 (or compatible), available at
+              <A
+HREF="http://www.gnu.org"
+TARGET="_top"
+>\|\|</A
+></P
+></LI
+><LI
+><P
+>GNU make (or compatible), available at 
+              <A
+HREF="http://www.gnu.org"
+TARGET="_top"
+>\|\|</A
+></P
+></LI
+><LI
+><P
+>Remote Shell (or compatible)</P
+></LI
+><LI
+><P
+>flex 2.5.4,</P
+></LI
+></UL
+>
+      </P
+><P
+><SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>Optional:</I
+></SPAN
+>
+        <P
+></P
+><UL
+><LI
+><P
+>OpenSSH SSH client (or compatible), avilable at
+              <A
+HREF="http://www.openssh.com"
+TARGET="_top"
+>\|\|</A
+></P
+></LI
+><LI
+><P
+>Java SDK 1.4.0 (or higher), available at
+            <A
+HREF="http://java.sun.com"
+TARGET="_top"
+>\|\|</A
+></P
+></LI
+><LI
+><P
+>Globus Toolkit 2.4 (or compatible), avilable at
+              <A
+HREF="http://globus.org"
+TARGET="_top"
+>\|\|</A
+></P
+></LI
+></UL
+>
+      </P
+><P
+>OmniRPC system was tested with RedHat Linux 7.3 on Intel
+Xeon 2.4, 512MB RAM and Debian GNU/Linux 2.0 (and higher version) on
+Intel compatible PCs.</P
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="COMPILATIONANDINSTALLATION"
+>Compilation and Installation</A
+></H2
+><DIV
+CLASS="SECT2"
+><H3
+CLASS="SECT2"
+><A
+NAME="COMPILEFROMSOURCE"
+>Compilation and Installation form Source File</A
+></H3
+><P
+>In order to compile and install OmniRPC system, type the
+following in the base direcotry of the OmniRPC distribution:</P
+><PRE
+CLASS="SCREEN"
+>            <SAMP
+CLASS="PROMPT"
+>%</SAMP
+> <KBD
+CLASS="USERINPUT"
+>./configure</KBD
+>
+            <SAMP
+CLASS="PROMPT"
+>%</SAMP
+> <KBD
+CLASS="USERINPUT"
+>make</KBD
+>
+            (as root)
+            <SAMP
+CLASS="PROMPT"
+>#</SAMP
+> <KBD
+CLASS="USERINPUT"
+>make install</KBD
+>
+          </PRE
+><P
+>As a result, the OmniRPC software is installed on the
+default directory ("/usr/local/omrpc"). If your system's make-command
+is gmake, type gmake instead of make.</P
+><P
+> If you want to change the install directory, you can specify
+          another install directory.</P
+><PRE
+CLASS="SCREEN"
+> 
+            <SAMP
+CLASS="PROMPT"
+>%</SAMP
+> ./configure --prefix /path/to/install
+          </PRE
+><P
+>After installation, add
+"<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>/path/to/install/bin</I
+></SPAN
+>" to the
+<CODE
+CLASS="ENVAR"
+>PATH</CODE
+> environmental value. </P
+></DIV
+><DIV
+CLASS="SECT2"
+><HR><H3
+CLASS="SECT2"
+><A
+NAME="COMPILEWITHGLOBUS"
+>Compilation and Installation with the Globus Toolkit
+          library</A
+></H3
+><P
+>          To compile OmniRPC with Globus Toolkit, the
+          <B
+CLASS="COMMAND"
+>globus-makefile-header</B
+> program, which is
+          attached to Globus Toolkit, is needed. And, OmniRPC requires
+          a library which supports pthread (such as gcc32dbgpthr,
+          gcc32pthr).
+
+          Type the following to build OmniRPC system with Globus
+          Toolkit library.
+          
+          <PRE
+CLASS="SCREEN"
+>            <SAMP
+CLASS="PROMPT"
+>%</SAMP
+> ./configure --enable-globus
+          </PRE
+>
+          At this time, the Globus Toolkit path is set to the value of
+          <CODE
+CLASS="ENVAR"
+>${GLOBUS_LOCATION}</CODE
+>, and the path to
+          Grid Packaging Toolkit(GPT) is set to the value of
+          <CODE
+CLASS="ENVAR"
+>${GPT_LOCATION}</CODE
+>.
+        </P
+><P
+>          If you want to specify a path to Globus Toolkit or to GPT,
+          you should type extra options.
+          <PRE
+CLASS="SCREEN"
+>             <SAMP
+CLASS="PROMPT"
+>%</SAMP
+> ./configure --enable-globus --with-globusDir=/path/to/globus --with-gtpDir=/path/to/gpt 
+          </PRE
+>
+        </P
+></DIV
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="INSTALLTEST"
+>Install Test</A
+></H2
+><P
+>        To test the installation, proceed as follows. Before testing,
+        you should move "<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>OmniRPC/test</I
+></SPAN
+>" directory. And, in each test,
+        you should move the directories s which are written by
+        number. To obtain more detailed  information of the test
+        program, especially if you encounter trouble with program
+        testing, add the command option
+        <CODE
+CLASS="OPTION"
+>"--debug"</CODE
+>, if some trouble on program
+        testing.
+      </P
+><DIV
+CLASS="SECT2"
+><HR><H3
+CLASS="SECT2"
+><A
+NAME="STUBTEST"
+>stub test (worker program test)</A
+></H3
+><P
+>          To generate the stub program and test the
+          <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>"local-exec-test"</I
+></SPAN
+> program, move the
+          subdirectory (omrpc_stub_test) and type in
+          <B
+CLASS="COMMAND"
+>"make"</B
+> to compile the program.</P
+><PRE
+CLASS="SCREEN"
+>            <SAMP
+CLASS="PROMPT"
+>%</SAMP
+> make
+        </PRE
+><P
+>          To test the stub program
+          <PRE
+CLASS="SCREEN"
+>            <SAMP
+CLASS="PROMPT"
+>%</SAMP
+> local-exec-test
+          </PRE
+>
+        </P
+><P
+>          Next, we should register the stub information. In
+          registration, we have to create the directory
+          (<CODE
+CLASS="PARAMETER"
+>${HOME}/.omrpc_registry</CODE
+>).
+          <PRE
+CLASS="SCREEN"
+>            <SAMP
+CLASS="PROMPT"
+>%</SAMP
+> mkdir $HOME/.omrpc_registry
+            <SAMP
+CLASS="PROMPT"
+>%</SAMP
+> make reg_stub
+          </PRE
+>
+        </P
+></DIV
+><DIV
+CLASS="SECT2"
+><HR><H3
+CLASS="SECT2"
+><A
+NAME="EXECTEST"
+>exec-test</A
+></H3
+><P
+>          We test stub activation on a remote node. 
+          Especially, we test  APIs (OmniRpcExecRemote, OmniRpcExecCall)
+          which enable remote execution. First, we input
+          <B
+CLASS="COMMAND"
+>"make"</B
+>  to compile the program.
+          <PRE
+CLASS="SCREEN"
+>            <SAMP
+CLASS="PROMPT"
+>%</SAMP
+> make
+          </PRE
+>
+          
+          To test the <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>OmniRpcExecRemote</I
+></SPAN
+> API,
+          &lt;stub_directory&#62; is a stub directory on which we compile
+          procedure 1.
+          We must describe  &lt;stub_directory&#62; as an absolute path. 
+          <PRE
+CLASS="SCREEN"
+>            <SAMP
+CLASS="PROMPT"
+>%</SAMP
+> remote_exec_test1 &lt;host&#62; &lt;stub_directory&#62;
+          </PRE
+>
+        </P
+><P
+>          In a similar manner, test OmniRpcExecCall API. 
+          <PRE
+CLASS="SCREEN"
+>            <SAMP
+CLASS="PROMPT"
+>%</SAMP
+> remote_exec_test2 &lt;host&#62; &lt;stub_directory&#62;
+          </PRE
+>
+        </P
+></DIV
+><DIV
+CLASS="SECT2"
+><HR><H3
+CLASS="SECT2"
+><A
+NAME="CALL-TEST"
+>call-test</A
+></H3
+><P
+>          You should check Remote Procedure Call's API(OmniRpcCall,
+          OmniRpcCallByHandle). Create the host file(<TT
+CLASS="FILENAME"
+>hostfile.xml</TT
+>).
+          You can get more detailed information about  creating
+          <TT
+CLASS="FILENAME"
+>hostfile.xml</TT
+> from hostfile.txt. 
+          <PRE
+CLASS="SCREEN"
+>            <SAMP
+CLASS="PROMPT"
+>%</SAMP
+> cat ~/.omrpc_registry/hosts.xml
+            &lt;OmniRpcConfig&#62;
+            &lt;Host name="localhost"/&#62; 
+            &lt;/OmniRpcConfig&#62;
+          </PRE
+>
+        </P
+><P
+>          Check OmniRpcCall API.
+          <PRE
+CLASS="SCREEN"
+>            <SAMP
+CLASS="PROMPT"
+>%</SAMP
+> rcp-call-test1 
+          </PRE
+>
+          
+          Check OmniRpcCallByHandle API.
+          <PRE
+CLASS="SCREEN"
+>            <SAMP
+CLASS="PROMPT"
+>%</SAMP
+> rpc-call-test2 &lt;host&#62;
+          </PRE
+>
+          Check OmniRpcModuleInit, OmniRpcCall API.
+          <PRE
+CLASS="SCREEN"
+>            <SAMP
+CLASS="PROMPT"
+>%</SAMP
+> rpc-call-test3
+          </PRE
+>
+          
+          Check OmniRpcAsync, OmniRpcWaitAll API.
+          <PRE
+CLASS="SCREEN"
+>            <SAMP
+CLASS="PROMPT"
+>%</SAMP
+> rpc-async-test1
+          </PRE
+>
+          The install test is finished.
+        </P
+></DIV
+></DIV
+></DIV
+><DIV
+CLASS="CHAPTER"
+><HR><H1
+><A
+NAME="GETTINGSTARTED"
+></A
+>Chapter 3. Getting Started: Programming with OmniRPC</H1
+><DIV
+CLASS="SECT1"
+><H2
+CLASS="SECT1"
+><A
+NAME="SIMPLE-EXAMPLE"
+>Simple example</A
+></H2
+><P
+> Let's begin programming with OmniRPC using a simple example.
+       In this case, we consider a program to calculate from 1 to 10 using
+       sine function.</P
+><PRE
+CLASS="PROGRAMLISTING"
+>#include &#60;stdio.h&#62;
+#include &#60;math.h&#62;
+     
+int main(){
+  int i;
+  double x, res[10];
+  x = 0.0;
+  for(i = 0; i &#60; 10; i++){
+    res[i] = sin(x);
+    x += 1.0;
+  }
+  for(i = 0; i &#60; 10; i++) 
+    printf("sin(%d)=%g\n",i,res[i]);
+}
+      </PRE
+><P
+>On this program, we calculate the sine in a remote node using
+OmniRPC. We label the computer node on which the program makes the
+Remote Procedure Call (RPC) as the <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>client host</I
+></SPAN
+>,
+and the  computer node on which procedures are executed by the RPC
+call as <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>the remote host</I
+></SPAN
+>.
+       </P
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="GETINGSTARTEDEXECUTIONENVIRONMENT"
+>Execution environment</A
+></H2
+><P
+>We assume the environment below as a simple explanation.</P
+><P
+></P
+><UL
+><LI
+><P
+>Client host's name is jones. </P
+></LI
+><LI
+><P
+> Remote host's name is dennis.</P
+></LI
+><LI
+><P
+> From jones to dennis, we can execute
+"<B
+CLASS="COMMAND"
+>rsh</B
+>" with no password authentication. In other
+words, <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>jones</I
+></SPAN
+> is registered to
+"<B
+CLASS="COMMAND"
+>/etc/host.equiv</B
+>" or the user's
+"<B
+CLASS="COMMAND"
+>.rhost</B
+>" on the remote host.  </P
+></LI
+><LI
+><P
+> On both hosts, OmniRPC is installed to the default
+            path("<B
+CLASS="COMMAND"
+>/usr/local/omrpc/</B
+>").</P
+></LI
+></UL
+><P
+>In addition, OmniRPC does not need to share the file
+system in both hosts. </P
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="OMNIRPCAGENTANDREMOTEEXECUTABLEPROGRAMS"
+>OmniRPC agent and remote executable programs</A
+></H2
+><P
+> In OmniRPC, to activate a remote executable program on a
+remote node which is described in the hostfile, the  omrpc-agent is
+first activated when OmniRpcInit, which is an initialization API is
+called. </P
+><P
+> This agent is activated for each program, and runs during
+program execution. This agent is invoked by an authentication method
+such as rsh, Globus GRAM, or ssh. And agent provides access to the
+module information which was registered on the remote node and
+interface of the job scheduler, communication multiplexing,  and so
+on. If you want to know more details about these features, please see
+the section, <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>12. Hostfile Description</I
+></SPAN
+>. </P
+><DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="img/fig1.gif"></P
+></DIV
+><P
+>In the upper figure, agent stands for
+<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>OmniRPC-agent</I
+></SPAN
+>, <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>rex</I
+></SPAN
+> stands
+for remote executable program.  In this example, the agent and rex are
+executed on the same host (dennis). </P
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="WRITEREMOTEEXECUTABLEPROGRAM"
+>Write remote executable program</A
+></H2
+><P
+>Here, we'll write a program which calculates the sine on a
+remote host.  We will define the interface of sine function. We name
+the file which defines interfaces  <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>IDL(Interface Description
+Language) file</I
+></SPAN
+>.  The IDL is discussed in detail later
+section.  For example, we can write the <TT
+CLASS="FILENAME"
+>calc_sin.idl</TT
+> file as
+follows. </P
+><PRE
+CLASS="PROGRAMLISTING"
+>Module calc_sin;
+
+Globals {
+#include &#60;math.h&#62;;
+}
+
+Define calc_sin(double IN x, double OUT result[]){
+  *result = sin(x);
+}
+      </PRE
+><P
+><SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>Module:</I
+></SPAN
+> We define the module name in the IDL file.
+In this example, we set this module name as "<CODE
+CLASS="FUNCTION"
+>calc_sin</CODE
+>".</P
+><P
+><SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>Define:</I
+></SPAN
+> Interfaces are defined by the
+"<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>Define</I
+></SPAN
+>" directive. In this example, we use
+sin. Arguments are the specified  data type and  whether the data is
+input or output. In OmniRPC, we cannot get the return value of the
+function as a value of the function's value like a original sin function. 
+So, we get the value by specifying arguments as
+"<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>OUT</I
+></SPAN
+>", as shown in the example. In the part
+surrounded with {...}, we can write a procedure which is executed  on
+the remote host in C Language. This program calls the sine function
+and "<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>result</I
+></SPAN
+>", which is an
+"<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>OUT</I
+></SPAN
+>"  argument, returns the since value. </P
+><P
+><SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>Globals:</I
+></SPAN
+> In the part assigned to
+<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>"Globals"</I
+></SPAN
+>,  we can describe any C program which
+is necessary for functions that are  defined in the modules. In this
+example, the IDL includes files which are required to call the
+"<CODE
+CLASS="FUNCTION"
+>sin</CODE
+>" function. </P
+><P
+> We can generate a remote executable program from the IDL
+file by using <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>omrpc-cc</I
+></SPAN
+>, which is OmniRPC's remote
+executable module generator. So, let's convert using this command.  (
+"<CODE
+CLASS="OPTION"
+>-lm</CODE
+>" option is to link math library.) </P
+><PRE
+CLASS="SCREEN"
+>         <SAMP
+CLASS="PROMPT"
+>%</SAMP
+> <KBD
+CLASS="USERINPUT"
+>omrpc-cc calc_sin.idl -lm</KBD
+>
+      </PRE
+><P
+>"<TT
+CLASS="FILENAME"
+>calc_sin.rex</TT
+>" is generated by
+executing this program.  This is the remote executable program. </P
+><P
+> By the way, the IDL can define multiple functions in a
+remote executable module. For Further details, see 13. IDL file
+Description. </P
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="REGISTRATIONOFREMOTEEXECUTABLEPROGRAM"
+>Registration of remote executable program</A
+></H2
+><P
+>After making the remote executable program, you should
+register it. For registration, we use the "omrpc-register"
+program. </P
+><PRE
+CLASS="SCREEN"
+>         <SAMP
+CLASS="PROMPT"
+>%</SAMP
+> <KBD
+CLASS="USERINPUT"
+>omrpc-register -register calc_sin.rex</KBD
+>
+      </PRE
+><P
+>This program creates the  ".omrpc_register" directory in
+the user's home directory and database,  which consists of the module
+name, function name and path to the remote executable program. </P
+><P
+>After completing the above procedure, setup on the remote
+host side is  finished. We move next to the setup on the  client host
+side. </P
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="CLIENTPROGRAM"
+>Client program</A
+></H2
+><P
+>We rewrite the client program with OmniRpcCall.</P
+><PRE
+CLASS="PROGRAMLISTING"
+>#include &#60;OmniRpc.h&#62;;
+#include &#60;stdio.h&#62;;
+#include &#60;math.h&#62;;
+
+int main(int argc,char *argv[]){
+   int i;
+   double x, res[10];
+
+   OmniRpcInit(&#38;argc,&#38;argv);
+
+   x = 0.0;
+   for(i = 0; i &#60; 10; i++){
+       OmniRpcCall("calc_sin",x,; res[i]);
+       x += 1.0;
+   }
+   for(i = 0; i &#60; 10; i++) 
+      printf("sin(%d)=%g\n",i,res[i]);
+
+  OmniRpcFinalize();
+
+}
+      </PRE
+><P
+>First, we call OmniRpcInit() before we use the OmniRPC
+library. And, at end of this program, we call
+OmniRpcFinalize(). Prototype definitions of these functions are
+described in OmniRpc.h, so the program must include the
+"<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>OmniRpc.h</I
+></SPAN
+>" header file. </P
+><P
+>We compile this program.</P
+><PRE
+CLASS="SCREEN"
+><SAMP
+CLASS="PROMPT"
+>%</SAMP
+> <KBD
+CLASS="USERINPUT"
+>omrpc-cc -o test.exe test.c</KBD
+>
+      </PRE
+><P
+> You can compile without omrpc-cc when you specify the
+directory of OmniRPC library. </P
+><PRE
+CLASS="SCREEN"
+><SAMP
+CLASS="PROMPT"
+>%</SAMP
+> <KBD
+CLASS="USERINPUT"
+>cc -I/usr/local/omrpc/include \
+-o test.exe test.c -L/usr/local/omrpc/lib -lomrpc_client -lomrpc_io </KBD
+>
+      </PRE
+><P
+>By default, OmniRPC software is installed at
+<TT
+CLASS="FILENAME"
+>/usr/local/omrpc</TT
+>. If you install the software
+in an other directory, you should change
+<TT
+CLASS="FILENAME"
+>/usr/loca/omrpc</TT
+> to the correct directory in
+which OmniRPC is installed.</P
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="CREATEHOSTFILE.XML"
+>Create hostfile.xml</A
+></H2
+><P
+>In OmniRPC, usually we describe the execution environment
+in <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>hostfile.xml</I
+></SPAN
+> with XML notation. In this
+example case, we describe the execution environment as follows.</P
+><PRE
+CLASS="PROGRAMLISTING"
+>&#60;?xml version="1.0" ?&#62;;
+&#60;OmniRpcConfig&#62;;
+   &#60;Host name="prost" /&#62;;
+&#60;/OmniRpcConfig&#62;;
+      </PRE
+><P
+>We write the above information in the
+<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>hosts.xml</I
+></SPAN
+> file.</P
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="EXECUTIONOFCLIENTPROGRAM"
+>Execution of Cleint Program</A
+></H2
+><P
+> The setup is finished. What we have to do next is to
+execute the program. </P
+><PRE
+CLASS="SCREEN"
+><SAMP
+CLASS="PROMPT"
+>%</SAMP
+> <KBD
+CLASS="USERINPUT"
+>test.exe --hostfile hosts.xml</KBD
+>
+      </PRE
+><P
+>This program searches for a remote function named sin on a
+remote host  which is specified in the hosts.xml file and activates
+the remote module. If the "<CODE
+CLASS="OPTION"
+>--hostfile</CODE
+>" option is
+omitted, "<CODE
+CLASS="OPTION"
+>--${HOME}/.omrpc-registry/hosts.xml</CODE
+>" file
+is used. </P
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="STARTSUMMARY"
+>Summary</A
+></H2
+><P
+>Below list is a summary of the general  procedure when
+using OmniRPC system.</P
+><P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>Install OmniRPC on the client host and remote host.</P
+></LI
+><LI
+><P
+> On the remote host, create a remote executable program of the remote
+function and register it.</P
+><P
+></P
+><OL
+TYPE="a"
+><LI
+><P
+>Create the IDL file which defines interfaces. </P
+></LI
+><LI
+><P
+>Generate a remote executable module from the
+IDL file with the "omrpc-cc" program.</P
+></LI
+><LI
+><P
+>Register with omrpc-register.</P
+></LI
+></OL
+></LI
+><LI
+><P
+>On the client host, create hosts.xml which describes
+the remote host.</P
+></LI
+><LI
+><P
+>Write the client program, and compile with omrpc-cc. </P
+></LI
+><LI
+><P
+>Execute the client program, specifying hosts.xml.</P
+></LI
+></OL
+></DIV
+></DIV
+><DIV
+CLASS="CHAPTER"
+><HR><H1
+><A
+NAME="PARALLELPROGRAMMINGWITHOMNIRPC"
+></A
+>Chapter 4. Parallel Programming with OmniRPC</H1
+><P
+>One aim of OmniRPC is to perform parallel programming with
+RPC. We execute the "calc_sin" function in parallel on multiple remote
+hosts by showing one example of parallel programming, as in
+3. Programming with OmniRPC. </P
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="PARALLELEXECUTIONENVIRONMENT"
+>Execution Environment</A
+></H2
+><P
+>We assume an execution environment like the
+following. </P
+><P
+></P
+><UL
+><LI
+><P
+>The client host's name is jones</P
+></LI
+><LI
+><P
+>We use three hosts (dennis, alice, jack) as remote
+hosts. </P
+></LI
+><LI
+><P
+><B
+CLASS="COMMAND"
+>rsh</B
+> can be executed from jones to the
+remote hosts without password authentication.
+In other words, jones is registered at
+<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>/etc/host.equiv</I
+></SPAN
+> or at the user's
+<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>.rhost</I
+></SPAN
+> on a remote host. </P
+></LI
+><LI
+><P
+>OmniRPC is installed in the default
+path(/usr/local/omrpc/) on both hosts.</P
+></LI
+><LI
+><P
+>And, calc_sin.rex which is the remote executable program
+of the "<CODE
+CLASS="FUNCTION"
+>calc_sin</CODE
+>" function, is registered on
+each remote host, as in previous example. </P
+></LI
+></UL
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="PARALLELPROGRAMMINGWITHASYNCHRONOUSCALL"
+>Parallel programming with asynchronous call</A
+></H2
+><P
+>We show an example of an asynchronous call with OmniRPC as
+follows.</P
+><PRE
+CLASS="PROGRAMLISTING"
+>#include &#60;OmniRpc.h&#62;;
+#include &#60;stdio.h&#62;;
+#include &#60;math.h&#62;;
+
+int main(int argc,char *argv[]){
+   int i;
+   double x, res[10];
+   OmniRpcRequest req[10];
+
+   OmniRpcInit(&#38;argc,&#38;argv);
+
+   x = 0.0;
+   for(i = 0; i &#60; 10; i++){
+       req[i] = OmniRpcCallAsync("calc_sin",x,&#38;res[i]);
+       x += 1.0;
+   }
+   OmniRpcWaitAll(10,req);
+   for(i = 0; i &#60; 10; i++) 
+      printf("sin(%d)=%g\n",i,res[i]);
+
+  OmniRpcFinalize();
+
+}</PRE
+><P
+>The OmniRpcCallAsync API activates the remote procedure
+call and returns without waiting for its call termination. Its API
+returns an OmniRpcRequest value which corresponds to the remote
+procedure call as a return value. We store its value in an array, and
+by using OmniRpcWaitAll API, the program waits for termination of all RPC calls.
+For  more details about this API, see 15. C API index.</P
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="HOSTFILEANDEXECUTION"
+>Hostfile and Execution</A
+></H2
+><P
+>Before program execution, you should prepare a
+hostfile.</P
+><PRE
+CLASS="PROGRAMLISTING"
+>&#60;?xml version="1.0" ?&#62;
+&#60;OmniRpcConfig&#62;
+   &#60;Host name="alice" /&#62;
+   &#60;Host name="dennis" /&#62;
+   &#60;Host name="jack" /&#62;
+&#60;/OmniRpcConfig&#62;</PRE
+><P
+>The rest of the procedure is the same the former
+example. The relationship between the agent and rex is shown
+below. </P
+><DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="img/fig2.gif"></P
+></DIV
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="PARALLELPROGRAMMINGWITHOPENMP"
+>Parallel programming with OpenMP</A
+></H2
+><P
+>We can do parallel programming by calling OmniRpcCall on a
+multi-thread program with <A
+HREF="http://phase.hpcc.jp/Omni/"
+TARGET="_top"
+>Omni
+OpenMP</A
+>, which is one of OpenMP compiler of  an implementation
+using a thread.  We show an example as follows.</P
+><PRE
+CLASS="PROGRAMLISTING"
+>#include &#60;OmniRpc.h&#62;
+#include &#60;stdio.h&#62;
+#include &#60;math.h&#62;
+
+int main(int argc,char *argv[]){
+   int i;
+   double x, res[10];
+   OmniRpcRequest req[10];
+
+   OmniRpcInit(&#38;argc,&#38;argv);
+
+   x = 0.0;
+#pragma omp parallel for
+   for(i = 0; i &#60;; 10; i++){
+       req[i] = OmniRpcCall("calc_sin",x,&#38;res[i]);
+       x += 1.0;
+   }
+   for(i = 0; i &#60; 10; i++) 
+      printf("sin(%d)=%g\n",i,res[i]);
+
+  OmniRpcFinalize();
+
+}</PRE
+><P
+> When you want to run this program, remember  to set the
+OMP_NUM_THREADS environmental value, which specifies the number of
+OpenMP threads, to a value more than the number of remote hosts.</P
+></DIV
+></DIV
+><DIV
+CLASS="CHAPTER"
+><HR><H1
+><A
+NAME="USEOFSHAREDMEMORYMULTIPROCESSORSYSTEM"
+></A
+>Chapter 5.  Use of shared memory multiprocessor (SMP) system </H1
+><P
+>The shared memory multiprocessor (SMP) system is a parallel
+computer which has multiple processors. High-end systems and,
+recently, some PCs haves multiprocessors. On a remote host, a program
+will show good performance when the program uses these CPUs at the
+same time. </P
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="SETTINGFORSMP"
+>Setting for SMP</A
+></H2
+><P
+>In this example, we assume the environment  below.</P
+><P
+></P
+><UL
+><LI
+><P
+> Client host is jones. </P
+></LI
+><LI
+><P
+> Remote host(apple) is an SMP system and has 4 processors.</P
+></LI
+><LI
+><P
+> The same network and process is invoked by
+<B
+CLASS="COMMAND"
+>rsh</B
+>.</P
+></LI
+></UL
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="SETTINGOFMAXJOB"
+>Setting of Maxjob</A
+></H2
+><P
+>Multiple remote execution programs can be executed at the
+same time on each processor in an SMP system. In this case, we can
+execute a maximum of 4 programs. We describe hostfile for the SMP
+system as follow.</P
+><PRE
+CLASS="PROGRAMLISTING"
+>&#60;?xml version="1.0" ?&#62;
+&#60;OmniRpcConfig&#62;
+   &#60;Host name="apple" arch="i386" os="linux"&#62;
+   &#60;JobScheduler maxjob="4" /&#62;
+   &#60;/Host&#62;
+&#60;/OmniRpcConfig&#62;</PRE
+><P
+>In this description, we set the maxjob attribute as "4"
+for the JobScheduler element. This shows that the maximum number of
+remote executable programs executed on the remote host at the same
+time is 4. Certainly, in a 4-way SMP system, we can run more than 4
+jobs, but in practice 4 processes are executed in parallel. Therefore
+effectiveness may not change.</P
+><P
+>In this case, the agent invoke multiple rex-es. The
+relationship is as follows. </P
+><DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="img/fig22.gif"></P
+></DIV
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="SMPPARALLELEXECUTIONOFCLIENTPROGRAM"
+>Execution of client progra</A
+></H2
+><P
+>The client program is executed in the  same manner as the
+others, except for using the above host file. </P
+><PRE
+CLASS="SCREEN"
+><SAMP
+CLASS="PROMPT"
+>%</SAMP
+> <KBD
+CLASS="USERINPUT"
+>a.out --hostfile hosts.xml <CODE
+CLASS="OPTION"
+> args
+... </CODE
+></KBD
+> 
+      </PRE
+><P
+> Of course, to achieve good performance, we use a client
+program which uses the OmniRPC call in parallel. </P
+></DIV
+></DIV
+><DIV
+CLASS="CHAPTER"
+><HR><H1
+><A
+NAME="EXECUTIONINGLOBUSTOOLKITENVIRONMENTS"
+></A
+>Chapter 6. Execution in Globus Toolkit Environments</H1
+><P
+> So far, we've mentioned local environments which can use
+rsh, but rsh cannot be used in wide-area network environments. One of
+the solution for that is the Globus toolkit.</P
+><P
+>We explain the case of using Globus Toolkit, which is the de
+facto standard for constructing grid environments. If you use Globus
+Toolkit,  on a remote host, creating the remote executable program,
+registering  and programing is the same as previously stated. 
+The only detail which is different is describing the hostfile.  If you
+don't know much about the Globus Toolkit, please see  <A
+HREF="htttp://www.globus.org"
+TARGET="_top"
+>Globus Alliance</A
+>. </P
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="EXECUTIONENVIRONMENTWITHGLOBUSTOOLKIT"
+>Execution Environment with Globus Toolkit</A
+></H2
+><P
+>We assume an execution environment as follows.</P
+><P
+></P
+><UL
+><LI
+><P
+> Client host is <CODE
+CLASS="PARAMETER"
+>alice.hpcs.is.tukuba.ac.jp</CODE
+> .</P
+></LI
+><LI
+><P
+> Remote host is
+<CODE
+CLASS="PARAMETER"
+>dennis.hpcc.jp</CODE
+>. The Globus-gate-keeper must be
+running on the remote host. </P
+></LI
+><LI
+><P
+> On the remote host, a non special privilege port (the
+port number is more than 1024) may be opened.</P
+><DIV
+CLASS="WARNING"
+><P
+></P
+><TABLE
+CLASS="WARNING"
+BORDER="1"
+WIDTH="90%"
+><TR
+><TD
+ALIGN="CENTER"
+><B
+>Warning</B
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+><P
+>Please refer to the Globus manual
+for the method to limit the range of Globus ports.</P
+></TD
+></TR
+></TABLE
+></DIV
+></LI
+></UL
+><P
+>In the explanation below, we assume an environment setting
+on which a job can be submitted from the client host to the remote
+host. </P
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="PREPARATIONOFGLOBUS"
+>Preparation of Globus</A
+></H2
+><P
+>First, initialize the proxy certificate when you use
+Globus Toolkit.</P
+><PRE
+CLASS="SCREEN"
+><SAMP
+CLASS="PROMPT"
+>%</SAMP
+> grid-proxy-init
+      </PRE
+><P
+>In this phase, you should input the pass phase, and
+create the proxy certificate. You can check whether Globus can execute
+normally or not, by the example. </P
+><PRE
+CLASS="SCREEN"
+><SAMP
+CLASS="PROMPT"
+>%</SAMP
+> globusrun -o -r dennis.hpcc.jp '&amp; (executable=/bin/date)'
+      </PRE
+><P
+>If you cannot see the current time, you have to return to
+the setting of Globus. On other hand, if you can see the current time,
+move to the next step. </P
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="HOSTFILEFORGLOBUS"
+>Hostfile for Globus</A
+></H2
+><P
+>To use <CODE
+CLASS="PARAMETER"
+>dennis.hpcc.jp</CODE
+>,  you should
+describe the information inn hosts.xml, and you can execute the client
+program by its hostfile. When you use Globus, you should describe the
+following information. </P
+><PRE
+CLASS="PROGRAMLISTING"
+>&#60;?xml version="1.0" ?&#62;
+&#60;OmniRpcConfig&#62;
+   &#60;Host name="dennis.hpcc.jp" arch="i386" os="linux"&#62;
+   &#60;Agent invoker="globus" /&#62;
+   &#60;/Host&#62;
+&#60;/OmniRpcConfig&#62;</PRE
+><P
+>This description is for an agent using Globus to invoke a remote executable
+program. In this setting, the relationship between the agent and rex
+is shown in the following.</P
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="GLOBUSEXECUTIONOFCLIENTPROGRAM"
+>Execution of client program</A
+></H2
+><DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="img/fig3.gif"></P
+></DIV
+><P
+> You can execute the client program in the same manner
+without using the hosts.xml file. </P
+><PRE
+CLASS="SCREEN"
+><SAMP
+CLASS="PROMPT"
+>%</SAMP
+> a.out --hostfile hosts.xml <CODE
+CLASS="OPTION"
+> args ... </CODE
+>
+      </PRE
+></DIV
+></DIV
+><DIV
+CLASS="CHAPTER"
+><HR><H1
+><A
+NAME="EXECUTIONOFSSHENVIRONMENT"
+></A
+>Chapter 7.  Execution of ssh Environment</H1
+><P
+>SSH (secure shell) is a common method for using remote
+machines. In this section, we explain execution of OmniRPC
+applications using ssh. In addition, like using Globus, create a
+remote executable module, register a program, and to create program
+are almost the same. The only different details is the description of
+hostfile (hosts.xml).</P
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="PREPARINGFORSSH"
+>Preparing for SSH</A
+></H2
+><P
+>In this example, the environment is described below.</P
+><P
+></P
+><UL
+><LI
+><P
+> Client host is <CODE
+CLASS="PARAMETER"
+>alice.hpcs.is.tukuba.ac.jp</CODE
+> .</P
+></LI
+><LI
+><P
+> Remote host is
+<CODE
+CLASS="PARAMETER"
+>dennis.hpcc.jp</CODE
+>. </P
+></LI
+><LI
+><P
+>  There is not a firewall between the remote host and
+client host. In other words, programs can communicate without
+limitation on the non special privilege port.</P
+></LI
+></UL
+><P
+>We assume that we can use SSH here. That is, we assume
+that we can access with SSH from
+<CODE
+CLASS="PARAMETER"
+>alice.hpcs.is.tsukuba.ac.jp</CODE
+> to
+<CODE
+CLASS="PARAMETER"
+>dennis.hpcc.jp</CODE
+>.</P
+><P
+>When using SSH, you should set up auto authentication with
+an <B
+CLASS="COMMAND"
+>ssh-agent</B
+>. If you do not, you have to type in
+the password at each remote host. If you want to know more detail, see
+man of "<B
+CLASS="COMMAND"
+>ssh-agent</B
+>", In this example, we outline the
+usage below. </P
+><P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>Activate <B
+CLASS="COMMAND"
+>ssh-agent</B
+>, and set the environment variable
+on your terminal.</P
+><PRE
+CLASS="SCREEN"
+><SAMP
+CLASS="PROMPT"
+>%</SAMP
+> <KBD
+CLASS="USERINPUT"
+>eval `ssh-agent`</KBD
+>
+          </PRE
+></LI
+><LI
+><P
+>  Register the pass phrase with
+<B
+CLASS="COMMAND"
+>ssh-add</B
+>.</P
+><PRE
+CLASS="SCREEN"
+><SAMP
+CLASS="PROMPT"
+>%</SAMP
+> <KBD
+CLASS="USERINPUT"
+>ssh-add</KBD
+>
+type your pass phrase here.<KBD
+CLASS="USERINPUT"
+>[passwd]</KBD
+>
+Identity added: /home/foo/.ssh/id_rsa (/home/foo/.ssh/id_rsa)
+<SAMP
+CLASS="PROMPT"
+>%</SAMP
+> <KBD
+CLASS="USERINPUT"
+>ssh-add</KBD
+>
+          </PRE
+></LI
+></OL
+><P
+>With the above procedure, you should confirm whether auto
+authentication is running or not. </P
+><PRE
+CLASS="SCREEN"
+><SAMP
+CLASS="PROMPT"
+>%</SAMP
+> <KBD
+CLASS="USERINPUT"
+> ssh dennis.hpcc.jp</KBD
+>
+      </PRE
+><P
+>With the above command, you can login to remote hosts
+without typing the password. </P
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="HOSTFILEFORSSH"
+>Hostfile for SSH</A
+></H2
+><P
+>To use <CODE
+CLASS="PARAMETER"
+>dennis.hpcc.jp</CODE
+>, you should
+describe <B
+CLASS="COMMAND"
+>hosts.xml</B
+>, and execute the client program
+with this hostfile. Write the hostfile for using ssh, as
+follows. </P
+><PRE
+CLASS="PROGRAMLISTING"
+>&#60;?xml version="1.0" ?&#62;
+&#60;OmniRpcConfig&#62;
+   &#60;Host name="dennis.hpcc.jp" arch="i386" os="linux"&#62;
+   &#60;Agent invoker="ssh" /&#62;
+   &#60;/Host&#62;
+&#60;/OmniRpcConfig&#62;
+ </PRE
+><P
+>This description is for activating the agent with ssh. In
+this specification, the relationship between the agent and rex is
+shown below.</P
+><DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="img/fig4.gif"></P
+></DIV
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="SETTINGFORFIREWALL"
+>Setting for firewall: Using SSH's port forwarding and MXIO option.</A
+></H2
+><P
+>There will be some firewalls between remote hosts and the
+client host when the client host and the remote hosts extend across
+administrations. When we use ssh for agent activation, programs
+communicate with the client and agent, using <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>ssh port
+forwarding</I
+></SPAN
+> . Using the ssh port forwarding function, we can
+communicate between remote executable modules on the remote host and
+client program. This is OmniRPC's multiplex communication function. If
+you want to use this feature, specify the "<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>mxio</I
+></SPAN
+>"
+attribution in the agent.</P
+><PRE
+CLASS="PROGRAMLISTING"
+>&#60;?xml version="1.0" ?&#62;
+&#60;OmniRpcConfig&#62;
+   &#60;Host name="dennis.hpcc.jp" arch="i386" os="linux"&#62;
+   &#60;Agent invoker="ssh"  mxio="on"  /&#62;
+   &#60;/Host&#62;
+&#60;/OmniRpcConfig&#62;
+ </PRE
+><P
+>The relationship of the agent and rex with this option is
+as follows. In this case, communication with rex and the client
+program occurs by way of rex.</P
+><DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="img/fig5.gif"></P
+></DIV
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="SSHEXECUTIONOFCLIENTPROGRAM"
+>Execution of client program</A
+></H2
+><P
+>You can execute in same manner without using hosts.xml.</P
+><PRE
+CLASS="SCREEN"
+><SAMP
+CLASS="PROMPT"
+>%</SAMP
+> <KBD
+CLASS="USERINPUT"
+>a.out --hostfile hosts.xml <CODE
+CLASS="OPTION"
+> args... </CODE
+></KBD
+> 
+      </PRE
+><P
+> Of course, to achieve good performance, we use a client
+program which uses the OmniRPC call in parallel. </P
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="SETTINGOFLOGINNAME"
+>Setting of Login name</A
+></H2
+><P
+> In addition, if the user name is different on client host
+and remote host, describe hostfile.xml as follows. </P
+><PRE
+CLASS="PROGRAMLISTING"
+>&#60;?xml version="1.0" ?&#62;
+&#60;OmniRpcConfig&#62;
+   &#60;Host name="dennis.hpcc.jp" user="foo" arch="i386" os="linux"&#62;
+   &#60;Agent invoker="ssh" mxio="on"  /&#62;
+   &#60;/Host&#62;
+&#60;/OmniRpcConfig&#62;
+ </PRE
+></DIV
+></DIV
+><DIV
+CLASS="CHAPTER"
+><HR><H1
+><A
+NAME="EXECUTIONONCLUSTERS"
+></A
+>Chapter 8.  Execution on Clusters</H1
+><P
+>On grid environments, clusters which connects many PCs and
+workstations in a network is a typical computation resources. In
+OmniRPC, we can treat a cluster as a remote host. We can run a remote
+executable module on each node in the cluster and execute in parallel
+so that we can achieve good performance. </P
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="SETTINGOFCLUSTERENVIRONMENT"
+>Setting of cluster environment</A
+></H2
+><P
+>When using clusters, we can access at least one computer
+in a cluster form the client host. We label this computer as the
+cluster server host  and label the computers in the cluster without a
+cluster server host as the cluster node host.</P
+><P
+></P
+><UL
+><LI
+><P
+> Client host is <CODE
+CLASS="PARAMETER"
+> jones.tsukuba.ac.jp </CODE
+> .</P
+></LI
+><LI
+><P
+> Cluster server host is
+<CODE
+CLASS="PARAMETER"
+>hpc-serv.hpcc.jp</CODE
+>. So <CODE
+CLASS="PARAMETER"
+>hpc1, hpc2 and
+hpc3</CODE
+> are connected to the cluster server host as cluster
+node hosts. </P
+></LI
+><LI
+><P
+>   Both the cluster server host and cluster node hosts
+share the same file system.</P
+></LI
+><LI
+><P
+> Client host can connect directly to the cluster
+server host and all of the cluster nodes. All port are not
+limited. </P
+></LI
+></UL
+><P
+>The last item in the list assumes that the client host and
+cluster are in same network.</P
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="SELECTIONOFJOBSCHEDULER"
+>Selection of job scheduler</A
+></H2
+><P
+>In OmniRPC, the omrpc-agent is invoked first on the
+cluster server host, and this agent activates remote executable module
+on each cluster node host with the appropriate scheduler. We can use
+one of the scheduler described below.</P
+><P
+></P
+><UL
+><LI
+><P
+>  Built-in round-robin scheduler (rr) </P
+></LI
+><LI
+><P
+> Portable Batch System (PBS) </P
+></LI
+><LI
+><P
+> SunGridEngine (SGE) </P
+></LI
+></UL
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="USEOFBUILT-INROUND-ROBINSCHEDULER"
+>Use of built-in round-robin scheduler</A
+></H2
+><P
+>OmniRPC's built-in round-robin scheduler is a simple
+scheduler which is implemented in the agent. This scheduler activates
+remote executable modules on cluster node hosts usign
+<B
+CLASS="COMMAND"
+>rsh</B
+>.</P
+><P
+>To use this scheduler, we create a nodes file which
+specifies cluster node hosts on the registry
+(<CODE
+CLASS="PARAMETER"
+>"$HOME/.omrpc-register"</CODE
+>) of the cluster server
+host. Below is the setting for this example. </P
+><PRE
+CLASS="PROGRAMLISTING"
+>hpc1
+hpc2
+hpc3</PRE
+><P
+> If you want to use <B
+CLASS="COMMAND"
+>ssh</B
+> instead of
+<B
+CLASS="COMMAND"
+>rsh</B
+> inside of a cluster, please add
+<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>ssh</I
+></SPAN
+> to next of hostname like below file.</P
+><PRE
+CLASS="PROGRAMLISTING"
+>hpc1 ssh
+hpc2 ssh
+hpc3 ssh</PRE
+><P
+>On the client host side, we create this hostfile.</P
+><PRE
+CLASS="PROGRAMLISTING"
+>&#60;?xml version="1.0" ?&#62;
+&#60;OmniRpcConfig&#62;
+   &#60;Host name="hpc-serv.hpcc.jp" arch="i386" os="linux"&#62;
+   &#60;JobScheduler type="rr" maxjob="4" /&#62; 
+   &#60;/Host&#62;
+&#60;/OmniRpcConfig&#62;</PRE
+><P
+>Set the type attribute in the job scheduler element to the
+round-robin scheduler "<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>rr</I
+></SPAN
+>."  The default value
+for this attribute is "<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>fork</I
+></SPAN
+>," which just creates
+the process on the same host. Our example applies to an SMP
+system. The number of cluster node hosts is 4, so you should set
+maxjob equal to 4.</P
+><P
+>The relationship between the agent and rex with this
+option is as follows.</P
+><DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="img/fig6.gif"></P
+></DIV
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="CLUSTERINPRIVATENETWORK"
+>Cluster in private network</A
+></H2
+><P
+>In the above example, the client host and cluster hosts
+are in same network. Also, the remote executable programs which
+execute on the cluster node hosts are activated directly for the
+client host. In the case in which the cluster and client host are in
+different networks, programs can communicate to the client host from a
+cluster node host.</P
+><P
+>But, as the number of node hosts increases, so do the
+clusters connected to the local-address network. In this situation,
+only the server host has a global IP address; the node hosts have
+local IP addresses. For OmniRPC, the cluster node host must
+communicate with the client host, but in this situation the cluster
+node host cannot communicate directly with the client host outside the
+cluster's network.</P
+><P
+>In this situation, there are 2 ways to use the
+cluster.</P
+><P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+> Set NAT to communicate with outside networks from the
+cluster node hosts. Programs can connect to anonymous ports on the
+client node from each cluster node. For the setting of NAT, please
+refer to NAT documents.</P
+></LI
+><LI
+><P
+> By using the agent function of multiplex
+communication, the agent relays communications between remote
+executable programs, which are executed on the cluster node host and
+client host.</P
+></LI
+></OL
+><P
+>We show an example hostile.xml which is based on the
+second way to use the cluster. </P
+><PRE
+CLASS="PROGRAMLISTING"
+>&#60;?xml version="1.0" ?&#62;
+&#60;OmniRpcConfig&#62;
+   &#60;Host name="hpc-serv.hpcc.jp" arch="i386" os="linux"&#62;
+   &#60;Agent invoker="rsh" mxio="on" /&#62;
+   &#60;JobScheduler type="rr" maxjob="4" /&#62;
+   &#60;/Host&#62;
+&#60;/OmniRpcConfig&#62;</PRE
+><P
+>You should set the <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>mxio</I
+></SPAN
+> attribute on
+the agent element with "<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>on</I
+></SPAN
+>." In this case,
+because we assume that the cluster server host and client host are in
+same network, we use "<B
+CLASS="COMMAND"
+>rsh</B
+>." If you want to invoke
+the agent with SSH, set "<B
+CLASS="COMMAND"
+>ssh</B
+>". If you want to do
+this with the Globus gate keeper, use "<B
+CLASS="COMMAND"
+>globus</B
+>."</P
+><P
+> Using this option, the relationship is shown in the
+figure below. </P
+><DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="img/fig7.gif"></P
+></DIV
+><P
+> The agent relays communications between every rex which
+is executed on the remote node host and the client.</P
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="CLUSTEROUTSIDEFIREWALL"
+>Cluster outside firewall</A
+></H2
+><P
+>You don't have to prepare for this situation.</P
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="CLUSTERINSIDEFIREWALL"
+>Cluster inside firewall</A
+></H2
+><P
+>We now explain the case of using clusters from outside of
+firewalls. When there are firewall(s), it is necessary at least to
+access with ssh to the cluster server host. If you can not use
+anonymous ports without a port (#22) of ssh, you can use the function
+of multiplex communication with the agent. We show the hostfile for
+this example.</P
+><PRE
+CLASS="PROGRAMLISTING"
+>&#60;?xml version="1.0" ?&#62;
+&#60;OmniRpcConfig&#62;
+   &#60;Host name="hpc-serv.hpcc.jp" arch="i386" os="linux"&#62;
+   &#60;Agent invoker="ssh" mxio="on" /&#62;
+   &#60;JobScheduler type="rr" maxjob="4" /&#62;
+   &#60;/Host&#62;
+&#60;/OmniRpcConfig&#62;</PRE
+><P
+>Set the <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>mxio</I
+></SPAN
+> attribute
+"<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>on</I
+></SPAN
+>" in the agent element and use the function of
+multiplex communication. </P
+><P
+>In environments which use Globus Toolkit, usually there
+are no firewalls, so you don't have to prepare. But, you have to set
+the mxio attribute in the same manner if the clusters consist of
+private IP addresses.</P
+><P
+>The relationship between the agent and rex is shown by the
+figure below. </P
+><DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="img/fig8.gif"></P
+></DIV
+><P
+>Communications between the client and
+<B
+CLASS="COMMAND"
+>rex</B
+>, which are executed on remote node hosts are
+relayed by the agent. And communications between the agent and clients
+are relayed by SSH's port forwarding through the firewall.</P
+></DIV
+></DIV
+><DIV
+CLASS="CHAPTER"
+><HR><H1
+><A
+NAME="PROGRAMMINGWITHOMNIRPCHANDLEAPI"
+></A
+>Chapter 9.  Programming with OmniRpcHandle API </H1
+><P
+>OmniRpcHandle is a data structure used for connection with a
+specific remote executable program. Using OmniRpcHandle , you can
+write programs which keep the status on a remote executable
+program. And, you can allocate a remote executable program on a
+specific remote host.</P
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="WHATSOMNIRPCHANDLE"
+>What's OmniRpcHandle</A
+></H2
+><P
+>OmniRpcHandle is a data structure which presents a
+connection with a specific remote executable program. OmniRpcHandle is
+created by activating the remote executable program which corresponds
+to the module with the OmniRpcCreateHandle API. Once the remote
+executable program is executing, remote executable programs can accept
+the requests of another RPC call which is inside of same module, and
+the program does not need to exit after finishing calculation using a
+function in the module.</P
+><P
+>Using this feature, you can do the following.</P
+><P
+></P
+><UL
+><LI
+><P
+> Keep the status on the remote executable program
+side. For instance, in function B you can use data which are set by
+function A in the same module. In other words, you can reuse the data
+sent to modules.</P
+></LI
+><LI
+><P
+>  Specify a remote node on which remote executable
+modules are activated. </P
+></LI
+></UL
+><P
+>With OmniRpcCall API, you specify the remote function
+only, and call the RPCs. From function name, the client program
+searches for the modules which contain it. Also, on adequate remote
+hosts remote program can run the remote executable program which
+corresponds to it, and assign. However if the client program uses
+OmniRpcHandle API, you should program the host executable module on
+which the programs are allocated. The host executable module should be
+allocated on a remote host. However, problems may arise when remote
+executable modules fail or are unavailable due to a timeout.</P
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="SEC-PROGRAMMINGWITHOMNIRPCHANDLE"
+>Programming with OmniRpcHandle</A
+></H2
+><P
+>For an easy example, we show a program which adds values
+which set the in setAB function and get its value, and use the IDL
+file as is.</P
+><PRE
+CLASS="PROGRAMLISTING"
+>Define Sample;
+
+Globals {
+ int a,b;
+}
+
+Define setAB(int in a0, int in b0)
+{
+   a = a0; b = b0;
+}
+
+Define plusAB(int out ab[])
+{
+     *ab = a + b;
+}</PRE
+><P
+>In the Globals directive, we define, in a style similar to
+C language, the variables which are used in the whole module. In the
+Globals scope, we write the module definitions in the style of C
+language.</P
+><P
+>You should compile this module with
+<B
+CLASS="COMMAND"
+>omrpc-cc</B
+>, and register
+<B
+CLASS="COMMAND"
+>Sample.rex</B
+> on the remote host
+(<CODE
+CLASS="PARAMETER"
+>alice.is.tsukuba.ac.jp)</CODE
+>) with
+<B
+CLASS="COMMAND"
+>omrpc-register</B
+>. </P
+><PRE
+CLASS="PROGRAMLISTING"
+>#include &#60;OmniRpc.h&#62;
+#include &#60;stdio.h&#62;
+
+int main(int argc,char *argv[]){
+   int ab;
+   OmniRpcHandle handle;
+
+   OmniRpcInit(&#38;argc,&#38;argv);
+   handle = OmniRpcCreateHandle("alice.is.tsukuba.ac.jp","Sample");
+
+   OmniRpcCallbyHandle(handle,"setAB",10,20);
+   OmniRpcCallbyHandle(handle,"plusAB",&#38;ab);
+   printf("a+b=%d\n",ab);
+  
+   OmniRpcHandleDestroy(handle);
+
+   OmniRpcFinalize();
+   exit(0);
+}</PRE
+><P
+>After the modules are initialized, the client program
+first activates the remote executable programs with
+OmniRpcCreateHandle API, and gets the OmniRpcHandle corresponding to
+it. Otherwise, by using OmniRpcCallbyHandle, the client program can
+call functions in the modules. Finally, the client program can stop
+the remote executable program with OmniRpcDestroyHandle API.</P
+><P
+>Also available is OmniRpcCallAsyncByHandle API, which call
+RPCs asynchronously. </P
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="ACQUISITIONOFHOSTINFORMATION."
+>Acquisition of host information.</A
+></H2
+><P
+>With OmniRpcCreateHandle API, you specify the remote host
+name on which the remote executable modules run. However, if you
+don't, programs allocate the appropriate remote host on modules which
+are registered. </P
+></DIV
+></DIV
+><DIV
+CLASS="CHAPTER"
+><HR><H1
+><A
+NAME="AUTOMATICMODULEINITIALIZATIONWITHOMNIRPCMODULEINITAPI"
+></A
+>Chapter 10.  Automatic module initialization with OmniRpcModuleInit API</H1
+><P
+>By using OmniRpcModuleInit API, when modules of a remote
+executable program are activated, the call initialize function is
+enabled automatically. So, you can write programs efficiently for
+master/worker programs which require worker initialization. We call
+this OmniRPC's restricted persistency model "Automatic Initializable
+Module".</P
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="WHATSAAUTOMATICINITIALIZABLEMODULE"
+>What's auto module initialization</A
+></H2
+><P
+>Auto module initialization is a function which calls the
+initialization method automatically when modules of a remote
+executable program are invoked. </P
+><P
+>By using OmniRpcHandle API, you can write efficient
+programs which keep data on a remote executable program, but you
+should write the program which is used by the remote executable
+program. We only specify the remote functions which are specified by
+OmniRpcCall at the start, the OmniRPC system executes and runs
+appropriate remote executable programs for requests. But we cannot
+know which remote executable programs are allocated by the OmniRPC
+system, so it is impossible to set the data beforehand.</P
+><P
+>In some OmniRPC master/worker programs, the master and
+worker share common data. Workers calculate its data with different
+parameters which are taken from the master. Auto module initialization
+is convenient in cases like this. In OmniRPC, if there is a function
+named "Initialize" in a module, "Initialize" is called automatically
+when a new remote executable program is activated for an other
+function's RPC call. Common data are set in initialization, and it can
+be efficient to reuse this data when function calls are called by real
+varied parameters. The bigger the costs of setup, the bigger are the
+effects. </P
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="PROGRAMMINGWITHOMNIRPCMODULEINITAPI"
+>Programming with OmniRpcModuleInit API</A
+></H2
+><P
+>For example, we will use a program to calculate the
+appearance of 10 sorts of strings (at a maximum of 10 characters) from
+a string which is 10000 characters in size. The sequential version may
+be written as follows.</P
+><PRE
+CLASS="PROGRAMLISTING"
+>#include &#60;stdio.h&#62;
+#include &#60;string.h&#62;
+
+char data[10000];  /* data to be searched */
+char str[10][10];  /* string to be compared */
+int occurrence[10];  /* array to record occurrence */
+
+/* prototype */
+void count_occurrence(char *data,char *str, int *r);
+
+int main(int argc, char *argv[])
+{
+    FILE *fp;
+    int i;
+
+    if((fp = fopen("data","r")) == NULL){
+	fprintf(stderr,"cannot open data file\n");
+	exit(1);
+    }
+    fread(data,10000,1,fp);
+    fclose(fp);
+    
+    if((fp = fopen("strings","r")) == NULL){
+	fprintf(stderr,"cannot open strings file\n");
+	exit(1);
+    }
+    for(i = 0; i &#60; 10; i++)
+	fscanf(fp,"%s",str[i]);
+    fclose(fp);
+
+    for(i = 0; i &#60; 10; i++)
+	count_occurrence(data,str[i],&#38;occurrence[i]);
+    
+    for(i = 0; i &#60; 10; i++)
+	printf("string(%i,'%s') occurrence=%d\n",i,
+	       str[i],occurrence[i]);
+    
+    exit(0);
+}
+
+void count_occurrence(char *data,char *str, int *r)
+{
+    int i,len,count;
+    len = strlen(str);
+    count = 0;
+    for(i = 0; i &#60; 10000-len; i++){
+	if(strncmp(&#38;data[i],str,len) == 0) count++;
+    }
+    *r = count;
+}</PRE
+><P
+>To parallize this program with OmniRpcCallAsync, we
+calculate count_occurrence in the remote executable program. The IDL
+file may be like the example shown below.</P
+><PRE
+CLASS="PROGRAMLISTING"
+>Module count_occurrence;
+
+Define count_occurrence(char IN data[10000],char IN str[10], int OUT
+r[]) Calls "C" count_occurrence(data,str,r);</PRE
+><P
+>Link this with the count_occurrence function. and register
+it. In the client program, we change a call of count_occurrence to a
+call of OmniRpcCallAsync API.</P
+><PRE
+CLASS="PROGRAMLISTING"
+>int main(int argc, char *argv[])
+{
+    FILE *fp;
+    int i;
+    OmniRpcReqeust reqs[10];
+
+    OmniRpcInit(&#38;argc,&#38;argv);
+
+    ... /* input data */
+
+    for(i = 0; i &#60; 10; i++)
+    	reqs[i] = OmniRpcCallAsync("count_occurrence",
+	                      data,str[i],&#38;occurrence[i]);
+   OmniRpcWaitAll(10,reqs);
+			          
+    ... 
+   OmniRpcFinalize();
+   exit(0);
+}</PRE
+><P
+>In this case, there is the problem that data are sent for
+each RPC call on the remote executable module. This data is unchanged,
+so it is efficient to reuse the data sent on the remote executable
+program side.</P
+><P
+>By using OmniRpcModuleInit API, the client program sends
+the data in the initialization of the remote executable programs, and
+sends only the strings which are searched with OmniRpcCall. We define
+the IDL file as follows. </P
+><PRE
+CLASS="PROGRAMLISTING"
+>Module count_occurrence;
+
+Globals {
+#include &#60;string.h&#62;
+char data[10000];
+}
+
+Define Initialize(char IN input_data[10000])
+{
+     memcpy(data,input_data,10000);
+}
+
+Define count_occurrence_each(char IN str[10], int OUT r[]){
+    count_occurrence(data,str,r);
+}</PRE
+><P
+>In the client program, initialization is described.</P
+><PRE
+CLASS="PROGRAMLISTING"
+>int main(int argc, char *argv[])
+{
+    FILE *fp;
+    int i;
+    OmniRpcReqeust reqs[10];
+
+    OmniRpcInit(&#38;argc,&#38;argv);
+
+    ... /* input data */
+
+    OmniRpcModuleInit("count_occurrence",data);
+
+    for(i = 0; i &#60; 10; i++)
+    	reqs[i] = OmniRpcCallAsync("count_occurrence_each",
+	                      str[i],&#38;occurrence[i]);
+   OmniRpcWaitAll(10,reqs);
+    ... 
+   OmniRpcFinalize();
+   exit(0);
+}</PRE
+><P
+>We specify the necessary data in the initialization with
+OmniRpcModuleInit. The initializations are indeed taken when the
+necessary remote executable modules are activated. So, it is important
+not to write in the area addressed by the pointer variables in
+initialization.</P
+></DIV
+></DIV
+><DIV
+CLASS="CHAPTER"
+><HR><H1
+><A
+NAME="DIRECTEXECUTIONOFREMOTEPROGRAM"
+></A
+>Chapter 11.  Direct Execution of Remote Program </H1
+><P
+> Usually, in OmniRPC we execute remote executable programs
+via the agent. It is possible to execute directly to specify a remote
+executable module.</P
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="THECASEOFDIRECTACTIVATIONOFREMOTOEXECUTABLEPROGRAM"
+>The case of direct activation of remote executable program</A
+></H2
+><P
+>Usually in OmniRPC, the client program executes a remote
+executable program via the agent. Here are some advantages.</P
+><P
+></P
+><UL
+><LI
+><P
+> By registering to the registry, it is possible to
+activate remote executable modules on the remote host without knowing
+its path. Furthermore, in the case of the same module's name, it is
+possible to allocate the job to the appropriate remote host.</P
+></LI
+><LI
+><P
+> When the remote host is a cluster, it is possible to
+allocate jobs to the cluster node host.</P
+></LI
+></UL
+><P
+>In this explanation, without the agent, we introduce a
+method to execute directly the remote executable module and to call
+RPCs. If there are remote executable programs for which you know the
+path in a certain remote host, you can omit registering remote
+executable programs, and so on. The advantages as are listed
+below.</P
+><P
+></P
+><UL
+><LI
+><P
+> Without describing a communication protocol, programs
+call function by using OmniRPC protocol. </P
+></LI
+><LI
+><P
+> By activating using Globus and ssh, the function of
+port forwarding is available in authentication. </P
+></LI
+></UL
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="SETTINGENVIRONMENTFORREMOTENODES"
+>Setting environment for remote nodes.</A
+></H2
+><P
+></P
+><UL
+><LI
+><P
+> Client host is <CODE
+CLASS="PARAMETER"
+>jones.tsukuba.ac.jp</CODE
+>.</P
+></LI
+><LI
+><P
+> Remote host is <CODE
+CLASS="PARAMETER"
+>dennis.hpcc.jp</CODE
+>. </P
+></LI
+><LI
+><P
+> Set <B
+CLASS="COMMAND"
+>calc_sin.rex</B
+>, which we
+introduced already as an example program, to
+"<CODE
+CLASS="PARAMETER"
+>/usr/local/tmp/</CODE
+>" .</P
+></LI
+><LI
+><P
+> Globus Toolkit's gate-keeper is running on
+<CODE
+CLASS="PARAMETER"
+>dennis.hpcc.jp</CODE
+>, and it is possible to execute
+programs with GRAM. </P
+></LI
+></UL
+><P
+> If you use this function, it executes rex directly
+without the agent.</P
+><DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="img/fig9.gif"></P
+></DIV
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="APIFORDIRECTEXECUTIONOFREMOTEPROGRAM"
+>API for direct execution of remote program</A
+></H2
+><P
+>Because, we don't use the agent for direct execution,
+initialization of the library is taken by OmniRpcExecInit()
+API.</P
+><P
+>APIs which activate remote executable programs on the
+remote host, are like APIs which use
+OmniRpcHandle. OmniRpcExecOnHost() API enables the execution of a
+remote executable program, which is specified by its path, on the
+specified remote host, and it returns OmniRpcExecHandle, which
+presents its connection. By using OmniRpcExecCall it is possible to
+call a function which is inside a module.</P
+><P
+>We show this example below.</P
+><PRE
+CLASS="PROGRAMLISTING"
+>#include &#60;OmniRpc.h&#62;
+#include &#60;stdio.h&#62;
+
+int main(int argc,char *argv[]){
+   double r;
+   OmniRpcExecHandle handle;
+
+   OmniRpcExecInit(&#38;argc,&#38;argv);
+   handle = OmniRpcExecOnHost("dennis.hpcc.jp","/usr/local/tmp/calc_sin.rex");
+
+   OmniRpcExecCall(handle,"calc_sin",10,&#38;r);
+   printf("sin(10)=%g\n",r);
+  
+   OmniRpcExecTerminate(handle);
+
+   OmniRpcExecFinalize();
+   exit(0);
+}</PRE
+><P
+>OmniRpcExecTerminate API enables the termination of the
+remote executable program which responds to the handle. Finally, you
+should use OmniExecFinalize() at the end of the program.</P
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="PROGRAMEXECUTION"
+>Program execution</A
+></H2
+><P
+>You should specify the path of an executable program to
+activate the remote executable program. For example, the case of an
+execution using Globus is as follows.</P
+><PRE
+CLASS="SCREEN"
+><SAMP
+CLASS="PROMPT"
+>%</SAMP
+> <KBD
+CLASS="USERINPUT"
+>a.out --globus <CODE
+CLASS="OPTION"
+>args...</CODE
+></KBD
+>
+      </PRE
+><P
+>In the case of SSH activation, you specify
+"<CODE
+CLASS="OPTION"
+>--ssh</CODE
+>."; if don't specify this, rsh is used to
+activate. </P
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="THELIMITATIONOFDIRECTACTIVATIONOFREMOTEEXECUTABLEPROGRAMS"
+>The limitation of direct activation of remote executable programs.</A
+></H2
+><P
+>At this time, there are some limitations with this method.</P
+><P
+></P
+><UL
+><LI
+><P
+>No support for a multi-thread environment (no thread-safe)</P
+></LI
+><LI
+><P
+>No support for asynchronous calls.</P
+></LI
+><LI
+><P
+>No support for activating with multiple methods of activation. </P
+></LI
+></UL
+><P
+>We hope to improve these issues in the future. </P
+></DIV
+></DIV
+><DIV
+CLASS="CHAPTER"
+><HR><H1
+><A
+NAME="FILETRANSFER"
+></A
+>Chapter 12.  File Transfer in OmniRPC</H1
+><P
+> </P
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="FILENAME"
+>File Transfer using Filename</A
+></H2
+><P
+>OmniRPC supports file transfer between client program and
+remote executable program. In file transfer mode, you should spcify 
+filenames which you want to transfer files.</P
+><DIV
+CLASS="SECT2"
+><HR><H3
+CLASS="SECT2"
+><A
+NAME="FILENAMEWORKERPROGRAM"
+>Write Remote Executable Program</A
+></H3
+><P
+>For an easy example, we show a program which
+concatinates 2 files and use the IDL file as is.</P
+><PRE
+CLASS="PROGRAMLISTING"
+>Module testfile;
+
+Globals { 
+#include &#60;math.h&#62;
+}
+
+Define testfile(IN filename infile[2], OUT filename outfile[])
+{
+    FILE *infp, *outfp;
+    char tmp[128];
+    int i;
+
+    fprintf(stderr, "STUB : infile[0] : %s\n", infile[0]);
+    fprintf(stderr, "STUB : infile[1] : %s\n", infile[1]);
+
+
+    if((outfp = fopen(*outfile, "w+")) == NULL){
+        perror("fopen");
+        exit(1);
+    }
+    for(i = 0; i &#60; 2; i++){
+        if((infp = fopen(infile[i], "r+")) == NULL){
+            perror("fopen");
+            exit(1);
+        }
+
+        while(fgets(tmp, sizeof(tmp), infp) != NULL){
+            fprintf(outfp, "%s", tmp);
+        }
+        fclose(infp);
+    }
+
+    fclose(outfp);
+    fprintf(stderr, "STUB : END\n");
+    fflush(stderr);
+}</PRE
+><P
+> In this source code, special identification
+<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>filename</I
+></SPAN
+> is introduced for file transfer.
+Type of <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>filename</I
+></SPAN
+> is string (which is a alias of
+<CODE
+CLASS="PARAMETER"
+>char *</CODE
+>).  
+In this example, <CODE
+CLASS="PARAMETER"
+>infile[2]</CODE
+> is string typed
+array variable.
+At the execution time, OmniRPC remote executable create new filename
+before the procedure in remote program.
+So you can use infile as filename strings.
+But output variable of outfile in IDL file is filename pointer, that
+alias is <CODE
+CLASS="PARAMETER"
+>char **</CODE
+>.&#13;</P
+><P
+> We can generate a remote executable program from the IDL
+file by using omrpc-cc. So, let's convert using this command.</P
+><PRE
+CLASS="SCREEN"
+>         % omrpc-cc testfile.idl
+        </PRE
+></DIV
+><DIV
+CLASS="SECT2"
+><HR><H3
+CLASS="SECT2"
+><A
+NAME="FILENAMECLIENTPROGRAM"
+>Write Client Program</A
+></H3
+><P
+></P
+><PRE
+CLASS="PROGRAMLISTING"
+>#include &#60;OmniRpc.h&#62;
+#include &#60;stdio.h&#62;
+
+int main(int argc,char *argv[])
+{
+
+   char *infile[2] = {"a.txt", "b.txt"};
+   char *outfile = "a.out";
+   char tmp[128];
+   FILE *fp;
+   int i,j;
+   int c = 0;
+
+   OmniRpcInit(&#38;argc,&#38;argv);
+
+   for(i = 0 ;i &#60; 2; i++){
+       if((fp = fopen(infile[i], "w+")) == NULL){
+           perror("cannot open file");
+           exit(1);
+       }
+       for(j =0; j &#60; 128; j++)
+           fprintf(fp, "%i\n",c++);
+       fflush(fp);
+       if(fclose(fp) != 0){
+           perror("cannot close file");
+       }
+   }
+
+   OmniRpcCall("testfile", infile, &#38;outfile);
+
+   fprintf(stderr, "TRANSFER FIN\n");
+   fflush(stderr);
+
+   if((fp = fopen(outfile, "r+")) == NULL){
+       perror("cannot open file");
+       exit(1);
+   }
+   while(fgets(tmp, sizeof(tmp), fp) != NULL){
+       fprintf(stdout, "OUTPUT:%s", tmp);
+   }
+
+  OmniRpcFinalize();
+}</PRE
+><P
+> We can generate a client program from the C file by
+using omrpc-cc. So, let's convert using this command.</P
+><PRE
+CLASS="SCREEN"
+>         % omrpc-cc -o testfile testfile.c 
+        </PRE
+></DIV
+><DIV
+CLASS="SECT2"
+><HR><H3
+CLASS="SECT2"
+><A
+NAME="EXECUTION"
+>Execution of Program</A
+></H3
+><P
+>Before you execute this example, you should prepaer 2
+file (named a.txt and b.txt) in the same directory on which client
+program is. </P
+><P
+> You can execute the client program in the same manner
+without using the hosts.xml file.</P
+><PRE
+CLASS="SCREEN"
+><SAMP
+CLASS="PROMPT"
+>%</SAMP
+> testfile --hostfile hosts.xml
+        </PRE
+><P
+>After execution, you can see the file named "a.out" in
+the the same direcotry of client program.</P
+><DIV
+CLASS="SECT3"
+><HR><H4
+CLASS="SECT3"
+><A
+NAME="SETTINGOFWORKINGDIRECTORY"
+>Setting of WorkingDirectory</A
+></H4
+><P
+>OmniRPC remote executable uses a temporary directory to
+store files. Default temporary directory is "/tmp", but you can use
+another directory by specifying the <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>WorkingPath</I
+></SPAN
+>
+in hostfile. And your login id has write and read permission on that
+directory. We show an example of hostfile which specify temporary
+directory.</P
+><PRE
+CLASS="PROGRAMLISTING"
+>&#60;OmniRpcConfig&#62;
+   &#60;Host name="alice.hpcc.jp" user="foo" arch="i386" os="linux"&#62;
+        &#60;Agent invoker="globus" mxio="on" path="/usr/local/omrpc"/&#62;
+        &#60;JobScheduler type="rr" maxjob="6" /&#62;
+        &#60;Registry path="/home/foo/app/stubs" /&#62;
+        &#60;WorkingPath path="/home/foo/tmp" /&#62;
+   &#60;/Host&#62;
+&#60;/OmniRpcConfig&#62;</PRE
+></DIV
+></DIV
+></DIV
+></DIV
+><DIV
+CLASS="CHAPTER"
+><HR><H1
+><A
+NAME="PROGRAMMINGINFORTRAN"
+></A
+>Chapter 13.  Programming in FORTRAN</H1
+><P
+>In this section, we explain how to program OmniRPC in
+FORTRAN. If you want to know more details about APIs, see Section
+FORTRAN API.</P
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="ASIMPLEEXAMPLEINFORTRAN"
+>A simple example in FORTRAN</A
+></H2
+><P
+>Let's think about this Fortran program. This program
+calculates the inner product of a matrix. The main program is called
+main.f, and ip.f is the subroutine that calculates the inner
+product.</P
+><P
+><TT
+CLASS="FILENAME"
+>main.f</TT
+></P
+><PRE
+CLASS="PROGRAMLISTING"
+>      double precision a(10),b(10),r
+      do i = 1,10
+         a(i) = i
+         b(i) = i+10
+      end do
+      call innerprod(10,a,b,r)
+      write(*,*) 'result=',r
+      end</PRE
+><P
+><TT
+CLASS="FILENAME"
+>ip.f</TT
+></P
+><PRE
+CLASS="PROGRAMLISTING"
+>      subroutine innerprod(n,a,b,r)
+      integer n
+      double precision a(*),b(*),r
+      integer i
+      r = 0.0
+      do i = 1,n
+        r = r+a(i)*b(i)
+      end do
+      return
+      end</PRE
+><P
+>Let's set this program to call the innerprod subroutine
+with OmniRPC.</P
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="CREATEREMOTEEXECUTABLEPROGRAM"
+>Create remote executable program</A
+></H2
+><P
+>As in a C program, we create a program which executes a
+subroutine on remote hosts. So, we define an interface to
+innerprod. We set the module name as <CODE
+CLASS="FUNCTION"
+>f_innerprod</CODE
+>,
+and the function name as <CODE
+CLASS="FUNCTION"
+>innerprod</CODE
+>.</P
+><PRE
+CLASS="PROGRAMLISTING"
+>Module f_innerprod;
+
+Define innerprod(IN int n, IN double a[n], IN double b[n],
+        OUT double result[1])
+Calls "Fortran" innerprod_(n,a,b,result);</PRE
+><P
+> The argument which specifies the array size must be a
+scalar variable. The double precision type in FORTRAN is
+"<CODE
+CLASS="VARNAME"
+>double</CODE
+>", the real type is
+"<CODE
+CLASS="VARNAME"
+>float</CODE
+>". If you directly call a FORTRAN function
+with calls, you specify "Fortran". Calling a function can mangle the
+function name in FORTRAN. Usually, in the case of the FORTRAN
+compiler, a mangled name is a name to which "<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>_</I
+></SPAN
+>"
+has been added. Please pay attention to whether a function name
+contains "<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>_</I
+></SPAN
+>"; if it is mangled, add
+"<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>__</I
+></SPAN
+>" in g77 (gcc). </P
+><P
+>This definition is the same as the above definition. As
+scalar variable is taken as the address pointer.</P
+><PRE
+CLASS="PROGRAMLISTING"
+>Module f_innerprod;
+
+Define innerprod(IN int n, IN double a[n], IN double b[n],
+        OUT double result[1])
+{
+    innerprod_(&#38;n,a,b,result);
+}</PRE
+><P
+>Generate OmniRPC's remote executable modules from this IDL
+file. We name this IDL file <TT
+CLASS="FILENAME"
+>f_ip.idl</TT
+>. </P
+><PRE
+CLASS="SCREEN"
+><SAMP
+CLASS="PROMPT"
+>%</SAMP
+> <KBD
+CLASS="USERINPUT"
+> omrpc-fc f_ip.idl ip.f</KBD
+>
+      </PRE
+><P
+>When you run this command, the remote executable program
+f_ip.rex is generated. To register with
+<B
+CLASS="COMMAND"
+>omrpc-register</B
+>, the method is the same as in C
+language.</P
+><PRE
+CLASS="SCREEN"
+><SAMP
+CLASS="PROMPT"
+>%</SAMP
+> <KBD
+CLASS="USERINPUT"
+> omrpc-register -register f_ip.rex</KBD
+>
+      </PRE
+><P
+>The command <B
+CLASS="COMMAND"
+>omrpc-fc</B
+>, it compiles
+FORTRAN program with <B
+CLASS="COMMAND"
+>f77</B
+>. If you want to use
+another compiler, use the "<CODE
+CLASS="OPTION"
+>-fc</CODE
+>" option. For example,
+if you want to use the intel Fortran compiler of ifc, run the
+following command. </P
+><PRE
+CLASS="SCREEN"
+><SAMP
+CLASS="PROMPT"
+>%</SAMP
+> <KBD
+CLASS="USERINPUT"
+> omrpc-fc -fc ifc f_ip.idl ip.f</KBD
+>
+      </PRE
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="CLIENTPROGRAMINFORTRAN"
+>Client program in Fortran</A
+></H2
+><P
+>And now, change the client program main.f to call the
+remote executable program with OmniRPC.</P
+><PRE
+CLASS="PROGRAMLISTING"
+>      double precision a(10),b(10),r
+      call OMINRPC_INIT
+      do i = 1,10
+         a(i) = i
+         b(i) = i+10
+      end do
+      call OMNIRPC_CALL("f_innerprod*",10,a,b,r)
+      write(*,*) 'result=',r
+      call OMNIRPC_FINALIZE
+      end</PRE
+><P
+>This program initializes with
+<CODE
+CLASS="FUNCTION"
+>OMNIRPC_INIT</CODE
+> and calls by
+<CODE
+CLASS="FUNCTION"
+>OMNIRPC_CALL</CODE
+>. Please keep in mind that the entry
+name which is specified by <CODE
+CLASS="FUNCTION"
+>OMNIRPC_CALL</CODE
+> should
+have "<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>*</I
+></SPAN
+>" at the end of the name which is defined
+on the interface. You should add "<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>*</I
+></SPAN
+>" to the end
+of strings which are obtained with OmniRPC, such as the module name
+and host name. OmniRPC considers "<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>*</I
+></SPAN
+>" to be a
+string terminator in OmniRPC's Fortran API.</P
+><P
+>Using omrpc-fc to compile this file.</P
+><PRE
+CLASS="SCREEN"
+><SAMP
+CLASS="PROMPT"
+>%</SAMP
+> <KBD
+CLASS="USERINPUT"
+> omrpc-fc main.f</KBD
+>
+      </PRE
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="ANASYNCHRONOUSCALLINFORTRAN"
+>An asynchronous call in FORTRAN</A
+></H2
+><P
+>Finally, we show an example which is written in
+FORTRAN. this example is also shown in the section Parallel
+programming with OmniRPC .</P
+><PRE
+CLASS="PROGRAMLISTING"
+>      double precision res(10)
+      double precision x
+      integer ireqs(10)
+      call omnirpc_init
+      x = 0.0
+      do i = 1, 10
+         call omnirpc_call_async(ireqs(i),'calc_sin*',x,res(i))
+         x = x + 1.0
+      end do
+      call omnirpc_wait_all(10,ireqs)
+      do i = 1, 10
+         write(*,*) 'res(',i, ')=',res(i)
+      end do
+      call omnirpc_finalize
+      end</PRE
+><P
+>For API details, see Fortran API </P
+></DIV
+></DIV
+><DIV
+CLASS="APPENDIX"
+><HR><H1
+><A
+NAME="DESCRIPTIONOFHOSTFILE"
+></A
+>Appendix A.  Description of hostfile</H1
+><P
+>The hostfile is an XML file that describes the execution
+environment. We will show the procedure to describe it.</P
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="SPECIFYINGTHEHOSTFILE"
+>Specifying the hostfile</A
+></H2
+><P
+>In the hostfile, you should specify which host a client
+program uses. You should type the command option
+"<CODE
+CLASS="OPTION"
+>--hostfile</CODE
+>" for the client program.</P
+><PRE
+CLASS="SCREEN"
+><SAMP
+CLASS="PROMPT"
+>%</SAMP
+> <KBD
+CLASS="USERINPUT"
+>a.out --hostfile  host_file</KBD
+> <CODE
+CLASS="OPTION"
+>args...</CODE
+>
+      </PRE
+><P
+>If "<CODE
+CLASS="OPTION"
+>--hostfile</CODE
+>" is not set, by default
+the <TT
+CLASS="FILENAME"
+>hosts.xml</TT
+> in each user's registry is used. In
+other words, "<TT
+CLASS="FILENAME"
+>$HOME/.omrpc-registry/hosts.xml</TT
+>" is
+nnused as the default setting. </P
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="HOWTODESCRIBE"
+>How to describe</A
+></H2
+><P
+>We show an example below.</P
+><PRE
+CLASS="PROGRAMLISTING"
+>&#60;?xml version="1.0" ?&#62;
+&#60;OmniRpcConfig&#62;
+   &#60;Host name="jones.is.tsukuba.ac.jp"&#62;
+   &#60;Host name="alice.hpcc.jp" user="foo" arch="i386" os="linux"&#62;
+	&#60;Agent invoker="globus" mxio="on" path="/usr/local/omrpc"/&#62;
+	&#60;JobScheduler type="rr" maxjob="6" /&#62;
+	&#60;Registry path="/home/foo/app/stubs" /&#62;
+        &#60;WorkingPath path="/home/foo/tmp" /&#62;
+	&#60;Description&#62;
+	This is a sample host description.
+	&#60;/Description&#62;
+   &#60;/Host&#62;
+   &#60;TimeOut second="20"&#62;
+&#60;/OmniRpcConfig&#62;</PRE
+><P
+>We specify 2 hosts(<CODE
+CLASS="PARAMETER"
+>jones.is.tsukuba.ac.jp</CODE
+> and
+<CODE
+CLASS="PARAMETER"
+>alice.hpcc.jp</CODE
+>). In
+<CODE
+CLASS="PARAMETER"
+>jones.is.tsukuba.ac.jp</CODE
+>, the defaults setting is 
+used, so the invocation method of the agent is "<B
+CLASS="COMMAND"
+>rsh</B
+>" and a remote
+executable program is allocated. Because <CODE
+CLASS="PARAMETER"
+>alice.hpcc.jp</CODE
+> is a remote
+server node, Globus Toolkit's GRAM is used as a agent invocation
+method. Registry is at "<TT
+CLASS="FILENAME"
+>/home/foo/app/stubs</TT
+>", not the default
+setting. Remote executable programs are executed by the
+<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>round-robin scheduler</I
+></SPAN
+>, which is the built-in
+scheduler in the OmniRPC agent. 6 remote executable programs are
+invoked. Also, the account in <CODE
+CLASS="PARAMETER"
+>alice.hpcc.jp</CODE
+> is
+"<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>foo</I
+></SPAN
+> and worker programs use
+"<TT
+CLASS="FILENAME"
+>/home/foo/tmp</TT
+>" directory to store temporary
+files, not the default setting (default directory is
+"<TT
+CLASS="FILENAME"
+>/tmp</TT
+>" </P
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="DETAILSOFHOSTFILE"
+>Details of Hostfile</A
+></H2
+><P
+>Hostfile is an XML file which has OmniRpcConfig at the top
+level. OmniRpcConfig's element is Host.</P
+><DIV
+CLASS="SECT2"
+><HR><H3
+CLASS="SECT2"
+><A
+NAME="HOSTELEMENT"
+>Host element</A
+></H3
+><P
+>In the host element, you should describe the hosts which
+you use.</P
+><P
+></P
+><DIV
+CLASS="VARIABLELIST"
+><DL
+><DT
+>Name attribute:(Required)</DT
+><DD
+><P
+>You should specify the host name with the name
+attribute. </P
+></DD
+><DT
+>User attribute: (Optional, user name on client host if omitted)</DT
+><DD
+><P
+>You can set the user name when the user names
+are different on the client host and remote host. If the value of the
+user attribute is omitted, the user name on the client host is
+used.</P
+></DD
+><DT
+>Arch attribute, os attribute(Optional)</DT
+><DD
+><P
+>At this writing, you can specify the
+architecture (arch) and operating system (os), but these values are
+not used.</P
+></DD
+></DL
+></DIV
+><P
+>In the host, you can specify the attributes below.</P
+><DIV
+CLASS="SECT3"
+><HR><H4
+CLASS="SECT3"
+><A
+NAME="AGENTELEMENT"
+>Agent element: (Optional)</A
+></H4
+><P
+>In OmniRPC, the <B
+CLASS="COMMAND"
+>omrpc-agent</B
+> is invoked in
+initialization, and the agent element is a option for the agent. It
+has no elements. but you can specify the following attributes.</P
+><P
+></P
+><DIV
+CLASS="VARIABLELIST"
+><DL
+><DT
+>invoker attribute: <CODE
+CLASS="PARAMETER"
+>rsh, ssh, gram,
+globus</CODE
+> (Required if agent element used)</DT
+><DD
+><P
+> You should specify the method of the agent
+invocation. "gram" is an alternative name for globus. If the agent
+element is omitted, the default invoker is rsh.</P
+></DD
+><DT
+>mxio attribute: <CODE
+CLASS="PARAMETER"
+>on, off</CODE
+>
+(Optional, off if omitted)</DT
+><DD
+><P
+>You should specify whether or not you use
+multiplex communication. Set this value on if you want to use the
+relay of communication by the agent. If you don't specify the value of
+the mxio attribute, the default value is off.</P
+></DD
+><DT
+>path attribute: (Optional,
+<TT
+CLASS="FILENAME"
+>/usr/local/omrpc/</TT
+> if omitted)</DT
+><DD
+><P
+>On this host, if OmniRpc software is not
+installed in the default install path (/usr/local/omrpc), you should
+specify the path attribute as the install path.</P
+></DD
+></DL
+></DIV
+></DIV
+><DIV
+CLASS="SECT3"
+><HR><H4
+CLASS="SECT3"
+><A
+NAME="JOBSCHEDULARELEMENT"
+>JobScheduler element: (Optional)</A
+></H4
+><P
+>Specify the jobscheduler of the omrpc-agent which
+executes the remote executable. There are some attributes. If this
+element is omitted, the default type is fork and maxjob is 1.</P
+><P
+></P
+><DIV
+CLASS="VARIABLELIST"
+><DL
+><DT
+>type attribute: <CODE
+CLASS="PARAMETER"
+>fork, round_robin,
+rr, pbs, sge </CODE
+>(Required if jobschedular element
+used)</DT
+><DD
+><P
+>You specify the type of jobscheduer. "rr" is
+an alternative name for "round_robin". "pbs" stands for portable batch
+system and sge stands for sun grid engine.</P
+></DD
+><DT
+>maxjob attribute: (Option. 1 if omitted)</DT
+><DD
+><P
+> You specify the number of maximum jobs
+which can be executed on the remote host. If the value is omitted,
+maxjob is set to 1.</P
+></DD
+></DL
+></DIV
+></DIV
+><DIV
+CLASS="SECT3"
+><HR><H4
+CLASS="SECT3"
+><A
+NAME="REGISTRYELEMENT"
+>Registry element: (Optional)</A
+></H4
+><P
+>Specifys the path to the registry on the remote
+host. If this element is omitted, the registry path is the home
+directory on the remote host.</P
+><P
+></P
+><DIV
+CLASS="VARIABLELIST"
+><DL
+><DT
+>path attribute: (Required if registry element
+used)</DT
+><DD
+><P
+>You should specify the path to registry.</P
+></DD
+></DL
+></DIV
+></DIV
+><DIV
+CLASS="SECT3"
+><HR><H4
+CLASS="SECT3"
+><A
+NAME="WORKINGPATHELEMENT"
+>WorkingPath element: (Optional)</A
+></H4
+><P
+>Specifys the directory on which worker program in
+remote side can store the file.</P
+><P
+></P
+><DIV
+CLASS="VARIABLELIST"
+><DL
+><DT
+>path attribute: (Required if registry element
+used)</DT
+><DD
+><P
+>You should specify the path that workers store
+temporary files .</P
+></DD
+></DL
+></DIV
+></DIV
+><DIV
+CLASS="SECT3"
+><HR><H4
+CLASS="SECT3"
+><A
+NAME="DESCRIPTIONELEMENT"
+>Description element: (Optional)</A
+></H4
+><P
+> You can describe information about host.</P
+></DIV
+></DIV
+><DIV
+CLASS="SECT2"
+><HR><H3
+CLASS="SECT2"
+><A
+NAME="TIMEOUT"
+>TimeOut element: (Optional)</A
+></H3
+><P
+>Specifys the timeout seconds of connection between
+client program and OmniRPC agent. Default seconds is 15 .</P
+><P
+></P
+><DIV
+CLASS="VARIABLELIST"
+><DL
+><DT
+>second attribute: (Required if registry element
+used)</DT
+><DD
+><P
+>You can specify the timeout second when the client
+program invokes OmniRPC agent in remote nodes. Sometimes the client
+program fails because of long phease of authentication. If you meet
+that case, please increase that value. </P
+></DD
+></DL
+></DIV
+></DIV
+><DIV
+CLASS="SECT2"
+><HR><H3
+CLASS="SECT2"
+><A
+NAME="DEBUG"
+>Debug element: (Optional)</A
+></H3
+><P
+>If you want OmniRPC client program to show debug
+message, please write Debug element in hostfile.</P
+></DIV
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="DTD"
+>DTD (Document Type Definition) of hostfile.</A
+></H2
+><PRE
+CLASS="PROGRAMLISTING"
+>&#60;!ELEMENT OmniRpcConfiguration (Host+, TimeOut?, Debug?)&#62;
+&#60;!ATTLIST OmniRpcConfiguration version CDATA&#62;
+
+&#60;!ELEMENT Host (Agent?, JobScheduler?, Registry?, WorkingPath?, Description?)&#62;
+&#60;!ATTLIST Host name CDATA #REQUIRED&#62;
+&#60;!ATTLIST Host user CDATA &#62;
+&#60;!ATTLIST Host arch CDATA&#62;
+&#60;!ATTLIST Host os CDATA&#62;
+
+&#60;!ELEMENT Agent EMPTY&#62;
+&#60;!ATTLIST Agent invoker (rsh|ssh|globus|gram) #REQUIRED&#62;
+&#60;!ATTLIST Agent mxio (on|off)&#62;
+&#60;!ATTLIST Agent path CDATA&#62;
+
+&#60;!ELEMENT JobScheduler EMPTY&#62;
+&#60;!ATTLIST JobScheduler type (fork|rr|round_robin|pbs|sge) #REQUIRED&#62;
+&#60;!ATTLIST JobScheduler maxjob CDATA&#62;
+
+&#60;!ELEMENT Registry EMPTY&#62;
+&#60;!ATTLIST Registry path CDATA #REQUIRED&#62;
+
+&#60;!ELEMENT WorkingPath EMPTY&#62;
+&#60;!ATTLIST WorkingPath path CDATA #REQUIRED&#62;
+
+&#60;!ELEMENT TimeOut EMPTY&#62;
+&#60;!ATTLIST TimeOut second CDATA #REQUIRED&#62;
+
+&#60;!ELEMENT Debug EMPTY&#62;
+
+&#60;!ELEMENT Description (#PCDATA)&#62;</PRE
+></DIV
+></DIV
+><DIV
+CLASS="APPENDIX"
+><HR><H1
+><A
+NAME="IDL"
+></A
+>Appendix B. IDL (Interface Description Language)</H1
+><P
+>To create a remote executable program, you need to write an
+IDL file which describes the interfaces of each remote function. In
+this section, we explain IDL.</P
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="IDLFILEANDGENERATIONOFREMOTEEXECUTABLEPROGRAMS"
+>IDL file and generation of remote executable programs</A
+></H2
+><P
+>We define a remote executable module in the IDL file. The
+stub generation program (<B
+CLASS="COMMAND"
+>omrpc-gen</B
+>) from the IDL
+file description creates a remote executable program which
+communications with the remote executable module. A command
+(<B
+CLASS="COMMAND"
+>omrpc-cc</B
+>) is a driver that generates the remote
+executable program and , also serves as link to library. </P
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="EXAMPLE"
+>Example</A
+></H2
+><P
+>We show an example as follows.</P
+><PRE
+CLASS="PROGRAMLISTING"
+>Module mat_mult;
+
+Define dmmul(mode_in int n, mode_in double A[n][n],
+        mode_in double B[n][n],
+        mode_out double C[n][n])
+{
+    double t;
+    int i,j,k;
+    for (i=0;i&#60;n;i++){
+        for (j=0;j&#60;n;j++){
+            t = 0;
+            for (k=0;k&#60;n;k++){
+                t += A[i*n + k] * B[k*n+j];     /* inner product */
+            }
+            C[i*n+j] = t;
+        }
+    }
+}</PRE
+><P
+>The module statement defines the module name. The
+functions inside this module are described by the "Define" statement
+The definitions of the arguments are similar to those in C language,
+but some differences exist, as follows.</P
+><P
+></P
+><UL
+><LI
+><P
+>You can specify whether a variable is input
+(<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>mode_in</I
+></SPAN
+> or <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>IN</I
+></SPAN
+>) or output
+(<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>mode_out</I
+></SPAN
+> or <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>OUT</I
+></SPAN
+>). </P
+></LI
+><LI
+><P
+> For an array, you can specify its size with an input parameter. </P
+></LI
+><LI
+><P
+> It is impossible to use the return value of the function itself. </P
+></LI
+></UL
+><P
+>After the Define statement, you can describe any program
+in C language inside of brace ({...}). Argument names can be used as
+the arguments in C language without modification.</P
+><P
+>You can call a library function, like the example,
+below. </P
+><PRE
+CLASS="PROGRAMLISTING"
+>Define dmmul(mode_in int n, mode_in double A[n][n],
+        mode_in double B[n][n],
+        mode_out double C[n][n])
+Calls "C" mmul(n,A,B,C);
+ </PRE
+><P
+>This above example calls "<CODE
+CLASS="FUNCTION"
+>mmul</CODE
+>"
+function, which writes in C language. </P
+><P
+>And, you can define multiple functions inside the module's
+definition file. These descriptions should be in the remote executable
+program.</P
+><P
+>At the time of this writing, fundamental data types and
+their arrays are supported. We are going to support structure data
+types in a future release. </P
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="IDLDETALS"
+>Details of IDL</A
+></H2
+><P
+>A description of IDL includes some elements.</P
+><P
+></P
+><UL
+><LI
+><P
+> Module statement</P
+></LI
+><LI
+><P
+> Define statement</P
+></LI
+><LI
+><P
+> Globals statement</P
+></LI
+><LI
+><P
+> FORTRAN format statement</P
+></LI
+></UL
+><P
+>In the explanation below, we define the identifier as
+names which consist of alphanumeric characters with start with the
+element followed by an underscore ('_').</P
+><DIV
+CLASS="SECT2"
+><HR><H3
+CLASS="SECT2"
+><A
+NAME="MODULESTATEMENT"
+>Module statement</A
+></H3
+><P
+>We define the module's name.</P
+><PRE
+CLASS="SCREEN"
+>Module <CODE
+CLASS="PARAMETER"
+>module_name</CODE
+>;
+        </PRE
+><P
+><CODE
+CLASS="PARAMETER"
+>module_name</CODE
+> is the identifier of
+the module. You should define the module name first in IDL
+file.</P
+></DIV
+><DIV
+CLASS="SECT2"
+><HR><H3
+CLASS="SECT2"
+><A
+NAME="DEFINESTATEMENT"
+>Define statement</A
+></H3
+><P
+>We define an interface of a function which called from
+the remote program.</P
+><PRE
+CLASS="SCREEN"
+>Define <CODE
+CLASS="PARAMETER"
+>function_name</CODE
+> (<CODE
+CLASS="PARAMETER"
+>parameter1,parameter2,...</CODE
+>) 
+<CODE
+CLASS="PARAMETER"
+>"...description..."</CODE
+>
+<CODE
+CLASS="PARAMETER"
+>interface_body</CODE
+>
+        </PRE
+><P
+>Function name is "<CODE
+CLASS="PARAMETER"
+>function_name</CODE
+>."
+We describe this parameter as follows. </P
+><PRE
+CLASS="SCREEN"
+><CODE
+CLASS="PARAMETER"
+> mode  type_specifier  parameter_name</CODE
+>
+        </PRE
+><P
+>Mode specifies whether an argument is input or
+output. If the argument is input, you write
+"<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>mode_in</I
+></SPAN
+>" or "<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>IN</I
+></SPAN
+>." If the
+argument is output, you should write "<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>mode_out</I
+></SPAN
+>"
+or "<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>OUT</I
+></SPAN
+>." And, if you want to allocate temporary
+data, you can specify "<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>work</I
+></SPAN
+>." the
+"<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>type_specifier</I
+></SPAN
+>" supports the names of the
+fundamental data type in C language, "<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>string</I
+></SPAN
+>," which
+stands for string, "<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>filename</I
+></SPAN
+> which stands for
+file specifyed filename and "<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>filepointer</I
+></SPAN
+>" which
+stands for filepointer. </P
+><P
+>You can specify arguments of an array in C
+language.</P
+><PRE
+CLASS="SCREEN"
+> <CODE
+CLASS="PARAMETER"
+>mode  type_specifier  parameter_name[size]...</CODE
+>
+        </PRE
+><P
+>Arguments of a multi-dimensional array are enclosed in
+brackets ([...]) for each dimension, as in C language.</P
+><P
+>You can describe the upper limit, bottom limit and
+stride of a transferred array area. </P
+><PRE
+CLASS="SCREEN"
+><CODE
+CLASS="PARAMETER"
+> mode  type_specifier  parameter_name[size:low,high,stride]...</CODE
+>
+        </PRE
+><P
+>Between the body information about the function is
+described in a string.</P
+><P
+>In the body, you need to conform to C language.</P
+><PRE
+CLASS="SCREEN"
+><CODE
+CLASS="PARAMETER"
+>Define function_name (...) { in manner of C language }</CODE
+>
+        </PRE
+><P
+>In the description of a function of C , arguments are
+accessed as a parameter variable.</P
+><P
+>And, if you call a function which is linked, you write
+the function call after the Call directive.</P
+><PRE
+CLASS="SCREEN"
+><CODE
+CLASS="PARAMETER"
+>Define function_name (...) Calls foo(...);</CODE
+>
+        </PRE
+></DIV
+><DIV
+CLASS="SECT2"
+><HR><H3
+CLASS="SECT2"
+><A
+NAME="GLOBALSTATEMENT"
+>Globals statement</A
+></H3
+><P
+>You can describe in programs written in C language the
+functions and data which are to be used in an entire module. For
+example, you can describe a necessary function definition when you
+define the definition of the function in C language. And, you can
+describe variables which are shared in functions and multiple
+functions.</P
+><PRE
+CLASS="SCREEN"
+>Globals { <CODE
+CLASS="OPTION"
+>... any programs</CODE
+> }
+        </PRE
+></DIV
+><DIV
+CLASS="SECT2"
+><HR><H3
+CLASS="SECT2"
+><A
+NAME="FORTRANFORMATSTATEMENT"
+>Fortranformat statement</A
+></H3
+><P
+>This specifies the rule of function mangling when
+function link to FORTRAN program.</P
+></DIV
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="DIFFERENCESFROMNINFIDL"
+>Differences from Ninf IDL</A
+></H2
+><P
+>OmniRPC's IDL description is based on Ninf's
+IDL. However, there are some differences.</P
+><P
+></P
+><UL
+><LI
+><P
+>Ninf creates a remote executable program for each
+definition of a function. OmniRPC creates a remote executable program
+for the entire module. </P
+></LI
+><LI
+><P
+> In OmniRPC, variables which are defined in a Global
+statement are shared in a function inside the module. </P
+></LI
+><LI
+><P
+> Ninf dose not have "Required" specifications which
+specify the link to a library for a function. </P
+></LI
+><LI
+><P
+> As of now, OmniRPC's IDL cannot define remote
+functions for MPI. </P
+></LI
+></UL
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="IDLGRAMMAR"
+>IDL grammar</A
+></H2
+><P
+>We show the informal definitions of IDL grammar as
+follows.</P
+><P
+></P
+><UL
+><LI
+><P
+>  '...' indicates a literal.</P
+></LI
+><LI
+><P
+> IDENTIFIER is an identifier, CONSTANT is a constant. </P
+></LI
+><LI
+><P
+>  STRING is one or more character inside double quotation marks("..."). OPT_STRING is a STRING which can be omitted.</P
+></LI
+><LI
+><P
+> {..}* stands iteration which not less than 0. </P
+></LI
+><LI
+><P
+> C_PROGRAM stands for any program in C.</P
+></LI
+><LI
+><P
+> type_specifier are fundamental data types of C,
+string, filename which stands for file and filepointer which stands
+for FILE pointer. </P
+></LI
+></UL
+><PRE
+CLASS="PROGRAMLISTING"
+>program := {declaration}*
+
+declaration:=
+          'Module' IDENTIFIER ';'
+	| 'Define' interface_definition OPT_STRING interface_body
+        | 'Globals' '{' C_PROGRAM '}'
+        | 'Fortranformat' STRING ';'
+	;
+
+interface_definition:=
+  	  IDENTIFIER '(' parameter {',' parameter}* ')'
+	;
+
+parameter:= decl_specifier declarator ;
+
+decl_specifier: 
+	type_specifier
+	| MODE
+	| MODE type_specifier
+	| type_specifier MODE
+	| type_specifier MODE type_specifier
+	;
+
+MODE := 'mode_in' | 'IN' | 'mode_out' | 'OUT';
+
+declarator=:
+	  IDENTIFIER
+	| '(' declarator ')'
+	| declarator '['expr_or_null ']'
+	| declarator '['expr_or_null ':' range_spec ']'
+	| '*' declarator
+	;
+
+range_spec=:
+  	  expr
+	| expr ',' expr
+	| expr ',' expr ',' expr
+	;
+
+interface_body:
+	'{' C_PROGRAM '}'
+	| CALLS OPT_STRING IDENTIFIER '(' IDENTIFIER {',' IDEFINTIER}* ')' ';'
+	;
+
+expr_or_null:= 	expr | /* null */;
+
+expr:=	  primary_expr
+	| '*' expr	/* pointer reference */ 
+	| '-' expr	/* unary minus */
+	| expr '/' expr
+	| expr '%' expr
+	| expr '+' expr
+	| expr '-' expr
+	| expr '*' expr
+	| expr '^' expr
+	| expr RELOP expr
+        | expr '?' expr ':' expr
+	;
+
+primary_expr:=
+	 primary_expr '[' expr ']'
+	| IDENTIFIER
+	| CONSTANT
+	| '('  expr  ')'
+	;</PRE
+></DIV
+></DIV
+><DIV
+CLASS="APPENDIX"
+><HR><H1
+><A
+NAME="COMMANDREFERENCE"
+></A
+>Appendix C.  Command Reference</H1
+><DIV
+CLASS="SECT1"
+><H2
+CLASS="SECT1"
+><A
+NAME="AEN1032"
+>Command Reference</A
+></H2
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="#OMRPC-REGISTER"
+>omrpc-register</A
+>&nbsp;--&nbsp;Operations about OmniRPC's registry.</DT
+><DT
+><A
+HREF="#OMRPC-CC"
+>omrpc-cc</A
+>&nbsp;--&nbsp;Compile driver for OmniRPC program.</DT
+><DT
+><A
+HREF="#OMRPC-FC"
+>omrpc-fc</A
+>&nbsp;--&nbsp;FORTRAN Compile driver for OmniRPC program.</DT
+><DT
+><A
+HREF="#OMRPC-GEN"
+>omrpc-register</A
+>&nbsp;--&nbsp;A program to generate OmniRPC's stub.</DT
+></DL
+></DIV
+><H1
+><A
+NAME="OMRPC-REGISTER"
+></A
+>omrpc-register</H1
+><DIV
+CLASS="REFNAMEDIV"
+><A
+NAME="AEN1038"
+></A
+><H2
+>Name</H2
+>omrpc-register&nbsp;--&nbsp;Operations about OmniRPC's registry.</DIV
+><DIV
+CLASS="REFSYNOPSISDIV"
+><A
+NAME="AEN1041"
+></A
+><H2
+>Synopsis</H2
+><P
+><B
+CLASS="COMMAND"
+>omrpc-register</B
+>  [-path <TT
+CLASS="REPLACEABLE"
+><I
+>reg_path</I
+></TT
+>] [-show | -help | -clear |                  [-register | -remove]
+            <TT
+CLASS="REPLACEABLE"
+><I
+>rex_prog</I
+></TT
+>]</P
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN1055"
+></A
+><H2
+>Description</H2
+><P
+>Adds registry of remote executable programs, and removes
+them from the registry. Shows the current registry.</P
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN1058"
+></A
+><H2
+>Options</H2
+><P
+></P
+><DIV
+CLASS="VARIABLELIST"
+><DL
+><DT
+>-path reg_path</DT
+><DD
+><P
+>Specifies path to the registry. The default
+registry path is "$HOME/.omrpc-registry".</P
+></DD
+><DT
+>-show</DT
+><DD
+><P
+> Shows information about the current registry.</P
+></DD
+><DT
+>-clear</DT
+><DD
+><P
+>Removes all information about current registry.</P
+></DD
+><DT
+>-register <CODE
+CLASS="PARAMETER"
+>rex_prog</CODE
+></DT
+><DD
+><P
+> Registers the remote executable program
+<CODE
+CLASS="PARAMETER"
+>rex_prog</CODE
+> on remote host.</P
+></DD
+><DT
+>-remove <CODE
+CLASS="PARAMETER"
+>rex_prog</CODE
+></DT
+><DD
+><P
+>Removes the remote executable program
+<CODE
+CLASS="PARAMETER"
+>rex_prog</CODE
+> from the registry.</P
+></DD
+><DT
+>-help</DT
+><DD
+><P
+>Displays help and exits.</P
+></DD
+></DL
+></DIV
+></DIV
+><H1
+><A
+NAME="OMRPC-CC"
+></A
+>omrpc-cc</H1
+><DIV
+CLASS="REFNAMEDIV"
+><A
+NAME="AEN1093"
+></A
+><H2
+>Name</H2
+>omrpc-cc&nbsp;--&nbsp;Compile driver for OmniRPC program.</DIV
+><DIV
+CLASS="REFSYNOPSISDIV"
+><A
+NAME="AEN1096"
+></A
+><H2
+>Synopsis</H2
+><P
+><B
+CLASS="COMMAND"
+>omrpc-cc</B
+>  [options] [<TT
+CLASS="REPLACEABLE"
+><I
+>file.idl</I
+></TT
+>] [<TT
+CLASS="REPLACEABLE"
+><I
+>file.c ...</I
+></TT
+>]</P
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN1104"
+></A
+><H2
+>Description</H2
+><P
+>The compile driver for the OmniRPC program. Links to 
+necessary OmniRPC library. And, if the IDL file is in the arguments,
+creates remote executable program which corresponds to  it.</P
+><P
+> When you create client program, the command is used
+like a C compiler.  For example:</P
+><PRE
+CLASS="SCREEN"
+><SAMP
+CLASS="PROMPT"
+>%</SAMP
+> <B
+CLASS="COMMAND"
+>omrpc-cc</B
+> <KBD
+CLASS="USERINPUT"
+>-o foo foo.c goo.o</KBD
+>
+        </PRE
+><P
+>Like a C compiler, this compiles
+<TT
+CLASS="FILENAME"
+>foo.c</TT
+>, and links to <TT
+CLASS="FILENAME"
+>goo.o</TT
+>,
+then the executable file foo is created. During this time, this
+command automatically sets the library and include file, which are 
+necessary for OmniRPC. Additionally, if "<CODE
+CLASS="OPTION"
+>-o</CODE
+>" is not
+specified,  like a C compiler, the object file is
+"<TT
+CLASS="FILENAME"
+>a.out</TT
+>." </P
+><P
+>If the IDL file  has an ".idl" extension in the argument
+file, this command generates the OmniRPC remote executable program
+from this file.  This program name takes on the extension ".rex", for
+instance, </P
+><PRE
+CLASS="SCREEN"
+><SAMP
+CLASS="PROMPT"
+>%</SAMP
+> <B
+CLASS="COMMAND"
+>omrpc-cc</B
+> <KBD
+CLASS="USERINPUT"
+>bar.idl goo.o</KBD
+>
+        </PRE
+><P
+>In this case, bar.rex is generated from bar.idl, and
+goo.o is the library linked to a remote execution program.</P
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN1123"
+></A
+><H2
+>Options</H2
+><P
+></P
+><DIV
+CLASS="VARIABLELIST"
+><DL
+><DT
+>-c</DT
+><DD
+><P
+> Compiles and generates the object file, but not the link.</P
+></DD
+><DT
+>-o</DT
+><DD
+><P
+>Specifies object files.</P
+></DD
+><DT
+>-l<CODE
+CLASS="OPTION"
+>lib_dir</CODE
+></DT
+><DD
+><P
+>Specifies the path to the library's directory.</P
+></DD
+><DT
+>-show</DT
+><DD
+><P
+>Shows the command which should be
+executed. Execution is not carried out.</P
+></DD
+><DT
+>-echo</DT
+><DD
+><P
+>Shows the command which should be executed.</P
+></DD
+><DT
+>-liner <CODE
+CLASS="OPTION"
+>link_command</CODE
+></DT
+><DD
+><P
+>Specifies the command to the link. If this option
+is omitted, the default command is <B
+CLASS="COMMAND"
+>cc</B
+>, which is a
+driver of the C compiler. For example, if you use Fortran, you can
+specify <B
+CLASS="COMMAND"
+>f77</B
+> as a linker.</P
+></DD
+></DL
+></DIV
+></DIV
+><H1
+><A
+NAME="OMRPC-FC"
+></A
+>omrpc-fc</H1
+><DIV
+CLASS="REFNAMEDIV"
+><A
+NAME="AEN1158"
+></A
+><H2
+>Name</H2
+>omrpc-fc&nbsp;--&nbsp;FORTRAN Compile driver for OmniRPC program.</DIV
+><DIV
+CLASS="REFSYNOPSISDIV"
+><A
+NAME="AEN1161"
+></A
+><H2
+>Synopsis</H2
+><P
+><B
+CLASS="COMMAND"
+>omrpc-fc</B
+>  [options] [<TT
+CLASS="REPLACEABLE"
+><I
+>file.idl</I
+></TT
+>] [<TT
+CLASS="REPLACEABLE"
+><I
+>file.f ...</I
+></TT
+>]</P
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN1169"
+></A
+><H2
+>Description</H2
+><P
+>The compile driver for the OmniRPC program. Links to 
+necessary OmniRPC library. And, if the IDL file is in the arguments,
+creates remote executable program which corresponds to  it.</P
+><P
+> When you create client program, the command is used
+like a FORTRAN compiler.  For example:</P
+><PRE
+CLASS="SCREEN"
+><SAMP
+CLASS="PROMPT"
+>%</SAMP
+> <B
+CLASS="COMMAND"
+>omrpc-fc</B
+> <KBD
+CLASS="USERINPUT"
+>-o foo foo.f goo.o</KBD
+>
+        </PRE
+><P
+>Like a FORTRAN compiler, this compiles
+<TT
+CLASS="FILENAME"
+>foo.f</TT
+>, and links to <TT
+CLASS="FILENAME"
+>goo.o</TT
+>,
+then the executable file foo is created. During this time, this
+command automatically sets the library and include file, which are 
+necessary for OmniRPC. Additionally, if "<CODE
+CLASS="OPTION"
+>-o</CODE
+>" is not
+specified,  like a FORTRAN compiler, the object file is
+"<TT
+CLASS="FILENAME"
+>a.out</TT
+>." </P
+><P
+>If the IDL file  has an ".idl" extension in the argument
+file, this command generates the OmniRPC remote executable program
+from this file.  This program name takes on the extension ".rex", for
+instance, </P
+><PRE
+CLASS="SCREEN"
+><SAMP
+CLASS="PROMPT"
+>%</SAMP
+> <B
+CLASS="COMMAND"
+>omrpc-fc</B
+> <KBD
+CLASS="USERINPUT"
+>bar.idl goo.o</KBD
+>
+        </PRE
+><P
+>In this case, bar.rex is generated from bar.idl, and
+goo.o is the library linked to a remote execution program.</P
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN1188"
+></A
+><H2
+>Options</H2
+><P
+></P
+><DIV
+CLASS="VARIABLELIST"
+><DL
+><DT
+>-c</DT
+><DD
+><P
+> Compiles and generates the object file, but not the link.</P
+></DD
+><DT
+>-o</DT
+><DD
+><P
+>Specifies object files.</P
+></DD
+><DT
+>-l<CODE
+CLASS="OPTION"
+>lib_dir</CODE
+></DT
+><DD
+><P
+>Specifies the path to the library's directory.</P
+></DD
+><DT
+>-show</DT
+><DD
+><P
+>Shows the command which should be
+executed. Execution is not carried out.</P
+></DD
+><DT
+>-echo</DT
+><DD
+><P
+>Shows the command which should be executed.</P
+></DD
+><DT
+>-liner <CODE
+CLASS="OPTION"
+>link_command</CODE
+></DT
+><DD
+><P
+>Specifies the command to the link. If this option
+is omitted, the default command is <B
+CLASS="COMMAND"
+>cc</B
+>, which is a
+driver of the C compiler. For example, if you use Fortran, you can
+specify <B
+CLASS="COMMAND"
+>f77</B
+> as a linker.</P
+></DD
+><DT
+>-fc <CODE
+CLASS="OPTION"
+>fortran_compiler</CODE
+></DT
+><DD
+><P
+>If you want to use another compiler, use the "-fc"
+option (default FORTRAN compiler is g77). </P
+></DD
+></DL
+></DIV
+></DIV
+><H1
+><A
+NAME="OMRPC-GEN"
+></A
+>omrpc-register</H1
+><DIV
+CLASS="REFNAMEDIV"
+><A
+NAME="AEN1228"
+></A
+><H2
+>Name</H2
+>omrpc-gen&nbsp;--&nbsp;A program to generate OmniRPC's stub.</DIV
+><DIV
+CLASS="REFSYNOPSISDIV"
+><A
+NAME="AEN1231"
+></A
+><H2
+>Synopsis</H2
+><P
+><B
+CLASS="COMMAND"
+>omrpc-gen</B
+>  [<TT
+CLASS="REPLACEABLE"
+><I
+>file.idl</I
+></TT
+>] [<TT
+CLASS="REPLACEABLE"
+><I
+>file.c</I
+></TT
+>]</P
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN1238"
+></A
+><H2
+>Description</H2
+><P
+>Generates the stub program <CODE
+CLASS="OPTION"
+>file.c</CODE
+> (in C
+language) from the IDL file <CODE
+CLASS="OPTION"
+>file.idl</CODE
+>. If the IDL file
+is omitted, the input is from <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>STDIN</I
+></SPAN
+>.  If the stub
+program argument is omitted, the output is
+<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>STDOUT</I
+></SPAN
+>. Usually IDL files uses the file extension
+".idl". The source file of stub program use the extension
+".rex.c". The remote executable program which is compiled from the
+stub program, use the extension ".rex".</P
+><P
+>This program usually call from the OmniRPC's compile driver, so you
+can use it directly. If you compile the stub source program directly,
+you should specify the include directory, which is below  the install
+directory, as the include path. And when you create the remote
+executable program, you should link the library for the stub
+(libomrpc_stub.a and libomrpc_io.a). If you install OmniRPC at the
+INSTALL_DIR, you should compile in the way shown below.</P
+><PRE
+CLASS="SCREEN"
+><SAMP
+CLASS="PROMPT"
+>%</SAMP
+>cc -o foo.rex -IINSTALL_DIR/include foo.rex.c
+    ... -LINSTALL_DIR/lib -lomrpc_stub.a -lomrpc_io
+        </PRE
+></DIV
+></DIV
+></DIV
+><DIV
+CLASS="APPENDIX"
+><HR><H1
+><A
+NAME="OMNIRPCAPI"
+></A
+>Appendix D. OmniRPC API index</H1
+><DIV
+CLASS="SECT1"
+><H2
+CLASS="SECT1"
+><A
+NAME="OMNIRPCCAPI"
+>OmniRPC C API</A
+></H2
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="#OMNIRPCINIT"
+>OmniRpcInit</A
+>&nbsp;--&nbsp; Initialization of OmniRPC system  </DT
+><DT
+><A
+HREF="#OMNIRPCFINALIZE"
+>OmniRpcFinalize</A
+>&nbsp;--&nbsp;Finalize OmniRPC system</DT
+><DT
+><A
+HREF="#OMNIRPCCALL"
+>OmniRpcCall</A
+>&nbsp;--&nbsp;Synchronous call of remote function</DT
+><DT
+><A
+HREF="#OMNIRPCCALLASYNC"
+>OmniRpcCallAsync</A
+>&nbsp;--&nbsp;Asynchronous call of remote function</DT
+><DT
+><A
+HREF="#OMNIRPCWAIT"
+>OmniRpcWait</A
+>&nbsp;--&nbsp;Wait for asynchronous call</DT
+><DT
+><A
+HREF="#OMNIRPCPROBE"
+>OmniRpcProbe</A
+>&nbsp;--&nbsp;Probing asynchronous function call</DT
+><DT
+><A
+HREF="#OMNIRPCWAITALL"
+>OmniRpcWaitAll</A
+>&nbsp;--&nbsp;Wait of multiple asynchronous calls</DT
+><DT
+><A
+HREF="#OMNIRPCWAITANY"
+>OmniRpcWaitAny</A
+>&nbsp;--&nbsp;Wait of multiple asynchronous function calls</DT
+><DT
+><A
+HREF="#OMNIRPCCREATEHANDLE"
+>OmniRpcCreateHandle</A
+>&nbsp;--&nbsp;Invocation of remote executable program</DT
+><DT
+><A
+HREF="#OMNIRPCCALLBYHANDLE"
+>OmniRpcCallByHandle</A
+>&nbsp;--&nbsp;Synchronous function call with OmniRpcHandle</DT
+><DT
+><A
+HREF="#OMNIRPCCALLASYNCBYHANDLE"
+>OmniRpcCallAsyncByHandle</A
+>&nbsp;--&nbsp;Asynchronous call of function with OmniRpcHandle</DT
+><DT
+><A
+HREF="#OMNIRPCDESTROYHANDLE"
+>OmniRpcDestroyHandle</A
+>&nbsp;--&nbsp;Termination of remote executable program by OmniRpcHandle</DT
+><DT
+><A
+HREF="#OMNIRPCMODULEINIT"
+>OmniRpcModuleInit</A
+>&nbsp;--&nbsp;Setting of module initialization</DT
+><DT
+><A
+HREF="#OMNIRPCEXECINIT"
+>OmniRpcExecInit</A
+>&nbsp;--&nbsp;Initialization for direct invocation of remote
+executable program</DT
+><DT
+><A
+HREF="#OMNIRPCEXECFINALIZE"
+>OmniRpcExecFinalize</A
+>&nbsp;--&nbsp;Termination of OmniRPC system for direct
+invocation of remote executable program</DT
+><DT
+><A
+HREF="#OMNIRPCEXECONHOST"
+>OmniRpcExecOnHost</A
+>&nbsp;--&nbsp;Direct invocation of remote executable program</DT
+><DT
+><A
+HREF="#OMNIRPCEXECCALL"
+>OmniRpcExecCall</A
+>&nbsp;--&nbsp;Synchronous call by OmniRpcExecHandle</DT
+><DT
+><A
+HREF="#OMNIRPCEXECTERMINATE"
+>OmniRpcExecTerminate</A
+>&nbsp;--&nbsp;Termination of remote executable program by
+OmniRpcExecHandle</DT
+></DL
+></DIV
+><H1
+><A
+NAME="OMNIRPCINIT"
+></A
+>OmniRpcInit</H1
+><DIV
+CLASS="REFNAMEDIV"
+><A
+NAME="AEN1256"
+></A
+><H2
+>Name</H2
+>OmniRpcInit&nbsp;--&nbsp; Initialization of OmniRPC system  </DIV
+><DIV
+CLASS="REFSYNOPSISDIV"
+><A
+NAME="AEN1259"
+></A
+><H2
+>Synopsis</H2
+><DIV
+CLASS="FUNCSYNOPSIS"
+><P
+></P
+><A
+NAME="AEN1260"
+></A
+><PRE
+CLASS="FUNCSYNOPSISINFO"
+>#include &lt;OmniRpc.h&gt;</PRE
+><P
+><CODE
+><CODE
+CLASS="FUNCDEF"
+>void OmniRpcInit</CODE
+>(int *argc, char **argv[]);</CODE
+></P
+><P
+></P
+></DIV
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN1269"
+></A
+><H2
+>Description</H2
+><P
+>Initializes OmniRPC System. Sets
+<CODE
+CLASS="PARAMETER"
+>argc</CODE
+> by the <CODE
+CLASS="PARAMETER"
+>argc</CODE
+>
+pointer of the main function, sets argv by the argv pointer of
+it. This should be called before processing the argument
+information. In initialization, it uses the hostfile which is
+specified in the command line "--hostfile" or the hostfile on
+"$HOME/.omrpc-registry/hosts.xml" if not specified. It reads the
+hostfile and executes omrpc-agent on the host which are used. And, it
+reads registry information about the remote executable programs which
+are registered on the each host. </P
+></DIV
+><H1
+><A
+NAME="OMNIRPCFINALIZE"
+></A
+>OmniRpcFinalize</H1
+><DIV
+CLASS="REFNAMEDIV"
+><A
+NAME="AEN1278"
+></A
+><H2
+>Name</H2
+>OmniRpcInit&nbsp;--&nbsp;Finalize OmniRPC system</DIV
+><DIV
+CLASS="REFSYNOPSISDIV"
+><A
+NAME="AEN1281"
+></A
+><H2
+>Synopsis</H2
+><DIV
+CLASS="FUNCSYNOPSIS"
+><P
+></P
+><A
+NAME="AEN1282"
+></A
+><PRE
+CLASS="FUNCSYNOPSISINFO"
+>#include &lt;OmniRpc.h&gt;</PRE
+><P
+><CODE
+><CODE
+CLASS="FUNCDEF"
+>void OmniRpcFinalize</CODE
+>(void);</CODE
+></P
+><P
+></P
+></DIV
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN1288"
+></A
+><H2
+>Description</H2
+><P
+>Finalize OmniRPC system. Terminate all remote executable
+programs and agents. </P
+></DIV
+><H1
+><A
+NAME="OMNIRPCCALL"
+></A
+>OmniRpcCall</H1
+><DIV
+CLASS="REFNAMEDIV"
+><A
+NAME="AEN1295"
+></A
+><H2
+>Name</H2
+>OmniRpcCall&nbsp;--&nbsp;Synchronous call of remote function</DIV
+><DIV
+CLASS="REFSYNOPSISDIV"
+><A
+NAME="AEN1298"
+></A
+><H2
+>Synopsis</H2
+><DIV
+CLASS="FUNCSYNOPSIS"
+><P
+></P
+><A
+NAME="AEN1299"
+></A
+><PRE
+CLASS="FUNCSYNOPSISINFO"
+>#include &lt;OmniRpc.h&gt;</PRE
+><P
+><CODE
+><CODE
+CLASS="FUNCDEF"
+> int OmniRpcCall</CODE
+>(const char *entry_name, ...);</CODE
+></P
+><P
+></P
+></DIV
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN1307"
+></A
+><H2
+>Description</H2
+><P
+>Calls a remote function which is specified by
+<CODE
+CLASS="PARAMETER"
+>entry_name</CODE
+>. It blocks the caller thread until
+the end of the function call.</P
+><P
+>It searches for the function name from modules which are
+registered on the one of remote hosts which are described in the
+hostfile, and calls the function on the appropriate remote host. If
+the function name is not found, it returns OMRPC_ERROR. If it ends
+normally, it returns OMRPC_OK. </P
+></DIV
+><H1
+><A
+NAME="OMNIRPCCALLASYNC"
+></A
+>OmniRpcCallAsync</H1
+><DIV
+CLASS="REFNAMEDIV"
+><A
+NAME="AEN1316"
+></A
+><H2
+>Name</H2
+>OmniRpcCallAsync&nbsp;--&nbsp;Asynchronous call of remote function</DIV
+><DIV
+CLASS="REFSYNOPSISDIV"
+><A
+NAME="AEN1319"
+></A
+><H2
+>Synopsis</H2
+><DIV
+CLASS="FUNCSYNOPSIS"
+><P
+></P
+><A
+NAME="AEN1320"
+></A
+><PRE
+CLASS="FUNCSYNOPSISINFO"
+>#include &lt;OmniRpc.h&gt;</PRE
+><P
+><CODE
+><CODE
+CLASS="FUNCDEF"
+>OmniRpcRequest OmniRpcRequest</CODE
+>(const char *entry_name, ...);</CODE
+></P
+><P
+></P
+></DIV
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN1328"
+></A
+><H2
+>Description</H2
+><P
+>Requests to call a remote function which is specified by
+<CODE
+CLASS="PARAMETER"
+>entry_name</CODE
+>, and returns the data structure (OmniRpcRequest) for the
+request. It blocks the caller thread. </P
+><P
+> It search for a function name from the modules which
+are registered on the remote hosts, which are described in the
+hostfile, and calls the function on the appropriate remote host. If
+the function name is not found, it returns NULL.</P
+></DIV
+><H1
+><A
+NAME="OMNIRPCWAIT"
+></A
+>OmniRpcWait</H1
+><DIV
+CLASS="REFNAMEDIV"
+><A
+NAME="AEN1337"
+></A
+><H2
+>Name</H2
+>OmniRpcWait&nbsp;--&nbsp;Wait for asynchronous call</DIV
+><DIV
+CLASS="REFSYNOPSISDIV"
+><A
+NAME="AEN1340"
+></A
+><H2
+>Synopsis</H2
+><DIV
+CLASS="FUNCSYNOPSIS"
+><P
+></P
+><A
+NAME="AEN1341"
+></A
+><PRE
+CLASS="FUNCSYNOPSISINFO"
+>#include &lt;OmniRpc.h&gt;</PRE
+><P
+><CODE
+><CODE
+CLASS="FUNCDEF"
+> void OmniRpcWait</CODE
+>(OmniRpcRequestreq);</CODE
+></P
+><P
+></P
+></DIV
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN1348"
+></A
+><H2
+>Description</H2
+><P
+>It blocks the caller thread until the end of an
+asynchronous call for the call request of
+<CODE
+CLASS="PARAMETER"
+>req</CODE
+>.</P
+></DIV
+><H1
+><A
+NAME="OMNIRPCPROBE"
+></A
+>OmniRpcProbe</H1
+><DIV
+CLASS="REFNAMEDIV"
+><A
+NAME="AEN1356"
+></A
+><H2
+>Name</H2
+>OmniRpcProbe&nbsp;--&nbsp;Probing asynchronous function call</DIV
+><DIV
+CLASS="REFSYNOPSISDIV"
+><A
+NAME="AEN1359"
+></A
+><H2
+>Synopsis</H2
+><DIV
+CLASS="FUNCSYNOPSIS"
+><P
+></P
+><A
+NAME="AEN1360"
+></A
+><PRE
+CLASS="FUNCSYNOPSISINFO"
+>#include &lt;OmniRpc.h&gt;</PRE
+><P
+><CODE
+><CODE
+CLASS="FUNCDEF"
+>int OmniRpcProbe</CODE
+>(OmniRpcRequestreq);</CODE
+></P
+><P
+></P
+></DIV
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN1367"
+></A
+><H2
+>Description</H2
+><P
+>Probes whether or not an asynchronous function call
+which associated to the call request of <CODE
+CLASS="PARAMETER"
+>req</CODE
+>
+finishes. If it does not finish, it returns 0. If it finishes, it
+returns 1.</P
+></DIV
+><H1
+><A
+NAME="OMNIRPCWAITALL"
+></A
+>OmniRpcWaitAll</H1
+><DIV
+CLASS="REFNAMEDIV"
+><A
+NAME="AEN1375"
+></A
+><H2
+>Name</H2
+>OmniRpcWaitAll&nbsp;--&nbsp;Wait of multiple asynchronous calls</DIV
+><DIV
+CLASS="REFSYNOPSISDIV"
+><A
+NAME="AEN1378"
+></A
+><H2
+>Synopsis</H2
+><DIV
+CLASS="FUNCSYNOPSIS"
+><P
+></P
+><A
+NAME="AEN1379"
+></A
+><PRE
+CLASS="FUNCSYNOPSISINFO"
+>#include &lt;OmniRpc.h&gt;</PRE
+><P
+><CODE
+><CODE
+CLASS="FUNCDEF"
+>voidOmniRpcWaitAll</CODE
+>(intn, OmniRpcRequestreqs[]);</CODE
+></P
+><P
+></P
+></DIV
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN1388"
+></A
+><H2
+>Description</H2
+><P
+>It blocks caller threads until the end of all
+asynchronous function calls which correspond to
+<CODE
+CLASS="PARAMETER"
+>n</CODE
+> call requests of
+<CODE
+CLASS="PARAMETER"
+>reqs</CODE
+>. The call requests are stored in an array
+of OmniRpcRequest.</P
+></DIV
+><H1
+><A
+NAME="OMNIRPCWAITANY"
+></A
+>OmniRpcWaitAny</H1
+><DIV
+CLASS="REFNAMEDIV"
+><A
+NAME="AEN1397"
+></A
+><H2
+>Name</H2
+>OmniRpcWaitAny&nbsp;--&nbsp;Wait of multiple asynchronous function calls</DIV
+><DIV
+CLASS="REFSYNOPSISDIV"
+><A
+NAME="AEN1400"
+></A
+><H2
+>Synopsis</H2
+><DIV
+CLASS="FUNCSYNOPSIS"
+><P
+></P
+><A
+NAME="AEN1401"
+></A
+><PRE
+CLASS="FUNCSYNOPSISINFO"
+>#include &lt;OmniRpc.h&gt;</PRE
+><P
+><CODE
+><CODE
+CLASS="FUNCDEF"
+>intOmniRpcWaitAny</CODE
+>(intn, OmniRpcRequestreqs[]);</CODE
+></P
+><P
+></P
+></DIV
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN1410"
+></A
+><H2
+>Description</H2
+><P
+>It blocks caller threads until the end of one
+asynchronous function call which corresponds to
+<CODE
+CLASS="PARAMETER"
+>n</CODE
+> call requests of 
+<CODE
+CLASS="PARAMETER"
+>req</CODE
+>, which are stored in an array of
+OmniRpcRequest. It returns the positions of finished call requests in
+the array. The finished call request elements on the array are set
+with NULL.</P
+></DIV
+><H1
+><A
+NAME="OMNIRPCCREATEHANDLE"
+></A
+>OmniRpcCreateHandle</H1
+><DIV
+CLASS="REFNAMEDIV"
+><A
+NAME="AEN1419"
+></A
+><H2
+>Name</H2
+>OmniRpcCreateHandle&nbsp;--&nbsp;Invocation of remote executable program</DIV
+><DIV
+CLASS="REFSYNOPSISDIV"
+><A
+NAME="AEN1422"
+></A
+><H2
+>Synopsis</H2
+><DIV
+CLASS="FUNCSYNOPSIS"
+><P
+></P
+><A
+NAME="AEN1423"
+></A
+><PRE
+CLASS="FUNCSYNOPSISINFO"
+>#include &lt;OmniRpc.h&gt;</PRE
+><P
+><CODE
+><CODE
+CLASS="FUNCDEF"
+>OmniRpcHandle OmniRpcCreateHandle</CODE
+>(const char *hostname, const char *module_name);</CODE
+></P
+><P
+></P
+></DIV
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN1432"
+></A
+><H2
+>Description</H2
+><P
+> Executes the remote executable program of the module
+which is specified by <CODE
+CLASS="PARAMETER"
+>module_name</CODE
+>, and that is
+on the remote host which is specified by
+<CODE
+CLASS="PARAMETER"
+>hostname</CODE
+>.  It returns handle corresponding to
+it. By using this, it calls functions on running remote executable
+programs with OmniRpcCallByHandle. If <CODE
+CLASS="PARAMETER"
+>hostname</CODE
+>
+is NULL, it selects the appropriate host in registered modules, and
+execute remote executable program of module. If host name or module
+are incorrect, it returns NULL.</P
+></DIV
+><H1
+><A
+NAME="OMNIRPCCALLBYHANDLE"
+></A
+>OmniRpcCallByHandle</H1
+><DIV
+CLASS="REFNAMEDIV"
+><A
+NAME="AEN1442"
+></A
+><H2
+>Name</H2
+>OmniRpcCallByHandle&nbsp;--&nbsp;Synchronous function call with OmniRpcHandle</DIV
+><DIV
+CLASS="REFSYNOPSISDIV"
+><A
+NAME="AEN1445"
+></A
+><H2
+>Synopsis</H2
+><DIV
+CLASS="FUNCSYNOPSIS"
+><P
+></P
+><A
+NAME="AEN1446"
+></A
+><PRE
+CLASS="FUNCSYNOPSISINFO"
+>#include &lt;OmniRpc.h&gt;</PRE
+><P
+><CODE
+><CODE
+CLASS="FUNCDEF"
+>int OmniRpcCallByHandle</CODE
+>(OmniRpcHandlehandle, char *entry_name, ...);</CODE
+></P
+><P
+></P
+></DIV
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN1456"
+></A
+><H2
+>Description</H2
+><P
+>Calls function on running remote executable program
+corresponding to the <CODE
+CLASS="PARAMETER"
+>handle</CODE
+> by
+OmniRpcCreateHandle. It blocks the caller thread until the end of the
+function call. If the function does not exist, it returns NULL.</P
+></DIV
+><H1
+><A
+NAME="OMNIRPCCALLASYNCBYHANDLE"
+></A
+>OmniRpcCallAsyncByHandle</H1
+><DIV
+CLASS="REFNAMEDIV"
+><A
+NAME="AEN1464"
+></A
+><H2
+>Name</H2
+>OmniRpcCallAsyncByHandle&nbsp;--&nbsp;Asynchronous call of function with OmniRpcHandle</DIV
+><DIV
+CLASS="REFSYNOPSISDIV"
+><A
+NAME="AEN1467"
+></A
+><H2
+>Synopsis</H2
+><DIV
+CLASS="FUNCSYNOPSIS"
+><P
+></P
+><A
+NAME="AEN1468"
+></A
+><PRE
+CLASS="FUNCSYNOPSISINFO"
+>#include &lt;OmniRpc.h&gt;</PRE
+><P
+><CODE
+><CODE
+CLASS="FUNCDEF"
+>OmniRpcRequest OmniRpcCallAsyncByHandle</CODE
+>(OmniRpcHandlehandle, char *entry_name, ...);</CODE
+></P
+><P
+></P
+></DIV
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN1478"
+></A
+><H2
+>Description</H2
+><P
+>Calls function on running executable program
+corresponding to the <CODE
+CLASS="PARAMETER"
+>handle</CODE
+> created by
+OmniRpcCreateHandle. It calls a function and returns the
+OmniRpcRequest which is associated with it. It probes the end of the
+function and blocks control by OmniRpcWait, OmniRpcProbe,
+OmniRpcWaitAll and OmniRpcWaitAny APIs.</P
+></DIV
+><H1
+><A
+NAME="OMNIRPCDESTROYHANDLE"
+></A
+>OmniRpcDestroyHandle</H1
+><DIV
+CLASS="REFNAMEDIV"
+><A
+NAME="AEN1486"
+></A
+><H2
+>Name</H2
+>OmniRpcDestroyHandle&nbsp;--&nbsp;Termination of remote executable program by OmniRpcHandle</DIV
+><DIV
+CLASS="REFSYNOPSISDIV"
+><A
+NAME="AEN1489"
+></A
+><H2
+>Synopsis</H2
+><DIV
+CLASS="FUNCSYNOPSIS"
+><P
+></P
+><A
+NAME="AEN1490"
+></A
+><PRE
+CLASS="FUNCSYNOPSISINFO"
+>#include &lt;OmniRpc.h&gt;</PRE
+><P
+><CODE
+><CODE
+CLASS="FUNCDEF"
+>void OmniRpcDestroyHandle</CODE
+>(OmniRpcHandlehandle);</CODE
+></P
+><P
+></P
+></DIV
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN1497"
+></A
+><H2
+>Description</H2
+><P
+>Terminates running remote executable program
+corresponding to the <CODE
+CLASS="PARAMETER"
+>handle</CODE
+> which is created by
+OmniRpcCreateHandle.</P
+></DIV
+><H1
+><A
+NAME="OMNIRPCMODULEINIT"
+></A
+>OmniRpcModuleInit</H1
+><DIV
+CLASS="REFNAMEDIV"
+><A
+NAME="AEN1505"
+></A
+><H2
+>Name</H2
+>OmniRpcModuleInit&nbsp;--&nbsp;Setting of module initialization</DIV
+><DIV
+CLASS="REFSYNOPSISDIV"
+><A
+NAME="AEN1508"
+></A
+><H2
+>Synopsis</H2
+><DIV
+CLASS="FUNCSYNOPSIS"
+><P
+></P
+><A
+NAME="AEN1509"
+></A
+><PRE
+CLASS="FUNCSYNOPSISINFO"
+>#include &lt;OmniRpc.h&gt;</PRE
+><P
+><CODE
+><CODE
+CLASS="FUNCDEF"
+>intOmniRpcModuleInit</CODE
+>(const char *module_name, ...);</CODE
+></P
+><P
+></P
+></DIV
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN1517"
+></A
+><H2
+>Description</H2
+><P
+>Sets arguments for initialization of the module named
+<CODE
+CLASS="PARAMETER"
+>module_name</CODE
+>. The "Initialize" function is
+required in the modules of remote executable programs. When the remote
+executable programs of modules are executed, it calls the "Initialize"
+function with sets the arguments. This API only sets the arguments;
+the actual initialization occurs when the remote executable program is executed.</P
+></DIV
+><H1
+><A
+NAME="OMNIRPCEXECINIT"
+></A
+>OmniRpcExecInit</H1
+><DIV
+CLASS="REFNAMEDIV"
+><A
+NAME="AEN1525"
+></A
+><H2
+>Name</H2
+>OmniRpcExecInit&nbsp;--&nbsp;Initialization for direct invocation of remote
+executable program</DIV
+><DIV
+CLASS="REFSYNOPSISDIV"
+><A
+NAME="AEN1528"
+></A
+><H2
+>Synopsis</H2
+><DIV
+CLASS="FUNCSYNOPSIS"
+><P
+></P
+><A
+NAME="AEN1529"
+></A
+><PRE
+CLASS="FUNCSYNOPSISINFO"
+>#include &lt;OmniRpc.h&gt;</PRE
+><P
+><CODE
+><CODE
+CLASS="FUNCDEF"
+>voidOmniRpcExecInit</CODE
+>(int *argc, char **argv[]);</CODE
+></P
+><P
+></P
+></DIV
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN1538"
+></A
+><H2
+>Description</H2
+><P
+>Initializes OmniRPC system for direct invocation of a
+remote executable program. You should set <CODE
+CLASS="PARAMETER"
+>argc</CODE
+>
+by the <CODE
+CLASS="PARAMETER"
+>argc</CODE
+> pointer of the main function, and
+sets argv by the argv pointer of it. You call this API in the main
+function of program before processing argument information. As in
+OmniRpcInit, the agent is not executed.</P
+><P
+>In the command option, if you specify "--globus", it
+uses GRAM, or, if you specify "--ssh", it uses ssh to invoke the
+remote executable program directly. It uses rsh by default. </P
+></DIV
+><H1
+><A
+NAME="OMNIRPCEXECFINALIZE"
+></A
+>OmniRpcExecFinalize</H1
+><DIV
+CLASS="REFNAMEDIV"
+><A
+NAME="AEN1548"
+></A
+><H2
+>Name</H2
+>OmniRpcExecFinalize&nbsp;--&nbsp;Termination of OmniRPC system for direct
+invocation of remote executable program</DIV
+><DIV
+CLASS="REFSYNOPSISDIV"
+><A
+NAME="AEN1551"
+></A
+><H2
+>Synopsis</H2
+><DIV
+CLASS="FUNCSYNOPSIS"
+><P
+></P
+><A
+NAME="AEN1552"
+></A
+><PRE
+CLASS="FUNCSYNOPSISINFO"
+>#include &lt;OmniRpc.h&gt;</PRE
+><P
+><CODE
+><CODE
+CLASS="FUNCDEF"
+>void OmniRpcExecFinalize</CODE
+>(void);</CODE
+></P
+><P
+></P
+></DIV
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN1558"
+></A
+><H2
+>Description</H2
+><P
+>Finalizes of OmniRPC system. Terminates all remote
+executable programs.</P
+></DIV
+><H1
+><A
+NAME="OMNIRPCEXECONHOST"
+></A
+>OmniRpcExecOnHost</H1
+><DIV
+CLASS="REFNAMEDIV"
+><A
+NAME="AEN1565"
+></A
+><H2
+>Name</H2
+>OmniRpcExecOnHost&nbsp;--&nbsp;Direct invocation of remote executable program</DIV
+><DIV
+CLASS="REFSYNOPSISDIV"
+><A
+NAME="AEN1568"
+></A
+><H2
+>Synopsis</H2
+><DIV
+CLASS="FUNCSYNOPSIS"
+><P
+></P
+><A
+NAME="AEN1569"
+></A
+><PRE
+CLASS="FUNCSYNOPSISINFO"
+>#include &lt;OmniRpc.h&gt;</PRE
+><P
+><CODE
+><CODE
+CLASS="FUNCDEF"
+>OmniRpcExecHandleOmniRpcExecOnHost</CODE
+>(char *host_name, char *prog_name);</CODE
+></P
+><P
+></P
+></DIV
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN1578"
+></A
+><H2
+>Description</H2
+><P
+>Invokes remote executable program <CODE
+CLASS="PARAMETER"
+>prog_name</CODE
+> on the
+remote host which is specified <CODE
+CLASS="PARAMETER"
+>host_name</CODE
+>, and returns the
+corresponding handle. Specify prog_name with path on remote
+host. Using this with OmniRpcExecCall, it is possible to call
+functions on running remote executable programs. You should initialize
+with OmniRpcExecInit API if you use this function. If the host name or
+module name is incorrect, it returns NULL.</P
+></DIV
+><H1
+><A
+NAME="OMNIRPCEXECCALL"
+></A
+>OmniRpcExecCall</H1
+><DIV
+CLASS="REFNAMEDIV"
+><A
+NAME="AEN1587"
+></A
+><H2
+>Name</H2
+>OmniRpcExecCall&nbsp;--&nbsp;Synchronous call by OmniRpcExecHandle</DIV
+><DIV
+CLASS="REFSYNOPSISDIV"
+><A
+NAME="AEN1590"
+></A
+><H2
+>Synopsis</H2
+><DIV
+CLASS="FUNCSYNOPSIS"
+><P
+></P
+><A
+NAME="AEN1591"
+></A
+><PRE
+CLASS="FUNCSYNOPSISINFO"
+>#include &lt;OmniRpc.h&gt;</PRE
+><P
+><CODE
+><CODE
+CLASS="FUNCDEF"
+>int OmniRpcExecCall</CODE
+>(OmniRpcHandlehandle, const char *func_name, ...);</CODE
+></P
+><P
+></P
+></DIV
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN1601"
+></A
+><H2
+>Description</H2
+><P
+>Calls a function of the running remote executable
+program corresponding to the <CODE
+CLASS="PARAMETER"
+>handle</CODE
+> created by OmniRpcExecOnHost. It
+blocks the called thread until the end of the function. If the remote
+executable program does not have a function, it returns NULL.</P
+></DIV
+><H1
+><A
+NAME="OMNIRPCEXECTERMINATE"
+></A
+>OmniRpcExecTerminate</H1
+><DIV
+CLASS="REFNAMEDIV"
+><A
+NAME="AEN1609"
+></A
+><H2
+>Name</H2
+>OmniRpcExecTerminate&nbsp;--&nbsp;Termination of remote executable program by
+OmniRpcExecHandle</DIV
+><DIV
+CLASS="REFSYNOPSISDIV"
+><A
+NAME="AEN1612"
+></A
+><H2
+>Synopsis</H2
+><DIV
+CLASS="FUNCSYNOPSIS"
+><P
+></P
+><A
+NAME="AEN1613"
+></A
+><PRE
+CLASS="FUNCSYNOPSISINFO"
+>#include &lt;OmniRpc.h&gt;</PRE
+><P
+><CODE
+><CODE
+CLASS="FUNCDEF"
+>voidOmniRpcExecTerminate</CODE
+>(OmniRpcHandlehandle);</CODE
+></P
+><P
+></P
+></DIV
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN1620"
+></A
+><H2
+>Description</H2
+><P
+>Terminates the running remote executable program
+corresponding to the <CODE
+CLASS="PARAMETER"
+>handle</CODE
+> created by
+OmniRpcExecOnHost.</P
+></DIV
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="OMNIRPCFORTRANAPI"
+>OmniRPC FORTRAN API</A
+></H2
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="#OMNIRPC-INIT"
+>OMNIRPC_INIT</A
+>&nbsp;--&nbsp; Initialization of OmniRPC system  </DT
+><DT
+><A
+HREF="#OMNIRPC-FINALIZE"
+>OMNIRPC_FINALIZE</A
+>&nbsp;--&nbsp;Finalizing OmniRPC system</DT
+><DT
+><A
+HREF="#OMNIRPC-CALL"
+>OMNIRPC_CALL</A
+>&nbsp;--&nbsp;Synchronous call of remote function</DT
+><DT
+><A
+HREF="#OMNIRPC-CALL-ASYNC"
+>OMNIRPC_CALL_ASYNC</A
+>&nbsp;--&nbsp;Asynchronous call of remote function</DT
+><DT
+><A
+HREF="#OMNIRPC-WAIT"
+>OMNIRPC_WAIT</A
+>&nbsp;--&nbsp;Wait for asynchronous call</DT
+><DT
+><A
+HREF="#OMNIRPC-PROBE"
+>OMNIRPC_PROBE</A
+>&nbsp;--&nbsp;Probing asynchronous function call</DT
+><DT
+><A
+HREF="#OMNIRPC-WAIT-ALL"
+>OMNIRPC_WAIT_ALL</A
+>&nbsp;--&nbsp;Wait of multiple asynchronous calls</DT
+><DT
+><A
+HREF="#OMNIRPC-WAIT-ANY"
+>OMNIRPC_WAIT_ANY</A
+>&nbsp;--&nbsp;Wait of multiple asynchronous function calls</DT
+><DT
+><A
+HREF="#OMNIRPC-CREATE-HANDLE"
+>OMNIRPC_CREATE_HANDLE</A
+>&nbsp;--&nbsp;Execution of remote executable program</DT
+><DT
+><A
+HREF="#OMNIRPC-CALL-BY-HANDLE"
+>OMNIRPC_CALL_BY_HANDLE</A
+>&nbsp;--&nbsp;Synchronous function call with OmniRpcHandle</DT
+><DT
+><A
+HREF="#OMNIRPC-CALL-ASYNC-BY-HANDLE"
+>OMNIRPC_CALL_ASYNC_BY_HANDLE</A
+>&nbsp;--&nbsp;Asynchronous call of function with OmniRpcHandle</DT
+><DT
+><A
+HREF="#OMNIRPC-DESTROY-HANDLE"
+>OMNIRPC_DESTROY_HANDLE</A
+>&nbsp;--&nbsp;Termination of remote executable program by OmniRpcHandle</DT
+><DT
+><A
+HREF="#OMNIRPC-MODULE-INIT"
+>OMNIRPC_MODULE_INIT</A
+>&nbsp;--&nbsp;Setting for module initialization</DT
+></DL
+></DIV
+><P
+>All APIs are wrapper subroutines of OmniRPC.</P
+><H1
+><A
+NAME="OMNIRPC-INIT"
+></A
+>OMNIRPC_INIT</H1
+><DIV
+CLASS="REFNAMEDIV"
+><A
+NAME="AEN1631"
+></A
+><H2
+>Name</H2
+>OMNIRPC_INIT&nbsp;--&nbsp; Initialization of OmniRPC system  </DIV
+><DIV
+CLASS="REFSYNOPSISDIV"
+><A
+NAME="AEN1634"
+></A
+><H2
+>Synopsis</H2
+><DIV
+CLASS="FUNCSYNOPSIS"
+><P
+></P
+><A
+NAME="AEN1635"
+></A
+><P
+><CODE
+><CODE
+CLASS="FUNCDEF"
+>callOMNIRPC_INIT</CODE
+>(void);</CODE
+></P
+><P
+></P
+></DIV
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN1640"
+></A
+><H2
+>Description</H2
+><P
+> Initializes the OmniRPC system.</P
+></DIV
+><H1
+><A
+NAME="OMNIRPC-FINALIZE"
+></A
+>OMNIRPC_FINALIZE</H1
+><DIV
+CLASS="REFNAMEDIV"
+><A
+NAME="AEN1647"
+></A
+><H2
+>Name</H2
+>OMNIRPC_FINALIZE&nbsp;--&nbsp;Finalizing OmniRPC system</DIV
+><DIV
+CLASS="REFSYNOPSISDIV"
+><A
+NAME="AEN1650"
+></A
+><H2
+>Synopsis</H2
+><DIV
+CLASS="FUNCSYNOPSIS"
+><P
+></P
+><A
+NAME="AEN1651"
+></A
+><P
+><CODE
+><CODE
+CLASS="FUNCDEF"
+>call OMNIRPC_FINALIZE</CODE
+>(void);</CODE
+></P
+><P
+></P
+></DIV
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN1656"
+></A
+><H2
+>Description</H2
+><P
+>Finalizes the OmniRPC system. Terminates all remote
+executable programs and agents.</P
+></DIV
+><H1
+><A
+NAME="OMNIRPC-CALL"
+></A
+>OMNIRPC_CALL</H1
+><DIV
+CLASS="REFNAMEDIV"
+><A
+NAME="AEN1663"
+></A
+><H2
+>Name</H2
+>OMNIRPC_CALL&nbsp;--&nbsp;Synchronous call of remote function</DIV
+><DIV
+CLASS="REFSYNOPSISDIV"
+><A
+NAME="AEN1666"
+></A
+><H2
+>Synopsis</H2
+><PRE
+CLASS="PROGRAMLISTING"
+>character*(*) entry_name
+          </PRE
+><DIV
+CLASS="FUNCSYNOPSIS"
+><P
+></P
+><A
+NAME="AEN1668"
+></A
+><P
+><CODE
+><CODE
+CLASS="FUNCDEF"
+>call OMNIRPC_CALL</CODE
+>(entry_name);</CODE
+></P
+><P
+></P
+></DIV
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN1674"
+></A
+><H2
+>Description</H2
+><P
+>Calls a remote function which is specified by
+entry_name. It blocks the caller thread until the end of the function
+call. entry_name is a string to which "*" is added.</P
+><P
+>It searches for the function name from modules which are
+registered on the remote hosts described in the hostfile, and calls
+the function on the appropriate remote host. </P
+></DIV
+><H1
+><A
+NAME="OMNIRPC-CALL-ASYNC"
+></A
+>OMNIRPC_CALL_ASYNC</H1
+><DIV
+CLASS="REFNAMEDIV"
+><A
+NAME="AEN1682"
+></A
+><H2
+>Name</H2
+>OMNIRPC_CALL_ASYNC&nbsp;--&nbsp;Asynchronous call of remote function</DIV
+><DIV
+CLASS="REFSYNOPSISDIV"
+><A
+NAME="AEN1685"
+></A
+><H2
+>Synopsis</H2
+><PRE
+CLASS="PROGRAMLISTING"
+>character*(*) entry_name
+integer ireq
+          </PRE
+><DIV
+CLASS="FUNCSYNOPSIS"
+><P
+></P
+><A
+NAME="AEN1687"
+></A
+><P
+><CODE
+><CODE
+CLASS="FUNCDEF"
+>call OMNIRPC_CALL_ASYNC</CODE
+>(ireq, entry_name, ...);</CODE
+></P
+><P
+></P
+></DIV
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN1696"
+></A
+><H2
+>Description</H2
+><P
+>Makes a request to call the remote function which is
+specified entry_name, and returns the ID of req for the
+request. entry_name is a string which is a combination of the function
+name and '*' character. It blocks the caller thread. It probes the end
+of the function and blocks control by using OMNIRPC_WAIT,
+OMNIRPC_PROBE, OMNIRPC_WAIT_ALL, OMNIRPC_WAIT_ANY API, all of which
+are possible whether the function ends or not.</P
+><P
+>Searches for the function name from modules registered
+on remote hosts, which are described in the hostfile, and calls
+function on the appropriate remote host. If the function name is not
+be found, it sets req to 0. </P
+></DIV
+><H1
+><A
+NAME="OMNIRPC-WAIT"
+></A
+>OMNIRPC_WAIT</H1
+><DIV
+CLASS="REFNAMEDIV"
+><A
+NAME="AEN1704"
+></A
+><H2
+>Name</H2
+>OMNIRPC_WAIT&nbsp;--&nbsp;Wait for asynchronous call</DIV
+><DIV
+CLASS="REFSYNOPSISDIV"
+><A
+NAME="AEN1707"
+></A
+><H2
+>Synopsis</H2
+><PRE
+CLASS="PROGRAMLISTING"
+>integer ireq
+          </PRE
+><DIV
+CLASS="FUNCSYNOPSIS"
+><P
+></P
+><A
+NAME="AEN1709"
+></A
+><P
+><CODE
+><CODE
+CLASS="FUNCDEF"
+>call OMNIRPC_WAIT</CODE
+>(ireq);</CODE
+></P
+><P
+></P
+></DIV
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN1715"
+></A
+><H2
+>Description</H2
+><P
+>It blocks the caller thread until the end of an
+asynchronous call for the call request of ireq.</P
+></DIV
+><H1
+><A
+NAME="OMNIRPC-PROBE"
+></A
+>OMNIRPC_PROBE</H1
+><DIV
+CLASS="REFNAMEDIV"
+><A
+NAME="AEN1722"
+></A
+><H2
+>Name</H2
+>OMNIRPC_PROBE&nbsp;--&nbsp;Probing asynchronous function call</DIV
+><DIV
+CLASS="REFSYNOPSISDIV"
+><A
+NAME="AEN1725"
+></A
+><H2
+>Synopsis</H2
+><PRE
+CLASS="PROGRAMLISTING"
+>integer ireq, istatus
+          </PRE
+><DIV
+CLASS="FUNCSYNOPSIS"
+><P
+></P
+><A
+NAME="AEN1727"
+></A
+><P
+><CODE
+><CODE
+CLASS="FUNCDEF"
+>call OMNIRPC_PROBE</CODE
+>(ireq, istatus);</CODE
+></P
+><P
+></P
+></DIV
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN1735"
+></A
+><H2
+>Description</H2
+><P
+>Probes whether or not an asynchronous function call
+which is associated with call the request of ireq finishes. If it does
+not finish, it sets istatus as 1. If it finishes, it sets istatus as
+0.</P
+></DIV
+><H1
+><A
+NAME="OMNIRPC-WAIT-ALL"
+></A
+>OMNIRPC_WAIT_ALL</H1
+><DIV
+CLASS="REFNAMEDIV"
+><A
+NAME="AEN1742"
+></A
+><H2
+>Name</H2
+> OMNIRPC_WAIT_ALL&nbsp;--&nbsp;Wait of multiple asynchronous calls</DIV
+><DIV
+CLASS="REFSYNOPSISDIV"
+><A
+NAME="AEN1745"
+></A
+><H2
+>Synopsis</H2
+><PRE
+CLASS="PROGRAMLISTING"
+>integer nreq, ireqs(*)
+          </PRE
+><DIV
+CLASS="FUNCSYNOPSIS"
+><P
+></P
+><A
+NAME="AEN1747"
+></A
+><P
+><CODE
+><CODE
+CLASS="FUNCDEF"
+>call  OMNIRPC_WAIT_ALL</CODE
+>(nreq, ireqs);</CODE
+></P
+><P
+></P
+></DIV
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN1755"
+></A
+><H2
+>Description</H2
+><P
+>It blocks caller threads until the end of all
+asynchronous function calls corresponding to nreq. Calls requests of
+req which are stored in an array of ireqs.</P
+></DIV
+><H1
+><A
+NAME="OMNIRPC-WAIT-ANY"
+></A
+>OMNIRPC_WAIT_ANY</H1
+><DIV
+CLASS="REFNAMEDIV"
+><A
+NAME="AEN1762"
+></A
+><H2
+>Name</H2
+>OMNIRPC_WAIT_ANY&nbsp;--&nbsp;Wait of multiple asynchronous function calls</DIV
+><DIV
+CLASS="REFSYNOPSISDIV"
+><A
+NAME="AEN1765"
+></A
+><H2
+>Synopsis</H2
+><PRE
+CLASS="PROGRAMLISTING"
+>integer nreq, ireqs(*), iret
+          </PRE
+><DIV
+CLASS="FUNCSYNOPSIS"
+><P
+></P
+><A
+NAME="AEN1767"
+></A
+><P
+><CODE
+><CODE
+CLASS="FUNCDEF"
+>call OMNIRPC_WAIT_ANY</CODE
+>(nreq, ireqs, iret);</CODE
+></P
+><P
+></P
+></DIV
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN1777"
+></A
+><H2
+>Description</H2
+><P
+>It blocks caller threads until the end of one
+asynchronous function call corresponding to nreq call requests of
+ireq, which are stored in an array of OmniRpcRequest. As a return
+value, it sets iret to the position of the finished call requests in
+the array. Finished call request elements in the array is set as
+0.</P
+></DIV
+><H1
+><A
+NAME="OMNIRPC-CREATE-HANDLE"
+></A
+>OMNIRPC_CREATE_HANDLE</H1
+><DIV
+CLASS="REFNAMEDIV"
+><A
+NAME="AEN1784"
+></A
+><H2
+>Name</H2
+>OMNIRPC_CREATE_HANDLE&nbsp;--&nbsp;Execution of remote executable program</DIV
+><DIV
+CLASS="REFSYNOPSISDIV"
+><A
+NAME="AEN1787"
+></A
+><H2
+>Synopsis</H2
+><PRE
+CLASS="PROGRAMLISTING"
+>integer ihandle
+character*(*) host_name, module_name
+          </PRE
+><DIV
+CLASS="FUNCSYNOPSIS"
+><P
+></P
+><A
+NAME="AEN1789"
+></A
+><P
+><CODE
+><CODE
+CLASS="FUNCDEF"
+>call OMNIRPC_CREATE_HANDLE</CODE
+>(ihandle, host_name, module_name);</CODE
+></P
+><P
+></P
+></DIV
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN1799"
+></A
+><H2
+>Description</H2
+><P
+> Executes the remote executable program of the module
+specified as module_name, on the remote host specified as
+host_name. It returns the corresponding ihandle. It calls functions on
+running remote executable programs with OmniRpcCallByHandle. The
+host_name and module_name have "*" attached to the hostname which is
+used or to the module. If the host_name has a "*", it selects the
+appropriate host fro the registered modules, and executes the remote
+executable program of the module. If the host name or module is
+incorrect, it sets ihandle as 0.</P
+></DIV
+><H1
+><A
+NAME="OMNIRPC-CALL-BY-HANDLE"
+></A
+>OMNIRPC_CALL_BY_HANDLE</H1
+><DIV
+CLASS="REFNAMEDIV"
+><A
+NAME="AEN1806"
+></A
+><H2
+>Name</H2
+> OMNIRPC_CALL_BY_HANDLE&nbsp;--&nbsp;Synchronous function call with OmniRpcHandle</DIV
+><DIV
+CLASS="REFSYNOPSISDIV"
+><A
+NAME="AEN1809"
+></A
+><H2
+>Synopsis</H2
+><PRE
+CLASS="PROGRAMLISTING"
+>integer ihandle
+character*(*) entry_name
+          </PRE
+><DIV
+CLASS="FUNCSYNOPSIS"
+><P
+></P
+><A
+NAME="AEN1811"
+></A
+><P
+><CODE
+><CODE
+CLASS="FUNCDEF"
+>call  OMNIRPC_CALL_BY_HANDLE</CODE
+>(ihandle, entry_name, ...);</CODE
+></P
+><P
+></P
+></DIV
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN1820"
+></A
+><H2
+>Description</H2
+><P
+>Calls entry_name function on the running remote
+executable program corresponding to the ihandle created by
+OmniRpcCreateHandle. A "*" is added the the entry_name function
+name. It blocks the caller thread until the end of the function
+call.</P
+></DIV
+><H1
+><A
+NAME="OMNIRPC-CALL-ASYNC-BY-HANDLE"
+></A
+>OMNIRPC_CALL_ASYNC_BY_HANDLE</H1
+><DIV
+CLASS="REFNAMEDIV"
+><A
+NAME="AEN1827"
+></A
+><H2
+>Name</H2
+>OMNIRPC_CALL_ASYNC_BY_HANDLE&nbsp;--&nbsp;Asynchronous call of function with OmniRpcHandle</DIV
+><DIV
+CLASS="REFSYNOPSISDIV"
+><A
+NAME="AEN1830"
+></A
+><H2
+>Synopsis</H2
+><PRE
+CLASS="PROGRAMLISTING"
+>integer ireq,ihandle
+character*(*) entry_name
+          </PRE
+><DIV
+CLASS="FUNCSYNOPSIS"
+><P
+></P
+><A
+NAME="AEN1832"
+></A
+><P
+><CODE
+><CODE
+CLASS="FUNCDEF"
+>call OMNIRPC_CALL_ASYNC_BY_HANDLE</CODE
+>(ireq, ihandle, entry_name, ...);</CODE
+></P
+><P
+></P
+></DIV
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN1843"
+></A
+><H2
+>Description</H2
+><P
+>Calls the entry_name function on the running remote
+executable program corresponding to the ihandle created by
+OmniRpcCreateHandle. entry_name is a string which combines the
+function name and the "*" character. Probes the end of the function
+and blocks control by using OMNIRPC_WAIT, OMNIRPC_PROBE,
+OMNIRPC_WAIT_ALL, OMNIRPC_WAIT_ANY API, all of which are possible
+whether the function end or not.</P
+></DIV
+><H1
+><A
+NAME="OMNIRPC-DESTROY-HANDLE"
+></A
+>OMNIRPC_DESTROY_HANDLE</H1
+><DIV
+CLASS="REFNAMEDIV"
+><A
+NAME="AEN1850"
+></A
+><H2
+>Name</H2
+>OMNIRPC_DESTROY_HANDLE&nbsp;--&nbsp;Termination of remote executable program by OmniRpcHandle</DIV
+><DIV
+CLASS="REFSYNOPSISDIV"
+><A
+NAME="AEN1853"
+></A
+><H2
+>Synopsis</H2
+><PRE
+CLASS="PROGRAMLISTING"
+>integer ihandle
+          </PRE
+><DIV
+CLASS="FUNCSYNOPSIS"
+><P
+></P
+><A
+NAME="AEN1855"
+></A
+><P
+><CODE
+><CODE
+CLASS="FUNCDEF"
+>call OMNIRPC_DESTROY_HANDLE</CODE
+>(ihandle);</CODE
+></P
+><P
+></P
+></DIV
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN1861"
+></A
+><H2
+>Description</H2
+><P
+>Terminates running remote executable program
+corresponding to the ihandle which is created by
+OmniRpcCreateHandle.</P
+></DIV
+><H1
+><A
+NAME="OMNIRPC-MODULE-INIT"
+></A
+>OMNIRPC_MODULE_INIT</H1
+><DIV
+CLASS="REFNAMEDIV"
+><A
+NAME="AEN1868"
+></A
+><H2
+>Name</H2
+>OMNIRPC_MODULE_INIT&nbsp;--&nbsp;Setting for module initialization</DIV
+><DIV
+CLASS="REFSYNOPSISDIV"
+><A
+NAME="AEN1871"
+></A
+><H2
+>Synopsis</H2
+><PRE
+CLASS="PROGRAMLISTING"
+>character*(*) module_name
+          </PRE
+><DIV
+CLASS="FUNCSYNOPSIS"
+><P
+></P
+><A
+NAME="AEN1873"
+></A
+><P
+><CODE
+><CODE
+CLASS="FUNCDEF"
+>call OMNIRPC_MODULE_INIT</CODE
+>(module_name, ...);</CODE
+></P
+><P
+></P
+></DIV
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN1880"
+></A
+><H2
+>Description</H2
+><P
+>Sets arguments for initialization of the module
+module_name. A "*" is added to module_name. The "Initialize" function
+must be required in the module of the remote executable program. When
+the remote executable programs of the modules are executed, it calls
+the "Initialize" function with set arguments. This API is only set;
+actual initialization occurs when the remote executable program is
+executed.</P
+></DIV
+></DIV
+></DIV
+><DIV
+CLASS="APPENDIX"
+><HR><H1
+><A
+NAME="FAQ"
+></A
+>Appendix E. FAQ</H1
+><DIV
+CLASS="QANDASET"
+><DL
+><DT
+>Q: <A
+HREF="#AEN1887"
+> Hostname of the client host cannot be accessed.</A
+></DT
+><DT
+>Q: <A
+HREF="#AEN1903"
+> Our cluster does not support <B
+CLASS="COMMAND"
+>RSH</B
+>
+due to security reason.</A
+></DT
+><DT
+>Q: <A
+HREF="#AEN1918"
+> I use SSH both for agent invocation and for worker
+invocation when I want to use clusters. But An error has
+occured when invocation of workers.</A
+></DT
+><DT
+>Q: <A
+HREF="#AEN1925"
+> After I lunched the client program, client program
+exits with like bellow message.</A
+></DT
+></DL
+><DIV
+CLASS="QANDAENTRY"
+><DIV
+CLASS="QUESTION"
+><P
+><A
+NAME="AEN1887"
+></A
+><B
+>Q: </B
+> Hostname of the client host cannot be accessed.</P
+></DIV
+><DIV
+CLASS="ANSWER"
+><P
+><B
+>A: </B
+>In the OmniRPC system, after the agent's invocation,
+the program on the remote host requests access to the client
+host. Therefore, it is necessary for the remote host to know the
+hostname which can be accessed to the client host By default, the
+OmniRPC system uses the hostname through hostname commands. But, in
+some settings, there may exits a hostname which cannot be accessed
+from an outside network exists. You should set
+<CODE
+CLASS="ENVAR"
+>FQDN</CODE
+>(Full Qualified Domain Name) by the hostname
+command or environment variable <CODE
+CLASS="ENVAR"
+>OMRPC_HOSTNAME</CODE
+> as
+<CODE
+CLASS="ENVAR"
+>FDQN</CODE
+>. </P
+><PRE
+CLASS="SCREEN"
+>(csh or tcsh)
+<SAMP
+CLASS="PROMPT"
+>%</SAMP
+> <KBD
+CLASS="USERINPUT"
+>setenv OMRP_HOSTNAME  FQDN</KBD
+>  
+
+(bash)
+<SAMP
+CLASS="PROMPT"
+>$</SAMP
+> <KBD
+CLASS="USERINPUT"
+>export OMRP_HOSTNAME  FQDN </KBD
+>
+          </PRE
+><P
+>There is the same problem in the Globus Toolkit
+environment. In this case, set the environmental variable
+<CODE
+CLASS="ENVAR"
+>GLOBUS_HOSTNAME</CODE
+> to <CODE
+CLASS="ENVAR"
+>FQDN</CODE
+>. for more
+details, please see Globus information. </P
+></DIV
+></DIV
+><DIV
+CLASS="QANDAENTRY"
+><DIV
+CLASS="QUESTION"
+><P
+><A
+NAME="AEN1903"
+></A
+><B
+>Q: </B
+> Our cluster does not support <B
+CLASS="COMMAND"
+>RSH</B
+>
+due to security reason.</P
+></DIV
+><DIV
+CLASS="ANSWER"
+><P
+><B
+>A: </B
+> Usually cluster nodes accept <B
+CLASS="COMMAND"
+>RSH</B
+>,
+So, the agent can invoke the remote executable program on the cluster
+nodes. But in some situations, the cluster nodes restrict the use of
+<B
+CLASS="COMMAND"
+>RSH</B
+> and support <B
+CLASS="COMMAND"
+>SSH</B
+>. Therefore,
+you can use <B
+CLASS="COMMAND"
+>SSH</B
+> to invoke remote executable
+programs. You should write explicitly to use
+<B
+CLASS="COMMAND"
+>SSH</B
+>. You can change the cluster nodes file (which
+is introduced in  Use of a built-in round-robiin scheduler) as
+below.</P
+><PRE
+CLASS="SCREEN"
+>hpc1 ssh
+hpc2 ssh
+hpc3 ssh
+          </PRE
+><P
+>If <B
+CLASS="COMMAND"
+>ssh</B
+> is omitted in the above
+description, <B
+CLASS="COMMAND"
+>rsh</B
+> is used.</P
+></DIV
+></DIV
+><DIV
+CLASS="QANDAENTRY"
+><DIV
+CLASS="QUESTION"
+><P
+><A
+NAME="AEN1918"
+></A
+><B
+>Q: </B
+> I use SSH both for agent invocation and for worker
+invocation when I want to use clusters. But An error has
+occured when invocation of workers.</P
+></DIV
+><DIV
+CLASS="ANSWER"
+><P
+><B
+>A: </B
+>It seems that authentications between OmniRPC agent
+and worker program are failed. Because OmniRPC agent cannot use the
+ssh-agent's pass-phrase in which client program runs. As result,
+when OmniRPC agent uses ssh to invoke worker program in cluster nodes,
+authentication between agent and worker program is failed.
+
+Easy way to solve this issue is to add ssh option in
+"<TT
+CLASS="FILENAME"
+>.ssh/config</TT
+>" as follows.</P
+><PRE
+CLASS="SCREEN"
+>ForwardAgent yes
+          </PRE
+></DIV
+></DIV
+><DIV
+CLASS="QANDAENTRY"
+><DIV
+CLASS="QUESTION"
+><P
+><A
+NAME="AEN1925"
+></A
+><B
+>Q: </B
+> After I lunched the client program, client program
+exits with like bellow message.</P
+><PRE
+CLASS="SCREEN"
+>OMRPC_FATAL(localhost:./[programname]): omrpc_io_accept: time out
+          </PRE
+></DIV
+><DIV
+CLASS="ANSWER"
+><P
+><B
+>A: </B
+> Authentication phase sometimes takes more than 15
+seconds when client program invokes OmniRPC agent in remote nodes.
+OmniRPC's default timeout is 15 seconds. If you want increase this
+number, please set the TimeOut element in hostfile like bellow
+example.  </P
+><PRE
+CLASS="PROGRAMLISTING"
+>&#60;?xml version="1.0" ?&#62;
+&#60;OmniRpcConfig&#62;
+   &#60;Host name="jones.is.tsukuba.ac.jp"&#62;
+   &#60;TimeOut second="20"&#62;
+&#60;/OmniRpcConfig&#62;</PRE
+></DIV
+></DIV
+></DIV
+></DIV
+></DIV
+></BODY
+></HTML
+>

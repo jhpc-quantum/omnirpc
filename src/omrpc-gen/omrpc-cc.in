@@ -1,0 +1,196 @@
+#! /bin/sh
+#
+# Script to compile stub and link remote libray
+#  it is borrowed from mpicc in MPICH
+#
+CC="cc"
+CLINKER="cc"
+STUBGEN="@orgPrefix@/bin/omrpc-gen"
+CCOPT="-I@orgPrefix@/include"
+LINKOPT=
+STUB_LINKLIB="-L@orgPrefix@/lib -lomrpc_stub -lomrpc_io @GLOBUS_LIBS@ -lpthread"
+CLIENT_LINKLIB="-L@orgPrefix@/lib -lomrpc_client -lomrpc_io @GLOBUS_LIBS@ -lpthread"
+
+DoLink=1
+DoCompile=0
+DoStubGen=0
+Show=eval
+allargs=
+compileargs=
+linkargs=
+linkobjs=
+stubgenargs=
+targetargs=
+
+gettinglinkarg=0
+gettinglinkerarg=0
+HasDashC=0
+HasDashO=0
+verbose=0
+
+for arg in "$@" ; do
+#    echo procssing arg $arg
+    # Special processing for -o name
+    if [ $gettinglinkarg = 1 ] ; then
+	linkargs="$linkargs $arg"
+	outputfilename="$arg"
+	gettinglinkarg=0
+	continue
+    fi
+    if [ $gettinglinkerarg = 1 ] ; then
+	CLINKER = "$arg"
+	gettinglinkerarg=0
+    fi
+    case "$arg" in 
+	-linker)
+	    gettinglinkerarg=1
+	;;
+	-c)
+	# If -c is NOT specified, then we need to perform a link step.
+	allargs="$allargs $arg"
+	compileargs="$compileargs $arg"
+        # If -o was set, then we need to move the output file option
+        # to the compile line (note that this is non-standard, and should
+        # not be used in portable codes)
+        if [ $DoLink = 1 -a -n "$outputfilename" ] ; then
+	    compileargs="$compileargs -o $outputfilename"
+        fi
+	DoLink=0
+	HasDashC=1
+	;;
+        -o)
+	# Need to link
+	allargs="$allargs $arg"
+        if [ $HasDashC = 1 ] ; then
+            # Some BUT NOT ALL compilers support -o with -c.  Allow
+            # the user to make use of the feature, IF IT EXISTS.
+            compileargs="$compileargs $arg"	
+        else
+	    linkargs="$linkargs $arg"
+	    # Still need to add the target of the -o
+	    gettinglinkarg=1
+	    DoLink=1
+        fi
+	HasDashO=1
+	;;
+	-l*)
+	# This SHOULD be the -l<lib> argument.  Only for the linker
+	linkargs="$linkargs $arg"
+	allargs="$allargs $arg"
+	;;
+	
+	-E|-M)
+	# For compilers that support -E as a way to get at the C preprocessor
+	# Also, for compilers that support -M for creating dependencies
+	allargs="$allargs $arg"
+	compileargs="$compileargs $arg"
+	DoLink=0
+	;;
+
+	-echo)
+	set -x
+	;;
+	-show)
+	Show=echo
+	;;
+	-v)
+	verbose=1
+	compileargs="$compileargs -v"
+	linkargs="$linkargs -v"
+	;;
+	-help)
+	echo "This is a program to compile stub or link remote libraries"
+	echo "In addition, the following special options are supported"
+	echo "    -show      - Show the commands that would be used without"
+	echo "                 runnning them"
+	echo "    -help      - Give this help"
+	echo "    -echo      - Show exactly what this program is doing."
+	echo "                 This option should normally not be used."
+	echo "This should be used just like the usual C compiler"
+	echo "For example,"
+	echo "   $0 -c foo.idl "
+	echo "and"
+	echo "   $0 -o foo.rex foo.o"
+	echo "Combining compilation and linking in a single command"
+	echo "   $0 -o foo foo.c"
+	echo "may not work on some systems, and is not recommended."
+	exit 1
+	;;
+        *\"*) 
+	allargs="$allargs `echo $arg | sed 's/\"/\\\"/g'`"
+	compileargs="$compileargs `echo $arg | sed 's/\"/\\\"/g'`"
+	linkargs="$linkargs `echo $arg | sed 's/\"/\\\"/g'`"
+	;;
+        *) allargs="$allargs $arg"
+	if [ -s "$arg" ] ; then
+	    ext=`expr "$arg" : '.*\(\..*\)'`
+	    if [ "$ext" = ".c" ] ; then
+	        DoCompile=1
+	        compileargs="$compileargs $arg"
+	        fname=`basename $arg .c`
+	        linkobjs="$linkobjs $fname.o"
+	    elif [ "$ext" = ".o" ] ; then
+		if [ $HasDashC = 1 ] ; then
+	            compileargs="$compileargs $arg"
+                else
+	            DoLink=1
+	            linkobjs="$linkobjs $arg"
+                fi
+	    elif [ "$ext" = ".idl" ] ; then
+		if [ DoStubGen = 1 ]; then
+		       echo "More than two *.idl are found in arguments"
+		       exit 1
+		fi
+	        DoStubGen=1
+	        DoCompile=1
+	        fname=`basename $arg .idl`
+		stubgenargs="$arg $fname.rex.c"
+	        compileargs="$compileargs $fname.rex.c"
+	        linkobjs="$linkobjs $fname.rex.o"
+		targetargs="-o $fname.rex"
+	    else
+	        compileargs="$compileargs $arg"
+	        linkargs="$linkargs $arg"
+	    fi
+	else
+            compileargs="$compileargs $arg"
+	    linkargs="$linkargs $arg"
+	fi
+	;;
+    esac
+done
+#
+status=0
+if [ $DoStubGen = 1 ] ; then
+    $Show $STUBGEN $stubgenargs
+    status=$?
+    if [ $status != 0 ] ; then 
+	exit $status
+    fi
+fi
+#
+if [ $DoCompile = 1 ] ; then
+    if [ $HasDashC != 1 ] ; then
+        compileargs="-c $compileargs"
+    fi
+    $Show $CC $CCOPT $compileargs
+    status=$?
+    if [ $status != 0 ] ; then 
+	exit $status
+    fi
+fi
+#
+# 
+if [ $DoLink = 1 ] ; then
+    if [ $HasDashO != 1 ] ; then
+	linkargs="$linkargs $targetargs"
+    fi
+    if [ $DoStubGen == 1 ] ; then
+	$Show $CLINKER $LINKOPT $linkobjs $linkargs $STUB_LINKLIB
+    	status=$?
+    else
+	$Show $CLINKER $LINKOPT $linkobjs $linkargs $CLIENT_LINKLIB
+    	status=$?
+    fi
+fi
+exit $status

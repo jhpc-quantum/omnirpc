@@ -1,0 +1,42 @@
+#
+# sample program: knapsack problem using OmniRPC in OpenMP
+# 
+OMRPC_DIR = @prefix@
+
+OMRPC_CC = omrpc-cc
+OMRPC_REG = omrpc-register
+
+CC = cc
+CFLAGS = -g -I$(OMRPC_DIR)/include
+
+OMRPC_CLIENT_LIBS = -L$(OMRPC_DIR)/lib -lomrpc_client -lomrpc_io \
+	-lpthread -lm 
+OMRPC_STUB_LIBS = -L$(OMRPC_DIR)/lib -lomrpc_stub -lomrpc_io -lpthread -lm 
+EP_LIBS = -lm 
+PROGRAM = ep-omrpc ep-normal
+REX = ep.rex
+EP_OBJ = c_print_results.o c_randdp.o c_timers.o wtime.o 
+
+all: $(PROGRAM) $(REX)
+
+# normal version
+ep-normal: ep.c $(EP_OBJ)
+	$(CC) $(CFLAGS) -o $@ ep.c $(EP_OBJ) $(EP_LIBS)
+# OmniRpc version
+ep-omrpc: ep.c $(EP_OBJ)
+	$(OMRPC_CC) -DUSE_OMRPC $(CFLAGS) -o $@ ep.c \
+	$(EP_OBJ) $(OMRPC_CLIENT_LIBS)
+
+
+reg_stub: $(REX)
+	$(OMRPC_REG) -register ep.rex
+
+ep.rex: ep.idl $(EP_OBJ)
+	$(OMRPC_CC) ep.idl $(EP_OBJ) $(EP_LIBS)
+
+clean:
+	/bin/rm -f $(PROGRAM) $(REX) *.rex.c *.o *~
+
+distclean: clean
+	/bin/rm -f Makefile
+

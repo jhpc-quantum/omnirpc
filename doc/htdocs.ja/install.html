@@ -1,0 +1,182 @@
+<HTML>
+<HEAD>
+<TITLE> OmniRPC: Install </TITLE>
+</HEAD>
+<BODY bgcolor="#fffff0">
+<h2> インストール </h2>
+
+<hr>
+<h3> ソースからのインストール </h3>
+<p>
+簡単にソースからインストールする手順は、以下の通りです。
+</p>
+<pre>
+ % ./configure
+ % make
+</pre>
+
+<p>
+rootになり
+</p>
+<pre>
+ % make install
+</pre>
+<p>
+これによって、デフォールトのdirectory (/usr/local/omrpc)にインストール
+されます。このパスを変える場合には、
+</p>
+<pre>
+ % ./configure --prefix /path/to/install
+</pre>
+<p>
+で変えることができます。
+この後で、/path/to/install/binにパスを通してください。
+</p>
+
+<hr>
+<h3> RPMパッケージを利用する場合のインストール</h3>
+<p>
+RPMパッケージをインストールするさいには，以下のように行います．</br>
+まずrootになり
+</p>
+<pre>
+% rpm -ivh OmniRPC-1.0.rpm
+</pre>
+<p>
+デフォルトでは /usr/local/omrpc にインストールされますので，
+/usr/local/omrpcにパスを通すようにしてください．
+</p>
+
+<h3> Globusを利用する場合のインストール </h3>
+
+<p>
+Globus Toolkit上で動作させるためには，Globus Toolkitに付属している
+globus-makefile-header が必要になります．
+また，OmniRPCでは，pthreadをサポートしたflavorが必要になりますので注意して
+ください．
+</p>
+
+<pre>
+ % ./configure --enable-globus
+</pre>
+
+<p>
+とオプションを指定してください．この時 Globus Toolkitへのパスは
+${GLOBUS_LOCATION}の値がとられ，GPTへのパスは${GPT_LOCATION}の値がとら
+れます．
+</p>
+<p>
+Globus Toolkitへのパスを指定したい場合には，以下のように指定してください．
+</p>n
+<pre>
+ % ./configure --enable-globus --with-globusDir=/path/to/globus
+</pre>
+
+<pre>
+GPTへのパスを指定するオプションも近日中にサポートします．
+</pre>
+
+<hr>
+
+<h3> インストールテスト </h3>
+
+<p>
+インストールテストは以下の順番でテストをお願いします．テストは
+OmniRpc/test のディレクトリへ移動してから行います．
+番号のわきに書かれた，ディレクトリに移って作業を行ってください．
+プログラムテストに問題がある際にはプログラムのオプションで"--debug"を
+指定すると詳細なログを出力します．
+</p>
+
+<dl>
+<dt> 1. stub_test </dt>
+
+<dd>
+ここではstubの生成と，プログラム"local-exec-test"をテストします．
+
+サブディレクトリomrpc_stub_testに移り，makeを行います．
+
+<pre>
+ % make
+</pre>
+
+stubのテストをおこないます．
+<pre>
+ % local-exec-test
+</pre>
+<p>
+次にstubの登録を行います．登録の際には ${HOME}/.omrpc_registryのディレ
+クトリを作成してください．
+</pre>
+
+<pre>
+ % mkdir ~/.omrpc_registry
+ % make reg_stub
+</pre>
+</dd>
+
+
+<dt> 2. exec_test: </dt>
+<dd>
+リモートでスタブを実行するテストを行います．
+
+stubをリモートで実行するAPIである OmniRpcExecRemote, OmniRpcExecCallを
+テストします．
+まずmakeを行います．
+<pre>
+ % make
+</pre>
+
+ OmniRpcExecRemote のAPIをテストします．&lt;stub_directory>は， 1 におい
+ て作成したstubのディレクトリです．このときの&lt;stub_directory>のディ
+ レクトリは絶対パスで表記してください． 
+<pre>
+ % remote_exec_test1 &lt;host> &lt;stub_directory>
+</pre>
+
+同じようにOmniRpcExecCallをテストします．
+<pre>
+ % remote_exec_test2 &lt;host> &lt;stub_directory>
+</pre>
+</dd>
+
+<dt> 3. call_test: </dt>
+<dd>
+   Remote Procedure CallのAPI(OmniRpcCall, OmniRpcCallByHandle)のテス
+   トを行います．
+
+   hostfileを作成します．hostfile.xmlを作成するドキュメントを参考にし
+    て下さい．
+<pre>
+    ~/.omrpc_registry/hosts.xml
+    &lt;OmniRpcConfig>
+    &lt;Host name="localhost"/> 
+    &lt;/OmniRpcConfig>
+</pre>
+
+    OmniRpcCall APIのテストです．
+<pre>
+    % rcp-call-test1 
+</pre>
+
+    OmniRpcCallByHandle APIのテストです．
+<pre>
+    % rpc-call-test2 &lt;host>
+</pre>
+    OmniRpcModuleInit, OmniRpcCall, APIのテストです．
+<pre>
+    % rpc-call-test3
+</pre>
+
+    OmniRpcAsync, OmniRpcWaitAll APIのテストです．
+<pre>
+    % rpc-async-test1
+</pre>
+
+以上でテストが終わります．
+
+</dd>
+</dl>
+
+</BODY>
+</HTML>

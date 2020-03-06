@@ -1,0 +1,135 @@
+<HTML>
+<HEAD>
+<TITLE> OmniRPC: using OmniRpcHandle </TITLE>
+</HEAD>
+<BODY bgcolor="#fffff0">
+<h2> OmniRpcHandleを用いたプログラミング </h2>
+
+<p>
+OmniRpcHandleは、特定のリモート実行プログラムとのコネクションを表現す
+るためのデータ構造です。これを使うことにより、リモート実行プログラム側
+を状態を保持し
+たプログラミングが可能になります。また、リモート実行プログラムを特定の
+リモートホストに割り当てることも可能です。
+</p>
+
+<dl>
+<dt> <a href=#1> OmniRpcHandleとは </a> </dt>
+<dt> <a href=#2> OmniRpcHandleを用いたプログラミング </a> </dt>
+<dt> <a href=#3> ホスト情報の取得 </a> </dt>
+</dl>
+
+
+<!-- ----------------------------- -->
+<hr>
+<h3> <a name=1> OmniRpcHandleとは </a> </h3>
+<p>
+OmniRpcHandleは、特定のリモート実行プログラムとのコネクションを表現す
+るためのデータ構造です。OmniRpcHandleは、OmniRpcCreateHandleによって、
+モジュールに対応するリモート実行プログラムを起動することによって作られ
+ます。いったん、実行を開始したリモート実行プログラムはそれに含まれる関
+数を実行した後でも終了せずに、モジュールに含まれる他の関数呼び出しを受
+け付けることができます。
+</p>
+
+<p>
+これを使うことにより、以下のことができます。
+</p>
+<ul>
+<li> 対応するリモート実行プログラム側の状態を保持できる。例えば、同じ
+モジュール内の関数Aでセットしたデータを、関数Bで利用できます。これによっ
+て、あらかじめおくっておいたデータを再利用したりすることができます。
+<li> リモート実行モジュールを起動するリモートノードを指定できる。
+</ul>
+<p>
+OmniRpcCallでは、リモート関数名のみを指定して、リモート関数を呼び出し
+ます。関数名から、その関数があるモジュールを検索し、それに
+対応するリモート実行モジュールを適当なリモートホストを起動し、割り当て
+ます。しかし、OmniRpcHandleを使った場合には、どの実行モジュールに対し、
+割り当てるのかについてプログラミングしなくてはなりません。また、リモー
+ト実行モジュールが停止したり、タイムアウトで使えなくなったりする場合にも
+ユーザが対処しなくてはなりません。
+</p>
+
+<h3> <a name=2> OmniRpcHandleを用いたプログラミング </a> </h3>
+<p>
+簡単な例として、関数setABでセットした値を、加算して取り出す関数plusABで
+取り出すプログラムとIDLファイルを示します。
+</p>
+<pre>
+Define Sample;
+
+Globals {
+ int a,b;
+}
+
+Define setAB(int in a0, int in b0)
+{
+   a = a0; b = b0;
+}
+
+Define plusAB(int out ab[])
+{
+     *ab = a + b;
+}
+</pre>
+
+<p>
+Globalsで、モジュール全体で使われるCの変数の宣言をします。Globals文で
+は、モジュール定義に使う任意のCの文を記述することができます。
+</p>
+<p>
+このモジュールをomrpc-ccでコンパイルし、できたSample.rexをリモートホス
+トalice.is.tsukuba.ac.jpに登録しておきます。
+</p>
+
+<pre>
+#include &lt;OmniRpc.h&gt;
+#include &lt;stdio.h&gt;
+
+int main(int argc,char *argv[]){
+   int ab;
+   OmniRpcHandle handle;
+
+   OmniRpcInit(&argc,&argv);
+   handle = OmniRpcCreateHandle("alice.is.tsukuba.ac.jp","Sample");
+
+   OmniRpcCallbyHandle(handle,"setAB",10,20);
+   OmniRpcCallbyHandle(handle,"plusAB",&ab);
+   printf("a+b=%d\n",ab);
+  
+   OmniRpcHandleDestroy(handle);
+
+   OmniRpcFinalize();
+   exit(0);
+}
+</pre>
+
+<p>
+初期化したあと、最初にOmniRpcCreateHandleでモジュールに対するリモート
+実行プログラムを起動し、それに対するOmniRpcHandleを得ます。これに対し
+て、OmniRpcCallbyHandleを使ってモジュール内の関数を呼び出すことができ
+ます。最後に、OmniRpcDestroyHandleを使ってリモート実行プログラムを停止
+します。
+</p>
+<p>
+この他に、非同期呼び出しを行うOmniRpcCallAsyncByHandleを使うことができ
+ます。
+</p>
+
+<h3> <a name=3> ホスト情報の取得 </a> </h3>
+
+<p>
+OmniRpcCreateHandleでは、リモート実行モジュールを起動するホスト名を指
+定しますが、これがNULLの場合にはモジュールが登録されている適当なホスト
+に起動します。
+</p>
+<p>
+実行時に指定されたhostファイルに記述されたホストから、適当なホストを選
+択することも考えられます。情報を取得するAPIには以下のものがあります。
+<font color=red> (未実装) </font>
+</p>
+<hr>
+</BODY>
+</HTML>
+

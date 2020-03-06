@@ -1,0 +1,53 @@
+/* 
+ * $Id: cpi.idl,v 1.1.1.1 2004-11-03 21:01:22 yoshihiro Exp $
+ * $Release: omnirpc-2.0.1 $
+ * $Copyright:
+ *  OmniRPC Version 1.0
+ *  Copyright (C) 2002-2004 HPCS Laboratory, University of Tsukuba.
+ *  
+ *  This software is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License version
+ *  2.1 published by the Free Software Foundation.
+ *  
+ *  Please check the Copyright and License information in the files named
+ *  COPYRIGHT and LICENSE under the top  directory of the OmniRPC Grid PRC 
+ *  System release kit.
+ *  
+ *  
+ *  $
+ */
+Module cpi;
+
+Globals {
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+  extern void omrpc_prf(char *msg,...);
+  double f(double a);
+}
+
+Define calMypi(IN int myid, IN int n, IN int numprocs,
+	       OUT double result[])
+"This is Test"
+{
+  double h, sum, x;
+  int i;
+  char hostname[128];
+
+  extern int omrpc_debug_flag;
+
+  if(omrpc_debug_flag){
+    gethostname(hostname, 128);
+    printf("Process %d on %s\n", myid,  hostname);
+  }
+
+  h   = 1.0 / (double) n;
+  sum = 0.0;
+  for (i = myid + 1; i <= n; i += numprocs){
+    x = h * ((double)i - 0.5);
+    sum += f(x);
+  }
+
+  *result = h * sum;
+}
+

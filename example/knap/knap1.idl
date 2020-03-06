@@ -1,0 +1,24 @@
+Module knap1;
+
+Globals { 
+  int g_N;
+  int g_W[300];
+  int g_P[300];
+}
+
+Define Initialize(IN int n, IN int W[n],IN int P[n])
+" initialize Knapsack depth first search"
+{
+  int i;
+  g_N = n;
+  for(i = 0; i < n; i++) g_W[i] = W[i];
+  for(i = 0; i < n; i++) g_P[i] = P[i];
+}  
+
+Define knap1_dfs(IN int i, IN int cp, IN int M, IN int g_lwb[1],OUT int rp[])
+" Knapsack depth first search"
+{
+  knap_dfs(g_N,g_W,g_P,i,cp,M,g_lwb,rp);
+}
+
+

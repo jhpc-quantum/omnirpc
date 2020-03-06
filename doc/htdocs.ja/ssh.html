@@ -1,0 +1,126 @@
+<HTML>
+<HEAD>
+<TITLE> OmniRPC: using SSH </TITLE>
+</HEAD>
+<BODY bgcolor="#fffff0">
+
+<h2> ssh環境での実行 </h2>
+
+リモートの計算機を使う方法として、一般的に使われているのがssh (Secure
+shell)です。ここでは、sshを用いてOmniRpcで記述されたプログラムを実行す
+る方法を説明します。
+
+なお、globusの時と同様に、
+リモートホストにおいてリモート実行プログラムを
+作成、登録、プログラミングについてはかわりません。変わるのは、
+ホストファイルhosts.xmlの記述だけです。
+
+<dl>
+<dt> <a href=1>  sshの準備 </a> </dt>
+<dt> <a href=2>  SSHのためのホストファイル </a> </dt>
+<dt> <a href=3> ファイヤウォールがある場合の設定: port forwardingの利
+用 </a> </dt>
+<dt><a href=4> クライアントプログラムの実行 </a> </dt>
+</dl>
+
+<!-- ----------------------------- -->
+<hr>
+<h3> <a name=1>  sshの準備 </a> </h3>
+<p>
+以下の環境を仮定します。
+</p>
+<ol>
+<li> クライアントホストは、alice.hpcs.is.tukuba.ac.jp
+<li> リモートホストは、dennis.hpcc.jp
+<li> リモートホストとクライアントホストの間ではファイヤウォールが無い。
+つまり、非特権ポートで制限なしに通信ができる。
+</ol>
+<p>
+ここでは、既にsshが利用できるということを前提に説明します。
+すなわち、alice.hpcs.is.tsukuba.ac.jpから、dennis.hpcc.jpにsshでアクセ
+スすることができると仮定します。
+</p>
+
+<p>
+まず、sshを利用する場合には、クライアントにおいて、ssh-agentによる自動
+認証を設定する必要があ
+ります。詳しくは、???を参照することにして、以下に概略のみを説明してお
+きます。
+</p>
+<ol>
+<li> ssh-agentコマンドでssh-agentを起動し、そのPIDを環境変数にセットし
+ておく。
+<li> ssh-addでパスフレーズを登録。
+</ol>
+<p>
+ここで、ssh-agentによる自動認証が動いているかどうかを確認してください。
+<quote> <pre>
+% ssh dennis.hpcc.jp
+</pre> </quote>
+<p>
+上記のコマンドで、リモートホストにパスワード入力無しでloginできればOK
+です。
+</p>
+
+<h3> <a name=2>  SSHのためのホストファイル </a> </h3>
+
+<p>
+deniss.hpcc.jpを使うためには、hosts.xmlに記述し、このホストファイルを
+使ってクライアントプログラムを実行します。sshを用いたリモートホスト
+の場合は以下のように記述します。
+</p>
+<pre>
+&lt;?xml version="1.0" ?&gt;
+&lt;OmniRpcConfig&gt;
+   &lt;Host name="dennis.hpcc.jp" arch="i386" os="linux"&gt;
+   &lt;Agent invoker="ssh" /&gt;
+   &lt;/Host&gt;
+&lt;/OmniRpcConfig&gt;
+</pre>
+<p>
+これはリモート実行プログラムを起動するためのagentをsshを使って行う
+ための記述です。この指定でのagentとrexの関係は以下のようになります。
+</p>
+<img src="fig4.gif">
+
+<h3> <a name=3> ファイヤウォールがある場合の設定: mxioの利
+用 </a> </h3>
+<p>
+リモートホストがクライアントホストとは異なる組織の場合には、リモートホ
+ストとクライアントホスト間にファイヤウォールが設定されていることがあり
+ます。sshで起動する場合にはsshのport forwardingを利用して、クライアン
+トとAgentの間の通信を行っていますが、さらにクライアントで実行
+されるリモート実行モジュールとクライアントプログラムとの通信をこのport 
+forwardingを使って通信させることができます。この機能が、通信の多重化機
+能です。そのためには、Agentの記述にmxio属性を指定します。
+</p>
+<pre>
+&lt;?xml version="1.0" ?&gt;
+&lt;OmniRpcConfig&gt;
+   &lt;Host name="dennis.hpcc.jp" arch="i386" os="linux"&gt;
+   &lt;Agent invoker="ssh" <font color=red> mxio="on" </font> /&gt;
+   &lt;/Host&gt;
+&lt;/OmniRpcConfig&gt;
+</pre>
+<p>
+この指定でのagentとrexの関係は以下のようになります。この場合は、rexと
+クライアントとの通信は、agentを経由して行われます。
+</p>
+<img src="fig5.gif">
+
+<h3><a name=5> クライアントプログラムの実行 </a> </h3>
+<p>
+上のhosts.xmlを使う以外は同じ手順で実行することができます。
+<pre>
+% a.out --hostfile hosts.xml <em> args ... </em>
+</pre>
+</p>
+<p>
+なお、クライアントホストとリモートホストでユーザ名が異なる場合、などに
+ついては、Tipsを御覧ください。
+</p>
+<hr>
+</BODY>
+</HTML>
+
+

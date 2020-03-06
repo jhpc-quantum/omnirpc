@@ -1,0 +1,89 @@
+# $Id: Makefile.in,v 1.1.1.1 2004-11-03 21:01:21 yoshihiro Exp $
+# $Release: omnirpc-2.0.1 $
+# $Copyright:
+#  OmniRPC Version 1.0
+#  Copyright (C) 2002-2004 HPCS Laboratory, University of Tsukuba.
+#  
+#  This software is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU Lesser General Public License version
+#  2.1 published by the Free Software Foundation.
+#  
+#  Please check the Copyright and License information in the files named
+#  COPYRIGHT and LICENSE under the top  directory of the OmniRPC Grid PRC 
+#  System release kit.
+#  
+#  
+#  $
+
+TOPDIR		=	../..
+prefix		=	@prefix@
+exec_prefix	=	@exec_prefix@
+
+bindir		=	$(exec_prefix)/bin
+libdir		=	$(prefix)/lib
+
+INSTALLDIR	=	$(bindir)
+INSTALL		= 	@INSTALLCOM@
+MKDIR		=	@MKDIRCOM@
+
+GCCINC		=	-I`case "$(CC)" in *gcc) echo \`$(CC) -v 2>&1 | grep specs | sed 's/specs$$/include/' | awk '{ print $$NF }'\`;; esac`
+
+
+CC_OPT_SWITCH	=	@CFLAGS@
+CPPFLAGS	=	-I. -I$(TOPDIR)/include -I../libomrpc @DEFS@ @CPPFLAGS@
+CFLAGS		=	$(CC_OPT_SWITCH) 
+
+CC		=	@CC@ 
+AR		=	@AR@
+RANLIB		=	@RANLIB@
+
+YACC		=	@YACCCOM@
+
+DEPEND_SWITCH	=	$(CPPFLAGS)
+
+SRCS = omrpc-register-yml.c
+
+OBJS = omrpc-register-yml.o
+
+LIBS = -L../libomrpc -lomrpc_client -lomrpc_io -lpthread @SOCK_LIBS@ @GLOBUS_LIBS@
+
+TARGET = omrpc-register-yml
+
+all: $(TARGET)
+
+# 
+#  OmniRPC stub register program
+#
+
+$(TARGET): $(OBJS)
+	$(CC) $(CC_OPT_SWITCH) -o $(TARGET) $(OBJS) $(LIBS)
+
+install: all
+	@if [ ! -d $(INSTALLDIR) ] ; then \
+		(echo "Making directory $(INSTALLDIR)" ; \
+		$(MKDIR) $(INSTALLDIR) ; \
+		chmod 775 $(INSTALLDIR)); \
+	else \
+		true ; \
+	fi
+	for i in $(TARGET) ; do \
+		$(INSTALL) -m 755 $$i $(INSTALLDIR); \
+	done
+
+clean:
+	rm -f *.o *~ core $(TARGET)
+
+distclean:	clean
+	rm -f config.* Makefile .depend*
+
+depend: $(SRCS)
+	touch .depend.tmp
+	makedepend -f ./.depend.tmp -a -- $(GCCINC) $(DEPEND_SWITCH) -- $(SRCS)
+	sed 's:^$(PLATFORMDIR)/:./:' ./.depend.tmp > ./.depend
+	cat Makefile ./.depend > ./Makefile.tmp
+	mv Makefile.tmp Makefile
+	rm -f ./.depend ./.depend.tmp .depend.tmp.bak
+
+Makefile::
+	(cd $(TOPDIR); sh ./config.status)
+

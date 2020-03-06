@@ -1,0 +1,357 @@
+<HTML>
+<HEAD>
+<TITLE> OmniRPC: API </TITLE>
+</HEAD>
+<BODY bgcolor="#fffff0">
+<h2>OmniRPC API 一覧 </h2>
+
+<dl>
+<dt> <a href=#1> OmniRpcInit: OmniRPCシステムの初期化 </a> </dt>
+<dt> <a href=#2> OmniRpcFinalize: OmniRPCシステムの終了 </a> </dt>
+<dt> <a href=#3> OmniRpcCall: リモート関数の同期呼び出し </a> </dt>
+<dt> <a href=#4> OmniRpcCallAsync: リモート関数の非同期呼び出し </a> </dt>
+<dt> <a href=#5> OmniRpcWait: 非同期呼び出しの待ち合わせ </a> </dt>
+<dt> <a href=#6> OmniRpcProbe: 非同期呼び出しの確認</a> </dt>
+<dt> <a href=#7> OmniRpcWaitAll: 複数の非同期呼び出しの待ち合わせ</a> </dt>
+<dt> <a href=#8> OmniRpcWaitAny: 複数の非同期呼び出しの待ち合わせ</a> </dt>
+<dt> <a href=#9> OmniRpcCreateHandle: リモート実行プログラムの起動</a> </dt>
+<dt> <a href=#10> OmniRpcCallByHandle: OmniRpcHandleによる同期関数呼び出し</a> </dt>
+<dt> <a href=#11> OmniRpcCallAsyncByHandle: OmniRpcHandleによる非同期関数呼び出し</a> </dt>
+<dt> <a href=#12> OmniRpcDestroyHandle: OmniRpcHandleによるリモート実行
+プログラムの終了</a> </dt>
+<dt> <a href=#13> OmniRpcModuleInit: モジュールの初期化の設定</a> </dt>
+<dt> <a href=#14> OmniRpcExecInit: リモート実行プログラム直接起動のため
+の初期化</a> </dt>
+<dt> <a href=#15> OmniRpcExecFinalize: リモート実行プログラム直接起動の
+時のOmniRPCシステムの終了 </a> </dt>
+<dt> <a href=#16> : OmniRpcExecOnHostリモート実行プログラムの直接起動</a> </dt>
+<dt> <a href=#17> OmniRpcExecCall: OmniRpcExecHandleによる同期関数呼び出し</a> </dt>
+<dt> <a href=#18> OmniRpcExecTerminate: OmniRpcExecHandleによるリモート実行
+プログラムの終了</a> </dt>
+</dl>
+
+<hr>
+<h3> <a name=1> OmniRpcInit: OmniRPCシステムの初期化 </a> </h3>
+<ul>
+<li> インタフェース
+<pre>
+#include &lt;OmniRpc.h&gt;
+void OmniRpcInit(int *argc, char **argv[])
+</pre>
+<li> 説明
+<p> OmniRPCシステムの初期化を行います。argcには、mainプログラムの
+argcへのポインタ、argvにはargvへのポインタを与えます。mainプログラムに
+おいて、引数の情報を処理する前に呼び出さなくてはなりません。
+
+初期化では、引数において--hostfileで指定されているホストファイル、
+もしくは引数で指定されていない場合には~/.omrpc-registry/hosts.xmlにある
+ホストファイルを読み込み、使用するホストに対し、omrpc-agentを起動し、
+それぞれのホストに登録されているリモート実行プログラムに関するレジスト
+リ情報を読み込みます。
+</ul>
+
+<hr> <!-- ----------------------------------- -->
+<h3> <a name=2> OmniRpcFinalize: OmniRPCシステムの終了 </a> </h3>
+<ul>
+<li> インタフェース
+<pre>
+#include &lt;OmniRpc.h&gt;
+void OmniRpcFinalize(void);
+</pre>
+<li> 説明
+<p>
+OmniRpcシステムの終了処理を行います。全てのリモート実行プログラムを終
+了させ、Agentを終了させます。
+</p>
+</ul>
+
+<hr> <!-- ----------------------------------- -->
+<h3> <a name=3> OmniRpcCall: リモート関数の同期呼び出し </a> </h3>
+<ul>
+<li> インタフェース
+<pre>
+#include &lt;OmniRpc.h&gt;
+int OmniRpcCall(char *entry_name,...);
+</pre>
+<li> 説明
+<p>
+<em>entry_name</em>で指定された関数を呼び出し、呼び出したスレッドは関
+数が終了するまでブロックします。
+</p>
+<p>
+ホストファイル中にあるリモートホストに
+登録されているモジュールの中から関数名を検索し、適当なリモートホストに関数呼
+び出しを行います。関数名が見つからない場合には、OMRPC_ERRORを返し、正
+常に終了した場合にはOMRPC_OKを返します。
+</p>
+</ul>
+
+<hr> <!-- ----------------------------------- -->
+<h3> <a name=4> OmniRpcCallAsync: リモート関数の非同期呼び出し </a> </h3>
+<ul>
+<li> インタフェース
+<pre>
+#include &lt;OmniRpc.h&gt;
+OmniRpcRequest OmniRpcCallAsync(char *entry_name,...);
+</pre>
+<li> 説明
+<p>
+<em>entry_name</em>で指定された関数を呼び出し要求を行い、その要求に対
+するデータ構造OmniRpcRequestを返します。呼び出しを行ったスレッドはブロッ
+クしません。関数の実行が終了したかについては、OmniRpcWait, OmniRpcProbe,
+OmniRpcWaitAll, OmniRpcWaitAnyの待ち合わせ関数を用いて、関数の終了を確
+認もしくは待ち合わせを行うことができます。
+</p>
+<p>
+ホストファイル中にあるリモートホストに
+登録されているモジュールの中から関数名を検索し、適当なリモートホストに関数呼
+び出しを行います。関数名が見つからない場合には、NULLを返します。
+</p>
+</ul>
+
+<hr> <!-- ----------------------------------- -->
+<h3> <a name=5> OmniRpcWait: 非同期呼び出しの待ち合わせ </a> </h3>
+<ul>
+<li> インタフェース
+<pre>
+#include &lt;OmniRpc.h&gt;
+void OmniRpcWait(OmniRpcRequest req);
+</pre>
+<li> 説明
+<p>
+呼び出し要求<em>req</em>に対応する非同期呼び出しされた関数が終了するま
+で、呼び出したスレッドをブロックします。
+</p>
+</ul>
+
+<hr> <!-- ----------------------------------- -->
+<h3> <a name=6> OmniRpcProbe: 非同期呼び出しの確認</a> </h3>
+<ul>
+<li> インタフェース
+<pre>
+#include &lt;OmniRpc.h&gt;
+int OmniRpcProbe(OmniRpcRequest req);
+</pre>
+<li> 説明
+<p>
+呼び出し要求<em>req</em>に対応する非同期呼び出しされた関数が
+終了したかどうかを確認します。終了していない場合には0, 終了していた場
+合には1を返します。
+</p>
+</ul>
+
+<hr> <!-- ----------------------------------- -->
+<h3> <a name=7> OmniRpcWaitAll: 複数の非同期呼び出しの待ち合わせ</a> </h3>
+<ul>
+<li> インタフェース
+<pre>
+#include &lt;OmniRpc.h&gt;
+void OmniRpcWaitAll(int n, OmniRpcRequest reqs[]);
+</pre>
+<li> 説明
+<p>
+<em>reqs</em>で指定されたOmniRpcRequestの配列にある<em>n</em>個の
+呼び出し要求<em>req</em>に対応する非同期呼び出しされた関数が、
+全て終了するまで、呼び出したスレッドをブロックします。
+</p>
+</ul>
+
+<hr> <!-- ----------------------------------- -->
+<h3> <a name=8> OmniRpcWaitAny: 複数の非同期呼び出しの待ち合わせ</a> </h3>
+<ul>
+<li> インタフェース
+<pre>
+#include &lt;OmniRpc.h&gt;
+int OmniRpcWaitAny(int n, OmniRpcRequest reqs[]);
+</pre>
+<li> 説明 <font color=red>(未実装) </font>
+<p>
+<em>reqs</em>で指定されたOmniRpcRequestの配列にある<em>n</em>個の
+呼び出し要求<em>req</em>に対応する非同期呼び出しされた関数のどれかが
+終了するまで、呼び出したスレッドをブロックします。
+返り値として、配列中の終了した呼び出し要求のある位置を返します。
+配列中の終了した呼び出し要求のある要素はNULLになります。
+</p>
+</ul>
+
+<hr> <!-- ----------------------------------- -->
+<h3> <a name=9> OmniRpcCreateHandle: リモート実行プログラムの起動</a> </h3>
+<ul>
+<li> インタフェース
+<pre>
+#include &lt;OmniRpc.h&gt;
+OmniRpcHandle OmniRpcCreateHandle(char *host_name, char *module_name);
+</pre>
+<li> 説明 
+<p> <em>host_name</em>で指定されたリモートホストにモジュール名
+<em>module_name</em>で指定されたモジュールのリモート実行プログラムを起
+動し、それに対するHandleを返します。これを使って、OmniRpcCallByHandleで
+実行中のリモート実行プログラムの関数を呼び出すことができます。
+<em>host_name</em>がNULLの場合には、モジュールが登録されている適当なホ
+ストを選択し、モジュールのリモート実行プログラムを起動します。
+ホスト名、モジュール名が不正の場合にはNULLを返します。
+</p>
+</ul>
+
+<hr> <!-- ----------------------------------- -->
+<h3> <a name=10> OmniRpcCallByHandle: OmniRpcHandleによる同期関数呼び出し</a> </h3>
+<ul>
+<li> インタフェース
+<pre>
+#include &lt;OmniRpc.h&gt;
+int OmniRpcCallByHandle(OmniRpcHandle handle,char *entry_name,...);
+</pre>
+<li> 説明 
+OmniRpcCreateHandleで作成したhandleに対応する実行中のリモート実行プロ
+グラムの関数を呼び出します。関数が終了するまで、呼び出したスレッドはブロッ
+クします。関数がない場合にはNULLを返します。
+</p>
+</ul>
+
+<hr> <!-- ----------------------------------- -->
+<h3> <a name=11> OmniRpcCallAsyncByHandle: OmniRpcHandleによる非同期関数呼び出し</a> </h3>
+<ul>
+<li> インタフェース
+<pre>
+#include &lt;OmniRpc.h&gt;
+OmniRpcRequest OmniRpcCallAsyncByHandle(OmniRpcHandle handle,char *entry_name,...);
+</pre>
+<li> 説明 
+OmniRpcCreateHandleで作成したhandleに対応する実行中のリモート実行プロ
+グラムの関数を呼び出します。関数を起動し、それに対応するOmniRpcRequest
+を返します。OmniRpcCallAsyncと同様に、OmniRpcWait, OmniRpcProbe,
+OmniRpcWaitAll, OmniRpcWaitAnyの待ち合わせ関数を用いて、関数の終了を確
+認もしくは待ち合わせを行うことができます。
+</p>
+</ul>
+
+<hr> <!-- ----------------------------------- -->
+<h3> <a name=12> OmniRpcDestroyHandle: OmniRpcHandleによるリモート実行
+プログラムの終了</a> </h3>
+<ul>
+<li> インタフェース
+<pre>
+#include &lt;OmniRpc.h&gt;
+void OmniRpcDestroyHandle(OmniRpcHandle handle);
+</pre>
+<li> 説明 
+<p>
+OmniRpcCreateHandleで作成したhandleに対応する実行中のリモート実行プロ
+グラムを終了します。
+</p>
+</ul>
+
+<hr> <!-- ----------------------------------- -->
+<h3> <a name=13> OmniRpcModuleInit: モジュールの初期化の設定</a> </h3>
+<ul>
+<li> インタフェース
+<pre>
+#include &lt;OmniRpc.h&gt;
+int OmniRpcModuleInit(char *module_name,...);
+</pre>
+<li> 説明 
+モジュール名<em>module_name</em>の初期化の引数を設定します。
+リモート実行プログラムのモジュール内に初期化のための関数Initialize
+がなくてはなりません。モジュールのリモート実行プログラムが起動されたと
+時に、設定された引数をつかって、Initializeという関数をよびだします。
+この関数では設定するのみで、実際の初期化はリモート実行プログラムが起動
+された時に行われます。
+</p>
+</ul>
+
+<hr> <!-- ----------------------------------- -->
+<h3> <a name=14> OmniRpcExecInit: リモート実行プログラム直接起動のため
+の初期化</a> </h3>
+<ul>
+<li> インタフェース
+<pre>
+#include &lt;OmniRpc.h&gt;
+void OmniRpcExecInit(int *argc, char **argv[]);
+</pre>
+<li> 説明
+<p>
+リモート実行プログラムの直接起動のためにOmniRPCシステムの初期化を行い
+ます。argcには、mainプログラムのargcへのポインタ、argvにはargvへのポイ
+ンタを与えます。mainプログラムにおいて、引数の情報を処理する前に呼び出
+さなくてはなりません。OmniRpcInitと異なり、Agentを起動しません。
+</p>
+<p>
+コマンドの引数において、--globusを指定した場合にはGRAM, --sshを指定し
+た場合にはsshを用いて、リモート実行プログラムを直接起動することになり
+ます。defaultは、rshで起動を行います。
+</p>
+</ul>
+<hr> <!-- ----------------------------------- -->
+<h3> <a name=15> OmniRpcExecFinalize: リモート実行プログラム直接起動の
+時のOmniRPCシステムの終了 </a> </h3>
+<ul>
+<li> インタフェース
+<pre>
+#include &lt;OmniRpc.h&gt;
+void OmniRpcExecFinalize(void);
+</pre>
+<li> 説明
+<p>
+OmniRpcシステムの終了処理を行います。全てのリモート実行プログラムを終
+了させます。
+</p>
+</ul>
+
+<hr> <!-- ----------------------------------- -->
+<h3> <a name=16> : OmniRpcExecOnHostリモート実行プログラムの直接起動</a> </h3>
+<ul>
+<li> インタフェース
+<pre>
+#include &lt;OmniRpc.h&gt;
+OmniRpcExecHandle OmniRpcExecOnHost(char *host_name,char *prog_name);
+</pre>
+<li> 説明 
+<p> <em>host_name</em>で指定されたリモートホストで、リモート実行プログ
+ラム<em>prog_name</em>で起動し、それに対するHandleを返します。
+<em>prog_name</em>はリモートホスト内でのパスで指定します。
+これを使って、OmniRpcExecCallで実行中のリモート実行プログラムの関数を
+呼び出すことができます。この関数を使う場合には、OmniRpcExecInitで初期
+化しておかなくてはなりません。ホスト名、モジュール名が不正の場合には
+NULLを返します。
+</p>
+</ul>
+
+<hr> <!-- ----------------------------------- -->
+<h3> <a name=17> OmniRpcExecCall: OmniRpcExecHandleによる同期関数呼び出し</a> </h3>
+<ul>
+<li> インタフェース
+<pre>
+#include &lt;OmniRpc.h&gt;
+int OmniRpcExecCall(OmniRpcExecHandle handle, char *func_name, ...);
+</pre>
+<li> 説明 
+OmniRpcExecOnHostで作成したhandleに対応する実行中のリモート実行プロ
+グラムの関数を呼び出します。関数が終了するまで、呼び出したスレッドはブロッ
+クします。関数がない場合にはNULLを返します。
+</p>
+</ul>
+
+
+<hr> <!-- ----------------------------------- -->
+<h3> <a name=18> OmniRpcExecTerminate: OmniRpcExecHandleによるリモート実行
+プログラムの終了</a> </h3>
+<ul>
+<li> インタフェース
+<pre>
+#include &lt;OmniRpc.h&gt; 
+void OmniRpcExecTerminate(OmniRpcExecHandle handle);
+</pre>
+<li> 説明 
+<p>
+OmniRpcExecOnHostで作成したhandleに対応する実行中のリモート実行プロ
+グラムを終了します。
+</p>
+</ul>
+
+<hr>
+</BODY>
+</HTML>
+
+
+
+

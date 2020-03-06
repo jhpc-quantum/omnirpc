@@ -1,0 +1,288 @@
+<HTML>
+<HEAD>
+<TITLE> OmniRPC: Getting Started </TITLE>
+</HEAD>
+<BODY bgcolor="#fffff0">
+<h2>
+OmniRpcによるプログラミング
+</h2>
+
+<dl>
+<dt> <a href=#1> 簡単な例 </a> </dt>
+<dt> <a href=#2> 実行環境 </a> </dt>
+<dt> <a href=#3> リモート実行プログラムの作成 </a> </dt>
+<dt> <a href=#4> リモート実行プログラムの登録 </a> </dt>
+<dt> <a href=#5> クライアントプログラム </a> </dt> 
+<dt> <a href=#6> ホストファイルの作成 </a> </dt>
+<dt> <a href=#7> クライアントプログラムの実行 </a> </dt>
+<dt> <a href=#8> まとめ </a> </dt>
+</dl>
+
+<hr>
+<h3> <a name=1> 簡単な例 </a> </h3>
+<p>
+まず、始めに簡単な例から始めましょう。例として、次のような1から10まで
+のsin関数の値を計算するプログラムを考えることにします。
+</p>
+<pre>
+#include &lt;stdio.h&gt;
+#include &lt;math.h&gt;
+
+int main(){
+   int i;
+   double x, res[10];
+   x = 0.0;
+   for(i = 0; i &lt; 10; i++){
+       res[i] = sin(x);
+       x += 1.0;
+   }
+   for(i = 0; i &lt; 10; i++) 
+      printf("sin(%d)=%g\n",i,res[i]);
+}
+</pre>
+<p>
+このプログラムのsinの計算の部分をOmniRpcでリモートホストで計算してみる
+ことにします。
+ここの説明では、遠隔呼び出しを行う側の計算機を
+<em>クライアントホスト</em>、遠隔呼び出しによって手続が実行される側の計算機を
+<em>リモートホスト</em>と呼ぶことにします。
+</p>
+
+<h3> <a name=2> 実行環境 </a> </h3>
+
+<p>
+さて、この最初の説明では簡単のために以下のような環境を仮定します。
+</p>
+<ol>
+<li> クライアントホスト名は、jones
+<li> リモートホスト名は、dennis
+<li> jonesから、prostに対して、rshをパスワードの認証なしで実行できる。
+すなわち、リモートホスト側の/etc/host.equivもしくはユーザの.rhostに
+jonesが登録されていることが必要です。
+<li> 両方のホストにOmniRpcがデフォールトパス(/usr/local/omrpc/)にイン
+ストールされている。
+</ol>
+<p>
+なお、ファイルシステムはshareされている必要はありません。
+</p>
+
+<h3> <a name=22> OmniRpc Agentとリモート実行プログラム </a>
+
+<p> 
+OmniRpcでは、ホストファイルに記述されたリモートホストでリモート実行プ
+ログラムを起動するために、プログラムの実行の最初に初期化APIである
+OmniRpcInitでomrpc_agentというプログラムを起動します。このAgentは、プ
+ログラム実行毎に起動され、プログラム実行中は実行されています。この
+Agentは、rshもしくはGlobus GRAM、sshで、必要な認証を行うための起動方法
+で実行されます。この他にも、agentはリモートノードに登録されているモジュー
+ル情報へのアクセス、リモートノードのスケジューラへのインタフェース、通
+信の多重化などの機能を提供します。この機能の指定方法については、
+<a href=hostfile.html> 12. ホストファイルの記述 </a>を参照してください。
+</p>
+<img src="fig1.gif" alt="fig1">
+<p>
+上の図で、agentはOmniRPC agentを示し、rexはリモート実行プログラムです。
+この例では、agentとrexは同じdennis上で実行されます。
+</p>
+
+
+<!-- --------------------------------- -->
+<h3> <a name=3> リモート実行プログラムの作成 </a> </h3>
+まず、リモートホストにおいて、sinの部分を計算するリモートホストで実行
+されるプログラムを作成します。そのために、sinに関してインタフェースを
+定義します。
+このインタフェースを定義するファイルを
+<em>IDL(inteface description language) ファイル</em>と呼びます。例え
+ば、以下のようなファイルcalc_sin.idlを作ります。
+<pre>
+Module calc_sin;
+
+Globals {
+#include &lt;math.h&gt;
+}
+
+Define calc_sin(double IN x, double OUT result[]){
+  *result = sin(x);
+}
+
+</pre>
+
+<p>
+まず、ModuleはこのIDLファイルで定義されるモジュール名を定義します。こ
+の例では、exampleにしました。
+</p>
+<p>
+インタフェースはDefine文で定義します。
+この例ではsinにしました。引数は、データタイプとその引数がinput(読み込
+まれる)であるか、output(書き込みがある)であるかを定義します。
+OmniRpcでは、元のsin関数のように関数の値を関数の返り値で返すことができ
+ないので、例のようにOUTの引数で返します。{...}で囲まれた部分では、リモー
+トホストで実際に実行する内容について、C言語で記述します。sin関数を呼び
+出し、その値をOUTの引数であるresultに書き込みます。
+</p>
+<em>Globals</em>に指定されている部分には、このモジュールで定義される関
+数で必要とされる任意のCプログラムを記述しておくことができます。この例
+では、sin関数の呼び出しに必要なファイルをincludeしています。
+</p>
+<p>
+このIDLファイルから、OmniRPCのリモート実行モジュール生成プログラム
+omrpc-ccによって、リモート実行プログラムを生成します。
+では、次のコマンドで変換しましょう。
+</p>
+<pre>
+% omrpc-cc calc_sin.idl -lm
+</pre>
+<p>
+このプログラムが実行されると、calc_sin.rexというファイルが生成されます。
+これが、りモート実行プログラムとなります。
+</p>
+<p>
+なお、一つのリモート実行モジュールには複数の関数を定義することができま
+す。なお、詳しい定義については
+<a href=IDL.html> 13. IDLファイルの記述 </a>
+を参照してください。
+</p>
+
+<!-- --------------------------------- -->
+<h3> <a name=4>リモート実行プログラムの登録</a> </h3>
+<p>
+リモート実行プログラムを作成したら、次にそのリモート実行プログラムを登
+録します。登録は、omrpc-registerで行います。
+</p>
+
+<pre>
+% omrpc-register -register calc_sin.rex
+</pre>
+
+<p>
+このプログラムは、ホームディレクトリに.omrpc-registryというディレクト
+リを作り、このの下にモジュール名と関数名、リモート実行プログラムのパス
+のデータベースを作ります。
+</p>
+<p>
+これで、リモートホスト側の準備はできました。クライアントホスト側の準備
+にうつりましょう。
+</p>
+
+<!-- --------------------------------- -->
+<h3> <a name=5> クライアントプログラム </a> </h3> 
+
+クライアントプログラムをOmniRpcCallを使って書き換えます。
+<pre>
+#include &lt;OmniRpc.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;math.h&gt;
+
+int main(int argc,char *argv[]){
+   int i;
+   double x, res[10];
+
+   OmniRpcInit(&argc,&argv);
+
+   x = 0.0;
+   for(i = 0; i &lt; 10; i++){
+       OmniRpcCall("calc_sin",x,&res[i]);
+       x += 1.0;
+   }
+   for(i = 0; i &lt; 10; i++) 
+      printf("sin(%d)=%g\n",i,res[i]);
+
+  OmniRpcFinalize();
+
+}
+</pre>
+<p>
+まず、OmniRpcのライブラリを用いる前に、OmniRpcInitを呼び出さなくてはな
+りません。また、プログラムの終了時にはOmniRpcFinialize()をよびます。
+OmniRpc.hには、これらの関数のプロトタイプが宣言されていますので、
+includeしてください。
+</p>
+
+<p>
+これを、コンパイルします。
+</p>
+
+<pre>
+ % omrpc-cc -o test.exe test.c
+</pre>
+
+<p>
+omrpc-ccを使わずに、直接コンパイルしてもかまいません。
+</p>
+
+<pre>
+  % cc -I/usr/local/omrpc/include -o test.exe test.c
+	-L/usr/local/omrpc/lib -lomrpc_client -lomrpc_io
+</pre>
+
+<p>
+デフォールトでは、/usr/local/omrpcにインストールされていますが、もしも、
+これ以外のディレクトリにインストールした場合には/usr/local/omrpcをイン
+ストールしたディレクトリに変えてください。
+</p>
+
+<!-- --------------------------------- -->
+<h3> <a name=6> ホストファイルの作成 </a> </h3>
+
+<p>
+OmniRpcでは、通常、どのリモートホストを用いて実行するのかを
+<em> ホストファイル</em>にxmlを使って記述します。この例で仮定している
+環境設定の場合は、以下のように記述します。
+</p>
+
+<pre>
+&lt;?xml version="1.0" ?&gt;
+&lt;OmniRpcConfig&gt;
+   &lt;Host name="prost" /&gt;
+&lt;/OmniRpcConfig&gt;
+</pre>
+
+<p>
+これを、hosts.xmlとします。
+</p>
+
+<p>
+この例では、最も単純な設定なので、これだけでOKです。詳しくは、???を参
+照してください。
+</p>
+
+<!-- --------------------------------- -->
+<h3> <a name=7> クライアントプログラムの実行 </a> </h3>
+<p>
+これで、準備ができました。あとは、プログラムを実行するだけです。
+</p>
+<pre>
+% test.exe --hostfile hosts.xml
+</pre>
+
+<p>
+host.xmlに指定されているリモートホストからsinという名前のリモート関数
+を探し、起動します。なお、--hostfileでホストファイルが指定されなかった 
+場合には、ホームディレクトリの~/.omrpc-registryにあるhosts.xmlがつかわ
+れます。
+</p>
+<!-- --------------------------------- -->
+<h3><a name=8> まとめ </a> </h3>
+<p>
+OmniRpcを使うための手順をまとめておきます。
+</p>
+<ol>
+<li> まず、リモートホストとクライアントホストにOmniRpcをインストールし
+ておく。
+<li> リモートホストにおいて、実行する関数についてのリモート実行プログ
+ラムを作り、登録しておく。
+<ol>
+<li>インタフェースを定義するIDLファイルを作成する。
+<li>そのファイルから、omrpc-ccでリモート実行モジュールを生成。
+<li> omrpc-registerで登録する
+</ol>
+<li> クライアントホストでは、リモートホストを記述するhosts.xmlを作成す
+る。
+<li> クライアントプログラムを作り、omrpc-ccでコンパイル。
+<li> hosts.xmlを指定して、クライアントプログラムを実行。
+</ol>
+<hr>
+</BODY>
+</HTML>
+
+

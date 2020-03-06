@@ -1,0 +1,272 @@
+<HTML>
+<HEAD>
+<TITLE> OmniRPC: Fortran API </TITLE>
+</HEAD>
+<BODY bgcolor="#fffff0">
+<h2>OmniRPC FORTREAN API 一覧 </h2>
+
+<P>
+全てのAPIは、外部サブルーチンです。
+</p>
+<dl>
+<dt> <a href=#1> OMNIRPC_INIT: OmniRPCシステムの初期化 </a> </dt>
+<dt> <a href=#2> OMNIRPC_FINALIZE: OmniRPCシステムの終了 </a> </dt>
+<dt> <a href=#3> OMNIRPC_CALL: リモート関数の同期呼び出し </a> </dt>
+<dt> <a href=#4> OMNIRPC_CALL_ASYNC: リモート関数の非同期呼び出し </a> </dt>
+<dt> <a href=#5> OMNIRPC_WAIT: 非同期呼び出しの待ち合わせ </a> </dt>
+<dt> <a href=#6> OMNIRPC_PROBE: 非同期呼び出しの確認</a> </dt>
+<dt> <a href=#7> OMNIRPC_WAIT_ALL: 複数の非同期呼び出しの待ち合わせ</a> </dt>
+<dt> <a href=#8> OMNIRPC_WAIT_ANY: 複数の非同期呼び出しの待ち合わせ</a> </dt>
+<dt> <a href=#9> OMNIRPC_CREATE_HANDLE: リモート実行プログラムの起動</a> </dt>
+<dt> <a href=#10> OMNIRPC_CALL_BYH_ANDLE: OmniRpcHandleによる同期関数呼び出し</a> </dt>
+<dt> <a href=#11> OMNIRPC_CALL_ASYNC_BY_HANDLE: OmniRpcHandleによる非同期関数呼び出し</a> </dt>
+<dt> <a href=#12> OMNIRPC_DESTROY_HANDLE: OmniRpcHandleによるリモート実行
+プログラムの終了</a> </dt>
+<dt> <a href=#13> OMNIRPC_MODULE_INIT: モジュールの初期化の設定</a> </dt>
+</dl>
+
+<hr>
+<h3> <a name=1> OMNIRPC_INIT: OmniRPCシステムの初期化 </a> </h3>
+<ul>
+<li> インタフェース
+<pre>
+call OMNIRPC_INIT
+</pre>
+<li> 説明
+<p> OmniRPCシステムの初期化を行います。
+</ul>
+
+<hr> <!-- ----------------------------------- -->
+<h3> <a name=2> OMNIRPC_FINALIZE: OmniRPCシステムの終了 </a> </h3>
+<ul>
+<li> インタフェース
+<pre>
+call OMNIRPC_FINALIZE
+</pre>
+<li> 説明
+<p>
+OmniRpcシステムの終了処理を行います。全てのリモート実行プログラムを終
+了させ、Agentを終了させます。
+</p>
+</ul>
+
+<hr> <!-- ----------------------------------- -->
+<h3> <a name=3> OMNIRPC_CALL: リモート関数の同期呼び出し </a> </h3>
+<ul>
+<li> インタフェース
+<pre>
+character*(*) entry_name
+
+call OMNIRPC_CALL(entry_name,...)
+</pre>
+<li> 説明
+<p>
+<em>entry_name</em>で指定された関数を呼び出し、呼び出したスレッドは関
+数が終了するまでブロックします。entry_nameは、呼び出す関数名に*を付け
+た文字列です。
+</p>
+<p>
+ホストファイル中にあるリモートホストに
+登録されているモジュールの中から関数名を検索し、適当なリモートホストに関数呼
+び出しを行います。
+</p>
+</ul>
+
+<hr> <!-- ----------------------------------- -->
+<h3> <a name=4> OMNIRPC_CALL_ASYNC: リモート関数の非同期呼び出し </a> </h3>
+<ul>
+<li> インタフェース
+<pre>
+character*(*) entry_name
+interger ireq
+
+call OMNIRPC_CALL_ASYNC(ireq,entry_name,...)
+</pre>
+<li> 説明
+<p>
+<em>entry_name</em>で指定された関数を呼び出し要求を行い、その要求に対
+するIDをreqに返します。entry_nameは、呼び出す関数名に*を付け
+た文字列です。
+呼び出しを行ったスレッドはブロッ
+クしません。関数の実行が終了したかについては、OMNIRPC_WAIT, OMNIRPC_PROBE,
+OMNIRPC_WAIT_ALL, OMNIRPC_WAIT_ANYの待ち合わせ関数を用いて、関数の終了を確
+認もしくは待ち合わせを行うことができます。
+</p>
+<p>
+ホストファイル中にあるリモートホストに
+登録されているモジュールの中から関数名を検索し、適当なリモートホストに関数呼
+び出しを行います。関数名が見つからない場合には、reqに0を返します。
+</p>
+</ul>
+
+<hr> <!-- ----------------------------------- -->
+<h3> <a name=5> OMNIRPC_WAIT: 非同期呼び出しの待ち合わせ </a> </h3>
+<ul>
+<li> インタフェース
+<pre>
+integer ireq
+
+call OMNIRPC_WAIT(ireq)
+</pre>
+<li> 説明
+<p>
+呼び出し要求<em>req</em>に対応する非同期呼び出しされた関数が終了するま
+で、呼び出したスレッドをブロックします。
+</p>
+</ul>
+
+<hr> <!-- ----------------------------------- -->
+<h3> <a name=6> OMNIRPC_PROBE: 非同期呼び出しの確認</a> </h3>
+<ul>
+<li> インタフェース
+<pre>
+integer ireq,istatus
+
+call OMNIRPC_PROBE(ireq,istatus)
+</pre>
+<li> 説明
+<p>
+呼び出し要求<em>ireq</em>に対応する非同期呼び出しされた関数が
+終了したかどうかを確認します。終了していない場合にはistatusに0, 終了していた場
+合には1を返します。
+</p>
+</ul>
+
+<hr> <!-- ----------------------------------- -->
+<h3> <a name=7> OMNIRPC_WAIT_ALL: 複数の非同期呼び出しの待ち合わせ</a> </h3>
+<ul>
+<li> インタフェース
+<pre>
+integer nreq,ireqs(*)
+
+call OMNIRPC_WAIT_ALL(nreq, ireqs)
+</pre>
+<li> 説明
+<p>
+<em>ireqs</em>で指定されたOmniRpcRequestの配列にある<em>nreq</em>個の
+呼び出し要求<em>ireq</em>に対応する非同期呼び出しされた関数が、
+全て終了するまで、呼び出したスレッドをブロックします。
+</p>
+</ul>
+
+<hr> <!-- ----------------------------------- -->
+<h3> <a name=8> OMNIRPC_WAIT_ANY: 複数の非同期呼び出しの待ち合わせ</a> </h3>
+<ul>
+<li> インタフェース
+<pre>
+integer nreq,ireqs(*),iret
+
+call OMNIRPC_WAIT_ANY(nreq, ireqs, iret)
+</pre>
+<li> 説明 <font color=red>(未実装) </font>
+<p>
+<em>ireqs</em>で指定されたOmniRpcRequestの配列にある<em>n</em>個の
+呼び出し要求<em>ireq</em>に対応する非同期呼び出しされた関数のどれかが
+終了するまで、呼び出したスレッドをブロックします。
+返り値として、iretに配列中の終了した呼び出し要求のある位置を返します。
+配列中の終了した呼び出し要求のある要素は0になります。
+</p>
+</ul>
+
+<hr> <!-- ----------------------------------- -->
+<h3> <a name=9> OMNIRPC_CREATE_HANDLE: リモート実行プログラムの起動</a> </h3>
+<ul>
+<li> インタフェース
+<pre>
+interger ihandle
+character*(*) host_name, module_name
+
+call OMNIRPC_CREATE_HANDLE(handle,host_name,module_name)
+</pre>
+<li> 説明 
+<p> <em>host_name</em>で指定されたリモートホストにモジュール名
+<em>module_name</em>で指定されたモジュールのリモート実行プログラムを起
+動し、それに対するHandleをihandleに返します。これを使って、OmniRpcCallByHandleで
+実行中のリモート実行プログラムの関数を呼び出すことができます。
+host_nameとmoduleは、起動するホスト名、モジュール名に'*'を付けたもので
+す。
+<em>host_name</em>が'*'の場合には、モジュールが登録されている適当なホ
+ストを選択し、モジュールのリモート実行プログラムを起動します。
+ホスト名、モジュール名が不正の場合にはihandleに0を返します。
+</p>
+</ul>
+
+<hr> <!-- ----------------------------------- -->
+<h3> <a name=10> OMNIRPC_CALL_BY_HANDLE: OmniRpcHandleによる同期関数呼び出し</a> </h3>
+<ul>
+<li> インタフェース
+<pre>
+integer ihandle
+charctor*(*) entry_name
+
+call OMNIRPC_CALL_BY_HANDLE(ihandle,entry_name,...)
+</pre>
+<li> 説明 
+OmniRpcCreateHandleで作成したihandleに対応する実行中のリモート実行プロ
+グラムの関数を呼び出します。entry_nameは、関数名に'*'を付けたものです。
+関数が終了するまで、呼び出したスレッドはブロッ
+クします。
+</p>
+</ul>
+
+<hr> <!-- ----------------------------------- -->
+<h3> <a name=11> OMNIRPC_CALL_ASYNC_BY_HANDLE: OmniRpcHandleによる非同期関数呼び出し</a> </h3>
+<ul>
+<li> インタフェース
+<pre>
+integer ireq,ihandle
+character*(*) entry_name
+
+call OMNIRPC_CALL_ASYNC_BY_HANDLE(ireq,ihandle,entry_name,...)
+</pre>
+<li> 説明 
+OmniRpcCreateHandleで作成したihandleに対応する実行中のリモート実行プロ
+グラムの関数を呼び出します。entry_nameは、関数名に'*'を付けたものです。
+関数を起動し、それに対応するOmniRpcRequest
+をireqに返します。OMNIRPC_CALL_ASYNCと同様に、OMNIRPC_WAIT, OMNIRPC_PROBE,
+OMNIRPC_WAIT_ALL, OMNIRPC_WAIT_ANYの待ち合わせ関数を用いて、関数の終了を確
+認もしくは待ち合わせを行うことができます。
+</p>
+</ul>
+
+<hr> <!-- ----------------------------------- -->
+<h3> <a name=12> OMNIRPC_DESTROY_HANDLE: OmniRpcHandleによるリモート実行
+プログラムの終了</a> </h3>
+<ul>
+<li> インタフェース
+<pre>
+integer ihandle
+
+call OMNIRPC_DESTROY_HANDLE(ihandle)
+</pre>
+<li> 説明 
+<p>
+OmniRpcCreateHandleで作成したihandleに対応する実行中のリモート実行プロ
+グラムを終了します。
+</p>
+</ul>
+
+<hr> <!-- ----------------------------------- -->
+<h3> <a name=13> OMNIRPC_MODULE_INIT: モジュールの初期化の設定</a> </h3>
+<ul>
+<li> インタフェース
+<pre>
+character*(*) module_name
+
+call OMNIRPC_MODULE_INIT(module_name,...);
+</pre>
+<li> 説明 
+モジュール名<em>module_name</em>の初期化の引数を設定します。
+<em>module_name</em>には、モジュール名に'*'を付けたものです。
+リモート実行プログラムのモジュール内に初期化のための関数Initialize
+がなくてはなりません。モジュールのリモート実行プログラムが起動されたと
+時に、設定された引数をつかって、Initializeという関数をよびだします。
+この関数では設定するのみで、実際の初期化はリモート実行プログラムが起動
+された時に行われます。
+</p>
+</ul>
+
+<hr>
+</BODY>
+</HTML>
+

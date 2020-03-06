@@ -1,0 +1,72 @@
+<HTML>
+<HEAD>
+<TITLE> OmniRPC: run on SMP </TITLE>
+</HEAD>
+<BODY bgcolor="#fffff0">
+
+<h2> 共有メモリマルチプロセッサシステムの利用 </h2>
+
+<p> 共有メモリマルチプロセッサシステム(SMP: Shared memory
+Multiprocessor)とは、複数のプロセッサを持つタイプの並列計算機です。ハ
+イエンドのシステムや、最近では、PCなどでも2つ以上のプロセッサを持つSMP
+になっているものもあります。リモートホストに、これらのCPUを同時に利用
+することでプログラムを高速化することができます。
+
+<dl>
+<dt> <a href=#1> SMPの設定 </a> </dt>
+<dt> <a href=#2> maxjobの指定 </a> </dt>
+<dt><a href=#3> クライアントプログラムの実行 </a> </dt>
+</dl>
+
+<!-- ----------------------------- -->
+<hr>
+<h3> <a name=1> SMPの設定 </a> </h3>
+以下の説明では、以下のような環境を仮定します。
+<ol>
+<li> クライアントホストはjones
+<li> リモートホストappleは、SMPであり、4プロセッサを持つ。
+<li> 同じネットワーク上にあり、rshでプロセスを起動できる。
+</ol>
+
+<h3> <a name=2> maxjobの指定 </a> </h3>
+
+<p>
+SMPにあるそれぞれのプロセッサでは複数のリモート実行プログラムを同時に
+実行させることができます。上の設定では、最大4つのプログラムを実行する
+ことができます。SMPのためのホストファイルは以下のように記述します。
+</p>
+<pre>
+&lt;?xml version="1.0" ?&gt;
+&lt;OmniRpcConfig&gt;
+   &lt;Host name="apple" arch="i386" os="linux"&gt;
+   <font color=red>&lt;JobScheduler maxjob="4" /&gt;</font> 
+   &lt;/Host&gt;
+&lt;/OmniRpcConfig&gt;
+</pre>
+<p>
+上の記述では、JobScheduler要素にmaxjob属性を4に指定します。
+これは同時に実行されるリモート実行プログラムの数の最大を4とすることを
+指定しています。
+もちろん、4プロセッサのシステムで4以上のジョブを実行できるようにしても
+かまいませんが、実際には4つのプロセスしか並列に実行できないため、効率
+は変わらないでしょう。
+</p>
+<p>
+この場合には、agentは複数のrexを起動します。その関係は次のようになりま
+す。
+</p>
+<img src="fig22.gif">
+
+<h3><a name=3> クライアントプログラムの実行 </a> </h3>
+
+上のホストファイルhosts.xmlを使う以外は同じ手順で実行することができます。
+<pre>
+% a.out --hostfile hosts.xml <em> args ... </em>
+</pre>
+当然ながら、SMPにより性能向上させるためには、クライアントプログラムは
+OmniPpcを並列に使うプログラムでなくてはなりません。
+<hr>
+</BODY>
+</HTML>
+
+

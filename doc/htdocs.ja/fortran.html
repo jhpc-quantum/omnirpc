@@ -1,0 +1,165 @@
+<HTML>
+<HEAD>
+<TITLE> OmniRPC: programming in Fortran</TITLE>
+</HEAD>
+<BODY bgcolor="#fffff0">
+<h2>FortranからのOmniRPCの使い方</h2>
+
+<p>
+ここでは、FortranからのOmniRPC APIの使い方について説明します
+詳しいAPIについては、<a href="F-API.html"> Fortran API </a>を参照して
+ください。
+</p>
+
+<dl>
+<dt> <a href=#1> Fortranの簡単な例 </a> </dt>
+<dt> <a href=#2> リモート実行プログラムの作成 </a> </dt>
+<dt> <a href=#3> Fortranのクライアントプログラム </a> </dt> 
+<dt> <a href=#4> Fortranでの非同期呼び出しの例</a> </dt> 
+</dl>
+
+<hr>
+<h3> <a name=1> Fortranの簡単な例 </a> </h3>
+以下のfortranプログラムを考えてみましょう。内積を計算するプログ
+ラムです。main.fがメインプログラム、ip.fが内積を計算するサブルーチンで
+す。
+<pre>
+main.f:
+      double precision a(10),b(10),r
+      do i = 1,10
+         a(i) = i
+         b(i) = i+10
+      end do
+      call innerprod(10,a,b,r)
+      write(*,*) 'result=',r
+      end
+
+ip.f:
+      subroutine innerprod(n,a,b,r)
+      integer n
+      double precision a(*),b(*),r
+      interger i
+      r = 0.0
+      do i = 1,n
+        r = r+a(i)*b(i)
+      end do
+      return
+      end
+</pre>
+<p>
+このプログラムで、サブルーチンinnerprodをOmniRPCで呼び出してみることに
+します。
+</p>
+
+<h3> <a name=2> リモート実行プログラムの作成 </a> </h3>
+Cと同じように、リモートホストにおいて、サブルーチンを実行するプログラ
+ムを作成します。そのために、innerprodに対するインタフェースを定義しま
+す。モジュール名はf_innerprod,関数名をinnerprodにします。
+<pre>
+Module f_innerprod;
+
+Define innerprod(IN int n, IN double a[n], IN double b[n],
+        OUT double result[1])
+Calls "Fortran" innerprod_(n,a,b,result);
+</pre>
+<p>
+サイズ指定に使われる引数は、スカラ変数にしなくてはなりません。
+fortranのdouble precisionは、double型、real型は、float型になります。
+CallsでFortranの関数を直接呼び出す場合には、"Fortran"と指定します。
+ここで呼び出す関数名はfortranのmanglingされた関数名でなくてはなりませ
+ん。大抵のfortranコンパイラの場合には、manglingされた名前は関数名に"_"
+を付けたものです。関数名に"_"が入る場合には、g77(gcc)では"__"("_"が２
+つ)が付くようにmanglingされることに注意してください。
+</p>
+<p>この定義は以下の定義と同じです。スカラー引数に対しては、アドレス渡
+しになります。
+<pre>
+Module f_innerprod;
+
+Define innerprod(IN int n, IN double a[n], IN double b[n],
+        OUT double result[1])
+{
+    innerprod_(&n,a,b,result);
+}
+</pre>
+<p>
+このIDLファイルから、OmniRPCリモート実行モジュールを生成します。IDLファ
+イルの名前をf_ip.idlとします。
+</p>
+<pre>
+% omrpc-fc f_ip.idl ip.f
+</pre>
+<p>
+このコマンドが実行されると、f_ip.rexというリモート実行プログラムが生成
+されます。これをomrpc-registerで登録するのは、Cの場合と同じです。
+</p>
+<pre>
+% omrpc-register -register f_ip.rex
+</pre>
+<p>
+omrpc-fcでは、fortranのプログラムをf77というコマンドでコンパイルします。
+もしも、異なるコンパイラを用いる場合には、-fcというオプションで変える
+ことができます。例えば、intelのifcを使う場合には以下のようにします。
+</p>
+<pre>
+% omrpc-fc -fc ifc f_ip.idl ip.f
+</pre>
+
+<h3> <a name=3> Fortranのクライアントプログラム </a> </h3> 
+<p>
+さて、クライアントプログラムであるmain.fをOmniRPCを用いて、リモート実
+行プログラムを呼び出すように変更します。
+</p>
+<pre>
+      double precision a(10),b(10),r
+      call OMINRPC_INIT
+      do i = 1,10
+         a(i) = i
+         b(i) = i+10
+      end do
+      call OMNIRPC_CALL("f_innerprod*",10,a,b,r)
+      write(*,*) 'result=',r
+      call OMNIRPC_FINALIZE
+      end
+</pre>
+<p>
+OMNIRPC_INITで初期化をし、OMNIRPC_CALLで呼び出します。
+OMNIRPC_CALLで指定するエントリ名は、インタフェースで定義した名前に"*"
+を最後に付けたものにすることに注意してください。モジュール名やホスト名
+など、OmniRPCに渡す文字列の最後には"*"を付けてください。OmniRPCの
+Fortran APIでは"*"を文字列の最後とみなします。
+</p>
+<p>
+このプログラムをコンパイルするには、omrpc-fcを使うことができます。
+</p>
+<pre>
+% omrpc-fc main.f
+</pre>
+
+<h3> <a name=4> Fortranでの非同期呼び出しの例</a> </h3> 
+<p> 
+最後に、<a href="parallel.html"> OmniRpcによる並列プログラム </a>で示
+した例をFortranで記述した例を示します。
+<pre>
+      double precision res(10)
+      double precision x
+      integer ireqs(10)
+      call omnirpc_init
+      x = 0.0
+      do i = 1, 10
+         call omnirpc_call_async(ireqs(i),'calc_sin*',x,res(i))
+         x = x + 1.0
+      end do
+      call omnirpc_wait_all(10,ireqs)
+      do i = 1, 10
+         write(*,*) 'res(',i, ')=',res(i)
+      end do
+      call omnirpc_finalize
+      end
+</pre>
+詳しいAPIについては、<a href="F-API.html"> Fortran API </a>を参照して
+ください。
+<hr>
+</BODY>
+</HTML>
+

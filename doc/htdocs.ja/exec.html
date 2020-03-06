@@ -1,0 +1,143 @@
+<HTML>
+<HEAD>
+<TITLE> OmniRPC: direct execution of remote program </TITLE>
+</HEAD>
+<BODY bgcolor="#fffff0">
+<h2> リモート実行プログラムの直接起動 </h2> 
+
+通常、OmniRpcではリモート実行プログラムをAgent経由で実行しますが、
+リモート実行プログラムを指定して直接起動することも可能です。
+
+<dl>
+<dt> <a href=#1> リモート実行プログラムの直接起動を使う場合 </a> </dt>
+<dt> <a href=#2> リモートノードの環境設定 </a> </dt>
+<dt> <a href=#3> リモートプログラム直接起動のためのAPI </a> </dt>
+<dt> <a href=#4> プログラムの実行 </a> </dt>
+<dt> <a href=#5> リモート実行プログラムの直接実行の場合の制限事項 </a> </dt>
+</dl>
+
+<hr>
+<h3> <a name=1> リモート実行プログラムの直接起動を使う場合 </a> </h3>
+<p>
+通常、OmniRpcではリモート実行プログラムをAgent経由で起動します。これに
+より、以下の利点があります
+</p>
+<ul>
+<li> レジストリに登録しておくことにより、リモートホスト側でのリモート
+実行プログラムのパスを知ることなく起動することができます。さらに、同じ
+モジュール名がある場合には適当なリモートホストにジョブを割り当てること
+できます。
+<li> リモートホストがクラスタの場合にはクラスタノードホストにジョブを
+割り当てることができます。
+</ul>
+<p>
+ここで説明するのは、Agentを使わずにクライアントプログラムがリモート実
+行プログラムを直接起動し、呼び出しを行う方法です。特定のリモートホスト
+で、決まったパスにあるリモート実行プログラムがある場合にはリモート実行
+プログラムの登録などの手続を省くことができる他、以下の利点があります。
+</p>
+<ul>
+<li> 通信のプロトコルを書かなくても、OmniRpcのプロトコルを使った関数の
+呼び出しができます。
+<li> Globusやsshで起動することにより、認証がport forwordingの機能を使
+うことができます。
+</ul>
+
+<h3> <a name=2> リモートノードの環境設定 </a> </h3>
+
+<p>
+例として以下のような環境設定を仮定します。
+</p>
+<ol>
+<li> クライアントホストは、jones.tsukuba.ac.jp
+<li> リモートホストは、dennis.hpcc.jp
+<li> 最初のプログラミング例に挙げたcalc_sin.rexを、
+   リモートノードの/usr/local/tmp/に置いておく。
+<li> dennis.hpcc.jpにはglobusのgete keeperが実行されており、GRAMを用い
+てプログラムを起動できる。
+</ol>
+
+<p> この機能を使う場合には、下のようにAgentを使わずにrexを直接起動し、
+通信を行います。
+</p>
+<img src="fig9.gif">
+
+<h3> <a name=3> リモートプログラム直接起動のためのAPI </a> </h3>
+
+<p>
+まず、直接起動のAPIを使うためにはAgentを使いませんので、ライブラリの初
+期化は、OmniRpcExecInit()で行います。
+</p>
+
+<p>
+リモートホストでのリモート実行プログラムの起動のAPIは、
+OmniRpcHandleを用いたAPIに似ています。OmniRpcExecOnHost()は、指定され
+たホストにおいて、パスで指定されたリモート実行プログラムを起動し、それ
+についてコネクションを表現するデータ構造であるOmniRpcExecHandleを返し
+ます。これについて、OmniRpcExecCallを使って、モジュール内の関数を呼び
+出すことができます。
+</p>
+
+<p>
+以下に例を示します。
+</p>
+<pre>
+#include &lt;OmniRpc.h&gt;
+#include &lt;stdio.h&gt;
+
+int main(int argc,char *argv[]){
+   double r;
+   OmniRpcExecHandle handle;
+
+   OmniRpcExecInit(&argc,&argv);
+   handle = OmniRpcExecOnHost("dennis.hpcc.jp","/usr/local/tmp/calc_sin.rex");
+
+   OmniRpcExecCall(handle,"calc_sin",10,&r);
+   printf("sin(10)=%g\n",r);
+  
+   OmniRpcExecTerminate(handle);
+
+   OmniRpcExecFinalize();
+   exit(0);
+}
+</pre>
+<p>
+OmniRpcExecTerminateは、handleに対応するリモート実行プログラムを終了さ
+せます。最後に、プログラムの終了時には、OmniRpcExecFinalizeを呼び出し
+てください。
+</p>
+
+<h3> <a name=4> プログラムの実行 </a> </h3>
+<p>
+リモート実行プログラムをどのような起動方法を使って起動するかについては、
+実行プログラムの引数で指定します。例えば、globusを用いて起動する場合に
+は、
+</p>
+<pre>
+ % a.out --globus <em> args </em>
+</pre>
+<p>
+というように、--globusを指定します。この他に、sshで起動する場合には、
+--sshと指定します。何も指定しない場合には、rshで起動することになります。
+</p>
+
+<h3> <a name=5> リモート実行プログラムの直接実行の場合の制限事項 </a> </h3>
+<p>
+現在のところ、この方法での起動方法については以下の制限があります。
+</p>
+<ul>
+<li> マルチスレッド環境については対応していない。(thread-safeではない)
+<li> 非同期呼び出しについてはサポートしていない。
+<li> 複数の起動方法を同時に使って、起動することはできない。
+</ul>
+<p>
+これらの点については、改善していく予定です。
+</p>
+<hr>
+</BODY>
+</HTML>
+
+
+
+
+

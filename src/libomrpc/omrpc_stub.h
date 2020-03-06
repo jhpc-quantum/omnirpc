@@ -1,0 +1,27 @@
+/*  
+ * $Id: omrpc_stub.h,v 1.1.1.1 2004-11-03 21:01:17 yoshihiro Exp $
+ * $Release: omnirpc-2.0.1 $
+ * $Copyright:
+ *  OmniRPC Version 1.0
+ *  Copyright (C) 2002-2004 HPCS Laboratory, University of Tsukuba.
+ *  
+ *  This software is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License version
+ *  2.1 published by the Free Software Foundation.
+ *  
+ *  Please check the Copyright and License information in the files named
+ *  COPYRIGHT and LICENSE under the top  directory of the OmniRPC Grid PRC 
+ *  System release kit.
+ *  
+ *  
+ *  $
+ */
+#include "ninf_stub_info.h"
+#include "omrpc_stub_lib.h"
+
+#include "omrpc_defs.h"
+#include "ninf_comm_lib.h"
+
+extern omrpc_io_handle_t *omrpc_stub_hp;
+extern char *omrpc_client_hostname;
+

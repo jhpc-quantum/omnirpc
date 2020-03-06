@@ -1,0 +1,46 @@
+ --- Test for OmniRPC installation ---
+
+1. omrpc_stub_test:
+  At first, make stub and test program 'local-exec-test'
+    % make 
+
+  Test stubs
+    % local-exec-test
+
+  And, register stubs.
+     mkdir ~/.omrpc_registry
+     make reg_stub
+
+2. omrpc_exec_test: remote exec stub test
+
+  Test stub exec interface,  OmniRpcExecRemote,  OmniRpcExecCall
+    %make
+  for test OmniRpcExecRemote,
+    % remote_exec_test1 <host> <stub_directory>
+  for test OmniRpcExecCall
+    % remote_exec_test2 <host> <stub_directory>
+
+3. omrpc_call_test: Call test
+
+  Test rpc call interface,  OmniRpcCall, OmniRpcCallByHandle
+    % make
+
+  Setup your machine file ~/.omrpc_registry/hosts like
+    <omnirpc_config>
+    <host> 
+    </host>
+    </omnirpc_config>
+
+  for testing OmniRpcCall,
+    % rcp-call-test1 
+  for testing OmniRpcCallByHandle,
+    % rpc-call-test2 <host>
+  for testing OmniRpcModuleInit, OmniRpcCall,
+    % rpc-call-test3
+  for testing OmniRpcAsync, OmniRpcWaitAll,
+    % rpc-async-test1
+
+4. communication performance test
+
+
+
