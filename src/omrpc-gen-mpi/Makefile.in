@@ -15,32 +15,6 @@
 #  
 #  $
 
-TOPDIR		=	../..
-prefix		=	@prefix@
-exec_prefix	=	@exec_prefix@
-
-bindir		=	$(exec_prefix)/bin
-libdir		=	$(prefix)/lib
-
-INSTALLDIR	=	$(bindir)
-INSTALL		= 	@INSTALLCOM@
-MKDIR		=	@MKDIRCOM@
-LIBINSTALLDIR   =	$(libdir)
-
-GCCINC		=	-I`case "$(CC)" in *gcc) echo \`$(CC) -v 2>&1 | grep specs | sed 's/specs$$/include/' | awk '{ print $$NF }'\`;; esac`
-
-CC_OPT_SWITCH	=	@CFLAGS@
-CPPFLAGS	=	-I. -I$(TOPDIR)/include -I../libomrpc @DEFS@ @CPPFLAGS@ -DCOMPILER="\"@CC@\"" -DCPP_FILE="\"$(CPP_FILE)\""
-CFLAGS		=	$(CC_OPT_SWITCH) 
-
-CC		=	@CC@ 
-AR		=	@AR@
-RANLIB		=	@RANLIB@
-
-YACC		=	@YACCCOM@
-
-DEPEND_SWITCH	=	$(CPPFLAGS)
-
 SRCS = omrpc_gen_main.c ninf_IDL.c omrpc_gen_mem.c omrpc_gen_misc.c \
 	omrpc_gen_compile.c omrpc_gen_stub.c omrpc_mpi_lib.c
 
@@ -60,8 +34,6 @@ all: $(TARGET)
 omrpc-gen-mpi: $(OBJS)
 	$(CC) $(CC_OPT_SWITCH) -o omrpc-gen-mpi $(OBJS)
 
-omrpc-cc-mpi:
-
 libomrpcmpi.a: $(MPI_LIB_OBJS)
 	rm -f $@
 	$(AR) $@ $(MPI_LIB_OBJS)
@@ -71,57 +43,5 @@ ninf_IDL.c: ninf_IDL.y ninf_IDL_lex.c
 	$(YACC) -d -v ninf_IDL.y 
 	mv y.tab.c ninf_IDL.c
 
-install: all
-	make install-bin install-lib
-#	@if [ ! -d $(INSTALLDIR) ] ; then \
-#		(echo "Making directory $(INSTALLDIR)" ; \
-#		$(MKDIR) $(INSTALLDIR) ; \
-#		chmod 775 $(INSTALLDIR)); \
-#	else \
-#		true ; \
-#	fi
-#	for i in $(TARGET) ; do \
-#		$(INSTALL) -m 755 $$i $(INSTALLDIR); \
-#	done
-
-install-bin: omrpc-gen-mpi omrpc-cc-mpi
-	@if [ ! -d $(INSTALLDIR) ] ; then \
-               (echo "Making directory $(INSTALLDIR)" ; \
-               $(MKDIR) $(INSTALLDIR) ; \
-               chmod 775 $(INSTALLDIR)); \
-	else \
-               true ; \
-	fi
-	$(INSTALL) -m 755 omrpc-gen-mpi $(INSTALLDIR);\
-	$(INSTALL) -m 755 omrpc-cc-mpi $(INSTALLDIR); \
-
-install-lib: libomrpcmpi.a
-	@if [ ! -d $(INSTALLDIR) ] ; then \
-               (echo "Making directory $(INSTALLDIR)" ; \
-               $(MKDIR) $(INSTALLDIR) ; \
-               chmod 775 $(INSTALLDIR)); \
-	else \
-               true ; \
-       	fi
-	$(INSTALL) -m 644 libomrpcmpi.a $(LIBINSTALLDIR)
-
-
-clean:
-	rm -f *.o *~ core $(TARGET) ninf_IDL.c y.tab.h y.output
-
-distclean: clean
-	rm -f config.* Makefile .depend* 
-
-depend: $(SRCS)
-	touch .depend.tmp
-	makedepend -f ./.depend.tmp -a -- $(GCCINC) $(DEPEND_SWITCH) -- $(SRCS)
-	sed 's:^$(PLATFORMDIR)/:./:' ./.depend.tmp > ./.depend
-	cat Makefile ./.depend > ./Makefile.tmp
-	mv Makefile.tmp Makefile
-	rm -f ./.depend ./.depend.tmp .depend.tmp.bak
-
-Makefile::
-	(cd $(TOPDIR); sh ./config.status)
-
-
-
+include $(MKRULESDIR)/rules.mk
+include .depend

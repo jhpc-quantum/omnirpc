@@ -15,7 +15,10 @@
 #  
 #  $
 
-all:	makeAll
+TOPDIR          = @TOPDIR@
+MKRULESDIR      = @MKRULESDIR@
+
+include $(MKRULESDIR)/vars.mk
 
 #DIRS		=	./include ./src/libomrpc ./src/omrpc-agent ./src/omrpc-daemon \
 #			./src/omrpc-gen ./src/omrpc-gen-xmp ./src/omrpc-gen-mpi ./src/omrpc-register \
@@ -26,41 +29,33 @@ TESTDIRS	=	./test/exec-test ./test/call-test ./test/stub-test
 
 EXAMPLEDIRS	=	./example/ep ./example/cpi ./example/knap
 
-makeAll:
-	for i in $(DIRS); do \
-		(cd $$i; make); \
-	done;
+include $(MKRULESDIR)/rules.mk
 
-install:
-	for i in $(DIRS); do \
-		(cd $$i; make DESTDIR=$(DESTDIR) install); \
-	done;
+clean::
+	$(RM) -r autom4te.cache config.log
+	find . -type f \( \
+		-name '*~' -o \
+		-name 'core' -o \
+		-name '*.core' -o \
+		-name 'vgcore.*' \
+	\) -exec rm -f {} \;
 
-clean:
-	for i in $(DIRS); do \
-		(cd $$i; make clean); \
-	done;
-	for i in $(TESTDIRS); do \
-		(cd $$i; make clean); \
-	done;
+distclean::	clean
+	$(RM) config.* mk/vars.mk mk/doxygen.conf ./libtool
+	find . -type f \( \
+		-name '.depend' \
+	\) | xargs $(RM)
+	find . -type d \( \
+		-name '.libs' \
+	\) | xargs $(RM) -r
 
-distclean:
-	for i in $(DIRS); do \
-		(cd $$i; make distclean); \
-	done;
-	for i in $(TESTDIRS); do \
-		(cd $$i; make distclean); \
-	done;
-	for i in $(EXAMPLEDIRS); do \
-		(cd $$i; make distclean); \
-	done;
-	rm -rf config.* Makefile *~
+ultimateclean:	distclean
+	@git clean -n -f -d -x | \
+	sed 's:^Would[[:space:]][[:space:]]*remove[[:space:]][[:space:]]*::' | \
+	grep -v tools/unity | \
+	xargs rm -rf
 
-Makefile::
-	@if test -x ./config.status; then \
-		sh ./config.status; \
-	fi;
-
-Makefiles:	Makefile
-
-
+show-garbage:
+	@git clean -n -f -d -x | \
+	sed 's:^Would[[:space:]][[:space:]]*remove[[:space:]][[:space:]]*::' | \
+	grep -v tools/unity

@@ -15,31 +15,10 @@
 #  
 #  $
 
-TOPDIR		=	../..
-prefix		=	@prefix@
-exec_prefix	=	@exec_prefix@
+TOPDIR          = @TOPDIR@
+MKRULESDIR      = @MKRULESDIR@
 
-bindir		=	$(exec_prefix)/bin
-libdir		=	$(prefix)/lib
-
-INSTALLDIR	=	$(bindir)
-INSTALL		= 	@INSTALLCOM@
-MKDIR		=	@MKDIRCOM@
-
-GCCINC		=	-I`case "$(CC)" in *gcc) echo \`$(CC) -v 2>&1 | grep specs | sed 's/specs$$/include/' | awk '{ print $$NF }'\`;; esac`
-
-
-CC_OPT_SWITCH	=	@CFLAGS@
-CPPFLAGS	=	-I. -I$(TOPDIR)/include @DEFS@ @CPPFLAGS@
-CFLAGS		=	$(CC_OPT_SWITCH)
-
-CC		=	@CC@ 
-AR		=	@AR@
-RANLIB		=	@RANLIB@
-
-YACC		=	@YACCCOM@
-
-DEPEND_SWITCH	=	$(CPPFLAGS)
+include $(MKRULESDIR)/vars.mk
 
 OMRPC_GEN = ../../src/omrpc-gen/omrpc-gen 
 OMRPC_REG = ../../src/omrpc-register/omrpc-register
@@ -52,27 +31,7 @@ OBJS = test1.o test2.o test3.o
 
 TARGET = test1 test2 test3
 
-all: $(TARGET)
-
-install:
-	true
-
-clean:
-	rm -f *.o *~ core $(TARGET)
-
-distclean:	clean
-	rm -f config.* Makefile .depend* *.rex *.rex.c
-
-depend: $(SRCS)
-	touch .depend.tmp
-	makedepend -f ./.depend.tmp -a -- $(GCCINC) $(DEPEND_SWITCH) -- $(SRCS)
-	sed 's:^$(PLATFORMDIR)/:./:' ./.depend.tmp > ./.depend
-	cat Makefile ./.depend > ./Makefile.tmp
-	mv Makefile.tmp Makefile
-	rm -f ./.depend ./.depend.tmp .depend.tmp.bak
-
-Makefile::
-	(cd $(TOPDIR); sh ./config.status)
-
+include $(MKRULESDIR)/rules.mk
+include .depend
 
 
