@@ -15,58 +15,15 @@
 #  
 #  $
 
-TOPDIR		=	..
-prefix		=	@prefix@
-exec_prefix	=	@exec_prefix@
+TOPDIR          = @TOPDIR@
+MKRULESDIR      = @MKRULESDIR@
 
-bindir		=	$(exec_prefix)/bin
-libdir		=	$(prefix)/lib
-incdir		=	$(prefix)/include
+include $(MKRULESDIR)/vars.mk
 
-INSTALLDIR	=	$(incdir)
-INSTALL		= 	@INSTALLCOM@
-MKDIR		=	@MKDIRCOM@
+INSTALL_HEADER_TARGETS	= OmniRpc.h ninf_stub_info.h omni_config.h \
+	omni_platform.h omrpc_stub_lib.h omrpc_mpi_lib.h omrpc_xmp_lib.h
 
-GCCINC		=	-I`case "$(CC)" in *gcc) echo \`$(CC) -v 2>&1 | grep specs | sed 's/specs$$/include/' | awk '{ print $$NF }'\`;; esac`
+include $(MKRULESDIR)/rules.mk
 
-
-CC_OPT_SWITCH	=	@CFLAGS@
-CPPFLAGS	=	-I. -I$(TOPDIR)/include @DEFS@ @CPPFLAGS@
-CFLAGS		=	$(CC_OPT_SWITCH) $(CPPFLAGS)
-
-CC		=	@CC@ 
-AR		=	@AR@
-RANLIB		=	@RANLIB@
-
-YACC		=	@YACCCOM@
-
-DEPEND_SWITCH	=	$(CPPFLAGS)
-
-HDRS		= OmniRpc.h ninf_stub_info.h omni_platform.h omrpc_stub_lib.h omrpc_mpi_lib.h omrpc_xmp_lib.h
-
-all:
-	@true
-
-install:
-	@if [ ! -d $(INSTALLDIR) ] ; then \
-		(echo "Making directory $(INSTALLDIR)" ; \
-		$(MKDIR) $(INSTALLDIR) ; \
-		chmod 775 $(INSTALLDIR)); \
-	else \
-		true ; \
-	fi
-	for i in $(HDRS) ; do \
-	     $(INSTALL) -m 644 $$i $(INSTALLDIR); \
-	done
-
-clean:
-	rm -f *.o *~ core
-
-distclean:	clean
-	rm -f config.* Makefile .depend*
-
-depend:
-	true
-
-Makefile::
-	(cd $(TOPDIR); sh ./config.status)
+clean::
+	$(RM) omni_config.h

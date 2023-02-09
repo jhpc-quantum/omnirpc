@@ -30,7 +30,7 @@ XMP_LIB_OBJS = omrpc_xmp_lib.o
 
 TARGET = omrpc-gen-xmp omrpc-cc-xmp libomrpcxmp.a
 
-all: $(TARGET)
+buildall: $(TARGET)
 
 # 
 #  OmniRPC Ninf stub program generator

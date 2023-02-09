@@ -28,7 +28,7 @@ OBJS = omrpc_gen_main.o ninf_IDL.o omrpc_gen_mem.o omrpc_gen_misc.o \
 
 TARGET = omrpc-gen omrpc-cc omrpc-fc
 
-all: $(TARGET)
+buildall: $(TARGET)
 
 # 
 #  OmniRPC Ninf stub program generator

@@ -30,7 +30,7 @@ MPI_LIB_OBJS = omrpc_mpi_lib.o
 
 TARGET = omrpc-gen-mpi omrpc-cc-mpi libomrpcmpi.a
 
-all: $(TARGET)
+buildall: $(TARGET)
 
 # 
 #  OmniRPC Ninf stub program generator

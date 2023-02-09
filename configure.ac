@@ -296,15 +296,15 @@ AC_CONFIG_FILES(
 	src/omrpc-gen/Makefile
 	src/omrpc-gen/omrpc-cc
 	src/omrpc-gen/omrpc-fc
-	src/omrpc-gen-xmp/Makefile
 	src/omrpc-gen-mpi/Makefile
+	src/omrpc-gen-xmp/Makefile
 	src/omrpc-gen-xmp/omrpc-cc-xmp
 	src/omrpc-register/Makefile
 	src/omrpc-register-yml/Makefile
 	src/omrpc-register-yml/omrpc_reg_defs.h
 	test/call-test/Makefile
 	test/exec-test/Makefile
-	test/comp-test/Makefile
+	test/comm-test/Makefile
 	test/stub-test/Makefile
 )
 
