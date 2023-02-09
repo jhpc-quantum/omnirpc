@@ -499,6 +499,9 @@ helgrind::
 generate::
 	@true
 
+clean::
+	@true
+
 ifdef HAVE_UNITY
 ifdef TESTS
 

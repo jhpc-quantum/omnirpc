@@ -15,6 +15,11 @@
 #  
 #  $
 
+TOPDIR          = @TOPDIR@
+MKRULESDIR      = @MKRULESDIR@
+
+include $(MKRULESDIR)/vars.mk
+
 SRCS = omrpc_gen_main.c ninf_IDL.c omrpc_gen_mem.c omrpc_gen_misc.c \
 	omrpc_gen_compile.c omrpc_gen_stub.c omrpc_mpi_lib.c
 

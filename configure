@@ -19616,7 +19616,7 @@ fi
 
 
 # emit.
-ac_config_files="$ac_config_files mk/vars.mk Makefile include/Makefile src/libomrpc/Makefile src/libomrpc/omrpc_defs.h src/omrpc-agent/Makefile src/omrpc-gen/Makefile src/omrpc-gen/omrpc-cc src/omrpc-gen/omrpc-fc src/omrpc-gen-xmp/Makefile src/omrpc-gen-xmp/omrpc-cc-xmp src/omrpc-register/Makefile src/omrpc-register-yml/Makefile src/omrpc-register-yml/omrpc_reg_defs.h test/call-test/Makefile test/exec-test/Makefile test/stub-test/Makefile"
+ac_config_files="$ac_config_files mk/vars.mk Makefile include/Makefile src/libomrpc/Makefile src/libomrpc/omrpc_defs.h src/omrpc-agent/Makefile src/omrpc-gen/Makefile src/omrpc-gen/omrpc-cc src/omrpc-gen/omrpc-fc src/omrpc-gen-xmp/Makefile src/omrpc-gen-mpi/Makefile src/omrpc-gen-xmp/omrpc-cc-xmp src/omrpc-register/Makefile src/omrpc-register-yml/Makefile src/omrpc-register-yml/omrpc_reg_defs.h test/call-test/Makefile test/exec-test/Makefile test/comp-test/Makefile test/stub-test/Makefile"
 
 
 # emit and set executable attribute.
@@ -20717,12 +20717,14 @@ do
     "src/omrpc-gen/omrpc-cc") CONFIG_FILES="$CONFIG_FILES src/omrpc-gen/omrpc-cc" ;;
     "src/omrpc-gen/omrpc-fc") CONFIG_FILES="$CONFIG_FILES src/omrpc-gen/omrpc-fc" ;;
     "src/omrpc-gen-xmp/Makefile") CONFIG_FILES="$CONFIG_FILES src/omrpc-gen-xmp/Makefile" ;;
+    "src/omrpc-gen-mpi/Makefile") CONFIG_FILES="$CONFIG_FILES src/omrpc-gen-mpi/Makefile" ;;
     "src/omrpc-gen-xmp/omrpc-cc-xmp") CONFIG_FILES="$CONFIG_FILES src/omrpc-gen-xmp/omrpc-cc-xmp" ;;
     "src/omrpc-register/Makefile") CONFIG_FILES="$CONFIG_FILES src/omrpc-register/Makefile" ;;
     "src/omrpc-register-yml/Makefile") CONFIG_FILES="$CONFIG_FILES src/omrpc-register-yml/Makefile" ;;
     "src/omrpc-register-yml/omrpc_reg_defs.h") CONFIG_FILES="$CONFIG_FILES src/omrpc-register-yml/omrpc_reg_defs.h" ;;
     "test/call-test/Makefile") CONFIG_FILES="$CONFIG_FILES test/call-test/Makefile" ;;
     "test/exec-test/Makefile") CONFIG_FILES="$CONFIG_FILES test/exec-test/Makefile" ;;
+    "test/comp-test/Makefile") CONFIG_FILES="$CONFIG_FILES test/comp-test/Makefile" ;;
     "test/stub-test/Makefile") CONFIG_FILES="$CONFIG_FILES test/stub-test/Makefile" ;;
     "mk/initdepend") CONFIG_FILES="$CONFIG_FILES mk/initdepend" ;;
 

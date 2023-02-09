@@ -20,8 +20,6 @@ MKRULESDIR      = @MKRULESDIR@
 
 include $(MKRULESDIR)/vars.mk
 
-all:	libomrpc_io.a libomrpc_stub.a libomrpc_client.a
-
 SRCS = omrpc_io.c omrpc_io_event.c omrpc_io_rw.c omrpc_exec.c \
 	omrpc_call.c omrpc_misc.c ninf_comm_lib.c ninf_misc.c \
 	omrpc_exec_lib.c omrpc_rpc_lib.c omrpc_rpc_flib.c omrpc_local.c \
@@ -48,7 +46,7 @@ STUB_LIB_OBJS = omrpc_stub_lib.o \
 
 TARGET_LIBS = libomrpc_io.a libomrpc_client.a libomrpc_stub.a
 
-all: $(TARGET_LIBS)
+buildlibs: $(TARGET_LIBS)
 
 libomrpc_io.a: $(IO_LIB_OBJS) 
 	rm -f $@
