@@ -16,13 +16,7 @@ static char rcsid[] = "$Id: omrpc_stub_lib.c,v 1.2 2006-01-25 16:06:18 ynaka Exp
  *  
  *  $
  */
-#include <string.h>
-#include <stdlib.h>
 #include "omrpc_stub.h"
-#include <string.h>
-#include <pthread.h>
-#include <sys/types.h>
-#include <unistd.h>
 
 #include "omrpc_mon.h"
 #include "omrpc_mpi.h"
@@ -111,7 +105,7 @@ omrpc_stub_INIT(int argc, char * argv[])
     omrpc_stub_mp = NULL;
     omrpc_stub_hp = NULL;
 
-#ifdef not
+#if 0
     omrpc_debug_flag = TRUE;
 #endif
 

@@ -16,16 +16,11 @@
  *  
  *  $
  */
-#include <stdio.h>
-#include <stdarg.h>
-#include <sys/types.h>
-#include <sys/wait.h>
 #include "omrpc_defs.h"
 #include "omrpc_io.h"
 #include "omrpc_rpc.h"
 #include "ninf_comm_lib.h"
 #include "omrpc_exec.h"
-#include <mpi.h>
 
 #ifdef USE_GLOBUS
 #include "omrpc_globus.h"

@@ -5,8 +5,6 @@
 #ifndef OMRPC_MPI_LIB
 #define OMRPC_MPI_LIB
 
-#include<mpi.h>
-
 #define MAXPATHLEN 256
 
 typedef struct omrpc_mpi_node{

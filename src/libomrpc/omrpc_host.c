@@ -16,9 +16,6 @@ static char rcsid[] = "$Id: omrpc_host.c,v 1.2 2006-01-25 16:06:17 ynaka Exp $";
  *  
  *  $
  */
-#include <stdio.h>
-#include <string.h>
-#include <mpi.h>
 #include "omrpc_defs.h"
 #include "omrpc_host.h"
 #include "omrpc_rpc.h"

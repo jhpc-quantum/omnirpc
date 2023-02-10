@@ -2,9 +2,6 @@
 
 #ifdef MYX
 
-#include<mpi.h>
-#include<stdio.h>
-
 #define MPI_Init(argc, argv)\
        PMPI_Init(argc, argv)
 

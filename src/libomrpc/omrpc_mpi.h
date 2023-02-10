@@ -1,8 +1,7 @@
 #ifndef _OMPRC_MPI_H_
 #define _OMRPC_MPI_H_
 
-#include <mpi.h>
-#include <pthread.h>
+#include "omrpc_defs.h"
 #include "omrpc_rpc.h"
 
 pthread_t mrpc_tid;

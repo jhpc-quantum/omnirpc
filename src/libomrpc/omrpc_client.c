@@ -83,7 +83,7 @@ int omrpc_agent_invoke(omrpc_io_handle_t *agent_hp,char *path,short port_num,int
 void omrpc_activate_port(omrpc_io_port_t *port)
 {
     switch(port->port_type){
-#ifdef not
+#if 0
     case PORT_MXIO:
     {
 	omrpc_mxio_port_t *mport = (omrpc_mxio_port_t *)port;
@@ -121,13 +121,13 @@ void omrpc_recv_done_port(omrpc_io_port_t *port)
 
 	if(!omrpc_handler_running) return;
 
-#ifdef not
+#if 0
 	omrpc_io_lock();
 	mport->active_flag = TRUE;	/* activate it */
 	omrpc_io_modified();
 #endif
 	omrpc_send_mxio_ack(mport,OMRPC_AGENT_READ_DONE);
-#ifdef not
+#if 0
 	omrpc_io_unlock();
 #endif
 	break;

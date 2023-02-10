@@ -3,10 +3,9 @@
  library for exec by mpi_comm_spawn
  M.Tsuji 2011.09.08
 */
-#include<mpi.h>
-#include<stdio.h>
-#include"../../include/omrpc_mpi_lib.h"
-#include"myx_master_wrapper.h"
+#include "omrpc_defs.h"
+#include "../../include/omrpc_mpi_lib.h"
+#include "myx_master_wrapper.h"
 
 void omrpc_recv_nodelist(int nprocs, MPI_Comm comm, omrpc_mpi_node_t *nodes)
 {

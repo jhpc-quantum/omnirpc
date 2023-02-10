@@ -1,8 +1,6 @@
 /* 20111129 M.TSUJI */
 
-#include <fcntl.h>
-#include <sys/types.h>
-#include <sys/stat.h>
+#include "omrpc_defs.h"
 #include "omrpc_host.h"
 #include "omrpc_mpi.h"
 #include "omrpc_mpi_io.h"

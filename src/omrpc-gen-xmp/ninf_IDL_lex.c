@@ -95,7 +95,7 @@ int lex_getc()
     
     if (debug_flag)  fprintf(stderr, "%3d:%s",lineno,line_buf);
     
-#ifdef not
+#if 0
     /* check line nubmer, # nnn "file" */
     if (line_buf[0] == '#'){
       linep = &line_buf[1];
@@ -184,7 +184,7 @@ yylex0()
       return(ch);
       
     case '|':	/* | and || */
-#ifdef not
+#if 0
       if((ch = GETCH()) == '|')
 	return(OROR);
       UNGETCH(ch);
@@ -192,7 +192,7 @@ yylex0()
       return('|');
       
     case '&':	/* & and && */
-#ifdef not
+#if 0
       if((ch = GETCH()) == '&')
 	return(ANDAND);
       UNGETCH(ch);
@@ -240,7 +240,7 @@ yylex0()
       return('=');
 
     case '+':  /* + and ++ */
-#ifdef not
+#if 0
       if((ch = GETCH()) == '+')
 	return(PLUSPLUS);
       UNGETCH(ch);
@@ -248,7 +248,7 @@ yylex0()
       return('+');
       
     case '-':	/* - and -- and -> */
-#ifdef not
+#if 0
       switch(ch = GETCH()){
       case '-':
 	return(MINUSMINUS);
@@ -434,7 +434,7 @@ read_string_constant(int mark)
       error("unexpected EOF");
       break;
       
-#ifdef not
+#if 0
     case '\n':
       error("newline in string or char constant");
       break;

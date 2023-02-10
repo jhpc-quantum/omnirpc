@@ -72,10 +72,10 @@ AC_CANONICAL_TARGET
 AC_PROG_INSTALL
 AC_PROG_CC
 AC_PROG_CXX
-#AC_PROG_YACC
+AC_PROG_YACC
 #AC_PROG_LEX
 #if test "x$LEX" != xflex -a "x$LEX" != xlex; then
-#   AC_MSG_ERROR([flex/lex must be installed.])
+#    AC_MSG_ERROR([flex/lex must be installed.])
 #fi
 AC_PROG_AWK
 

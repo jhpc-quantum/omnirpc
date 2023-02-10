@@ -2,8 +2,7 @@
  * prototype for API
  * $Id: OmniRpc.h,v 1.1.1.1 2004-11-03 21:01:36 yoshihiro Exp $
  */
-#include <stdarg.h>
-#include <mpi.h>
+#include "omni_platform.h"
 
 #define OMRPC_OK 0
 #define OMRPC_ERROR (-1)

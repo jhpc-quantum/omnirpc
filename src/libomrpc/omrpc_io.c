@@ -632,7 +632,7 @@ int omrpc_io_connect(char *host, unsigned short port)
     sin.sin_port = htons(port);
 
     if(host == NULL){
-#ifdef not
+#if 0
         r = gethostname(hostname,MAXHOSTNAMELEN);
         if(r < 0){
             perror("hostname");

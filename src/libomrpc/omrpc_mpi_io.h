@@ -1,8 +1,6 @@
 #ifndef _OMRPC_MPI_IO_H_
 #define _OMRPC_MPI_IO_H_
 
-#include <mpi.h>
-#include <pthread.h>
 #include "omrpc_stub.h"
 #ifdef USE_FJMPI
 #include "mpi-ext.h"

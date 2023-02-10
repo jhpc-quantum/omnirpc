@@ -323,7 +323,7 @@ omrpc_io_handle_t *omrpc_get_input_handle()
                 omrpc_fatal("get_input_handle: mxio error");
             hp->peeked_ncount = nbytes;
             hp->peeked = TRUE;
-#ifdef not
+#if 0
             mport->active_flag = FALSE;  /* already take input, de-activate */
 #endif
             if(omrpc_debug_flag)

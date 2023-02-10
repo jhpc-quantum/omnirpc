@@ -15,11 +15,6 @@
 	*   
 	*   $
 	*/
-#include <stdio.h>
-#include <sys/types.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <mpi.h>
 #include "omrpc_defs.h"
 #include "omrpc_exec.h"
 #include "omrpc_mon.h"

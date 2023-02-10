@@ -25,5 +25,5 @@ INSTALL_HEADER_TARGETS	= OmniRpc.h ninf_stub_info.h omni_config.h \
 
 include $(MKRULESDIR)/rules.mk
 
-clean::
+distclean::
 	$(RM) omni_config.h

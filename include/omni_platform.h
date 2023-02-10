@@ -21,4 +21,12 @@
 
 #include "omni_config.h"
 
+#ifdef USE_MPI
+#include <mpi.h>
+#endif /* USE_MPI */
+
+#ifdef USE_XMP
+#include <xmp.h>
+#endif /* USE_XMP */
+
 #endif /* _OMNI_PLATFORM_H */

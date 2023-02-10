@@ -91,7 +91,7 @@ void OmniRpcInit(int *argc, char **argv[])
                     }
                 } else if (strcmp(p, "debug") == 0) {
                     omrpc_debug_flag = TRUE;
-#ifdef not
+#if 0
                 } else if (strcmp(p, "np") == 0){
                     args++;
                     if (*args == NULL){
@@ -197,7 +197,7 @@ void OmniRpcMpiInit(int *argc, char **argv[])
                     }
                 } else if (strcmp(p, "debug") == 0) {
                     omrpc_debug_flag = TRUE;
-#ifdef not
+#if 0
                 } else if (strcmp(p, "np") == 0){
                     args++;
                     if (*args == NULL){

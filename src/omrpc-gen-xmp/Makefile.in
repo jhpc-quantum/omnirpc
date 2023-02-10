@@ -44,9 +44,16 @@ libomrpcxmp.a: $(XMP_LIB_OBJS)
 	$(AR) $@ $(XMP_LIB_OBJS)
 	$(RANLIB) $@
 
+
+prerequisite::	ninf_IDL.c
+
 ninf_IDL.c: ninf_IDL.y ninf_IDL_lex.c
 	$(YACC) -d -v ninf_IDL.y 
 	mv y.tab.c ninf_IDL.c
 
 include $(MKRULESDIR)/rules.mk
 include .depend
+
+distclean::
+	$(RM) -f ninf_IDL.c y.tab.h
+

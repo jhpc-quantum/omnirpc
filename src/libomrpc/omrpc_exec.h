@@ -19,8 +19,6 @@
 #ifndef _OMRPC_EXEC_H_
 #define _OMRPC_EXEC_H_
 
-#include<mpi.h>
-
 #define RSH_COMMAND "rsh"       /* default */
 #define SSH_COMMAND "ssh"       /* default */
 #define PBS_SUBMIT_COMMAND "qsub"       /* default */

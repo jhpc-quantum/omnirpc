@@ -375,7 +375,7 @@ static void ninf_trans_array_rec(int dim, omrpc_io_handle_t *hp, char *base,
   }
 }
 
-#ifdef not
+#if 0
 /* 
  * send & recv interface information
  */
