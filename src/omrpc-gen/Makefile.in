@@ -23,18 +23,9 @@ include $(MKRULESDIR)/vars.mk
 SRCS = omrpc_gen_main.c ninf_IDL.c omrpc_gen_mem.c omrpc_gen_misc.c \
 	omrpc_gen_compile.c omrpc_gen_stub.c
 
-OBJS = omrpc_gen_main.o ninf_IDL.o omrpc_gen_mem.o omrpc_gen_misc.o \
-	omrpc_gen_compile.o omrpc_gen_stub.o 
-
 TARGET = omrpc-gen omrpc-cc omrpc-fc
 
 buildall: $(TARGET)
-
-prerequisite::	ninf_IDL.c
-
-ninf_IDL.c: ninf_IDL.y ninf_IDL_lex.c
-	$(YACC) -d -v ninf_IDL.y 
-	mv y.tab.c ninf_IDL.c
 
 # 
 #  OmniRPC Ninf stub program generator
@@ -45,6 +36,12 @@ omrpc-gen: $(OBJS)
 
 include $(MKRULESDIR)/rules.mk
 include .depend
+
+generate::	ninf_IDL.c
+
+ninf_IDL.c: ninf_IDL.y ninf_IDL_lex.c
+	$(YACC) -d -v ninf_IDL.y 
+	mv y.tab.c ninf_IDL.c
 
 distclean::
 	$(RM) -f ninf_IDL.c y.tab.h

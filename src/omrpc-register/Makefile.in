@@ -28,7 +28,9 @@ LIBS = -L../libomrpc -lomrpc_client -lomrpc_io -lpthread @SOCK_LIBS@ @GLOBUS_LIB
 
 TARGET = omrpc-register
 
-all: $(TARGET)
+CPPFLAGS	+=	-I$(BUILD_LIBDIR)
+
+buildall: $(TARGET)
 
 # 
 #  OmniRPC stub register program
