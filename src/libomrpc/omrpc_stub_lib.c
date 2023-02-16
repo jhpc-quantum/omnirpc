@@ -351,7 +351,7 @@ omrpc_stub_REQ()
             // receive scalar args
 	    ninfm_recv_scalar_args(omrpc_stub_mp,stub_info,stub_args,FALSE);
             // receive vector data 
-n            for (i = 0; i < stub_info->nparam; i++){
+            for (i = 0; i < stub_info->nparam; i++){
                 dp = &stub_info->params[i];
                 if(dp->ndim == 0) continue;         // scalar 
 
