@@ -160,18 +160,6 @@ endif
 LTLINK_RPATH	= -rpath $(DEST_LIBDIR)
 LTLINK_RUNPATH	= $(BUILD_LIBDIR)
 
-ifneq ($(DPDK_DIR),)
-LTLINK_RUNPATH  += -R $(DPDK_DIR)
-endif
-
-ifneq ($(SPDK_DIR),)
-LTLINK_RUNPATH  += -R $(SPDK_DIR)/lib
-endif
-
-ifneq ($(LIBFABRIC_DIR),)
-LTLINK_RUNPATH  += -R $(LIBFABRIC_DIR)/lib
-endif
-
 LTLINK_RUNPATH	+= \
 	-R $(RUNPATH_FABR_UTIL_LIB) \
 	-R $(RUNPATH_FABR_THD_POOL_LIB) \
@@ -206,22 +194,7 @@ LTINSTALL_LIB	= $(LIBTOOL) --mode=install $(INSTALL_DATA)
 LTINSTALL_HEADER= $(LIBTOOL) --mode=install $(INSTALL_DATA)
 LTCLEAN		= $(LIBTOOL) --mode=clean $(RM)
 
-HAVE_RUBY		= @HAVE_RUBY@
-RUBY			= ruby
-
 HAVE_PROTOC		= @HAVE_PROTOC@
-HAVE_UNITY		= @HAVE_UNITY@
-TEST_RESULT_DIR		= $(TOPDIR)/test_result_dir
-UNITY_DIR		= $(TOPDIR)/tools/unity
-BUILDUNITY_DIR		= $(UNITY_DIR)/src
-UNITY_CPPFLAGS		= -I$(BUILDUNITY_DIR)
-UNITY_GEN_RUNNER	= $(UNITY_DIR)/auto/generate_test_runner.rb
-UNITY_SUMMARY		= $(UNITY_DIR)/auto/unity_test_summary.rb
-UNITY_REPORT		= $(UNITY_DIR)/auto/colour_reporter
-UNITY_LIB		= libunity.la
-DEP_UNITY_LIB		= $(BUILDUNITY_DIR)/$(UNITY_LIB)
-RUNPATH_UNITY_LIB	= $(BUILDUNITY_DIR)/.libs
-
 HAVE_GCOVR		= @HAVE_GCOVR@
 
 HAVE_PAPI		= @HAVE_PAPI@
@@ -229,4 +202,8 @@ HAVE_PAPI		= @HAVE_PAPI@
 ifdef SITECONF_MK
 __SITECONF__=.post.
 include $(SITECONF_MK)
+endif
+
+ifdef USE_MPI
+include $(MKRULESDIR)/mpi.mk
 endif

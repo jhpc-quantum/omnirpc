@@ -69,8 +69,8 @@ typedef enum tlog_type {
 } TLOG_TYPE;
 
 
-void tlog_INIT_AGENT_IN();
-void tlog_INIT_AGENT_OUT();
+void tlog_INIT_AGENT_IN(void);
+void tlog_INIT_AGENT_OUT(void);
 
 void tlog_RPC_IN(int id);
 void tlog_RPC_OUT(int id);
@@ -94,15 +94,16 @@ void tlog_RECV_ARG_IN(int id);
 void tlog_RECV_ARG_OUT(int id);
 
 /* event */
-void tlog_CALL_IN_EVENT();
-void tlog_CALL_OUT_EVENT();
-void tlog_CALL_ASYNC_EVENT();
-void tlog_INIT_MODULE_EVENT();
+void tlog_CALL_IN_EVENT(void);
+void tlog_CALL_OUT_EVENT(void);
+void tlog_CALL_ASYNC_EVENT(void);
+void tlog_INIT_MODULE_EVENT(void);
 
-void tlog_WAIT_IN_EVENT();
-void tlog_WAIT_OUT_EVENT();
+void tlog_WAIT_IN_EVENT(void);
+void tlog_WAIT_OUT_EVENT(void);
 
 void tlog_init(char *);
 void tlog_finalize(void);
 
 #endif /* _TLOG_OMRPC_H */
+

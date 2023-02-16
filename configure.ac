@@ -285,6 +285,27 @@ AC_CHECK_FUNCS([strlcpy strlcat, pthread_mutex_timedlock])
 LIBS=${oLIBS}
 AC_CHECK_FUNC(strtold, [AC_DEFINE(HAVE_STRTOLD)])
 
+### MPI
+USE_MPI=''
+mpi_flavor=''
+AC_ARG_WITH([mpi],
+	[AS_HELP_STRING([--with-mpi=flavor], [specify MPI type to use])],
+	[mpi_flavor="$withval"], [mpi_flavor=''])
+if test ! -z "${mpi_flavor}"; then
+    AC_MSG_CHECKING([MPI])
+    case ${mpi_flavor} in
+        yes|openmpi) mpi_flavor=mpi;;
+    esac
+    mk/genflags.sh ${mpi_flavor} | sed 's:^PKG_:MPI_:' > mk/mpi.mk
+    if test $? -eq 0; then
+	AC_DEFINE(USE_MPI)
+	AC_MSG_RESULT([${mpi_flavor}.])
+    else
+        AC_MSG_ERROR([failed to find ${mpi_flavor}.])
+    fi
+fi
+AC_SUBST(USE_MPI)
+
 # emit.
 AC_CONFIG_FILES(
 	mk/vars.mk

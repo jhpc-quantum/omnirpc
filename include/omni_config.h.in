@@ -58,4 +58,6 @@
 #undef SIZEOF_VOID_P
 #undef SIZEOF_PTHREAD_T
 
+#indef USE_MPI
+
 #endif /* ! __OMNI_CONFIG_H__ */

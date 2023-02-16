@@ -53,12 +53,12 @@ extern int omrpc_tlog_flag;
 /* prototype */
 void *omrpc_malloc(size_t size);
 void omrpc_free(void *p);
-void omrpc_fatal(char *msg,...);
-void omrpc_error(char *msg,...);
-void omrpc_prf(char *msg,...);
+void omrpc_fatal(const char *msg,...);
+void omrpc_error(const char *msg,...);
+void omrpc_prf(const char *msg,...);
 
-void omrpc_init_client();
-void omrpc_finalize_client();
+void omrpc_init_client(void);
+void omrpc_finalize_client(void);
 void omrpc_get_default_path(char *buf, char *file);
 
 char *omrpc_tempnam(char *base, int32_t id);

@@ -657,6 +657,7 @@ ac_includes_default="\
 ac_header_c_list=
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
+USE_MPI
 PCAP_LIBS
 HAVE_GCOVR
 HAVE_NKF
@@ -783,6 +784,7 @@ with_aix_soname
 with_gnu_ld
 with_sysroot
 enable_libtool_lock
+with_mpi
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1437,6 +1439,7 @@ Optional Packages:
   --with-gnu-ld           assume the C compiler uses GNU ld [default=no]
   --with-sysroot[=DIR]    Search for dependent libraries within DIR (or the
                           compiler's sysroot if not specified).
+  --with-mpi=flavor       specify MPI type to use
 
 Some influential environment variables:
   CC          C compiler command
@@ -19669,6 +19672,36 @@ if test "x$ac_cv_func_strtold" = xyes
 then :
   printf "%s\n" "#define HAVE_STRTOLD 1" >>confdefs.h
 
+fi
+
+
+### MPI
+USE_MPI=''
+mpi_flavor=''
+
+# Check whether --with-mpi was given.
+if test ${with_mpi+y}
+then :
+  withval=$with_mpi; mpi_flavor="$withval"
+else $as_nop
+  mpi_flavor=''
+fi
+
+if test ! -z "${mpi_flavor}"; then
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking MPI" >&5
+printf %s "checking MPI... " >&6; }
+    case ${mpi_flavor} in
+        yes|openmpi) mpi_flavor=mpi;;
+    esac
+    mk/genflags.sh ${mpi_flavor} | sed 's:^PKG_:MPI_:' > mk/mpi.mk
+    if test $? -eq 0; then
+	printf "%s\n" "#define USE_MPI 1" >>confdefs.h
+
+	{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: ${mpi_flavor}." >&5
+printf "%s\n" "${mpi_flavor}." >&6; }
+    else
+        as_fn_error $? "failed to find ${mpi_flavor}." "$LINENO" 5
+    fi
 fi
 
 
