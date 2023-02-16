@@ -319,6 +319,7 @@ AC_CONFIG_FILES(
 	src/omrpc-gen/omrpc-cc
 	src/omrpc-gen/omrpc-fc
 	src/omrpc-gen-mpi/Makefile
+	src/omrpc-gen-mpi/omrpc-cc-mpi
 	src/omrpc-gen-xmp/Makefile
 	src/omrpc-gen-xmp/omrpc-cc-xmp
 	src/omrpc-register/Makefile

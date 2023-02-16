@@ -57,15 +57,15 @@ all:: $(TARGET_LIBS)
 
 libomrpc_io.la: $(IO_LIB_OBJS) 
 	$(RM) -f $@ .libs/$(@F:.la=.*)
-	$(LTLIB_CC) -o $@ $(IO_LIB_OBJS) $(LDFLAGS) $(DEP_LIBS)
+	$(LTLIB_CC) -o $@ $(IO_LIB_OBJS) $(MPI_LIBS) $(LDFLAGS) $(DEP_LIBS)
 
 libomrpc_stub.la: $(STUB_LIB_OBJS)
 	$(RM) -f $@ .libs/$(@F:.la=.*)
-	$(LTLIB_CC) -o $@ $(STUB_LIB_OBJS) $(LDFLAGS) $(DEP_LIBS)
+	$(LTLIB_CC) -o $@ $(STUB_LIB_OBJS) $(MPI_LIBS) $(LDFLAGS) $(DEP_LIBS)
 
 libomrpc_client.la: $(CLIENT_LIB_OBJS) 
 	$(RM) -f $@ .libs/$(@F:.la=.*)
-	$(LTLIB_CC) -o $@ $(CLIENT_LIB_OBJS) $(LDFLAGS) $(DEP_LIBS)
+	$(LTLIB_CC) -o $@ $(CLIENT_LIB_OBJS) $(MPI_LIBS) $(LDFLAGS) $(DEP_LIBS)
 
 include $(MKRULESDIR)/rules.mk
 include .depend

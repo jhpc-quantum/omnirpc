@@ -19,8 +19,10 @@ static char rcsid[] = "$Id: omrpc_stub_lib.c,v 1.2 2006-01-25 16:06:18 ynaka Exp
 #include "omrpc_stub.h"
 
 #include "omrpc_mon.h"
+#ifdef USE_MPI
 #include "omrpc_mpi.h"
 #include "omrpc_mpi_io.h"
+#endif /* USE_MPI */
 
 #include "myx_master_wrapper.h"
 #ifdef USE_GLOBUS
@@ -36,7 +38,9 @@ extern short omrpc_n_entry;
 extern NINF_STUB_INFO *omrpc_stub_info_table[];
 
 omrpc_io_handle_t  *omrpc_stub_hp;
+#ifdef USE_MPI
 omrpc_mpi_handle_t *omrpc_stub_mp;
+#endif /* USE_MPI */
 char *omrpc_client_hostname;
 int omrpc_mxio_flag;
 char *omrpc_sched_type = NULL;
@@ -102,7 +106,9 @@ omrpc_stub_INIT(int argc, char * argv[])
 
     omrpc_my_prog_name = strdup(argv[0]);
     hostname = NULL;
+#ifdef USE_MPI
     omrpc_stub_mp = NULL;
+#endif /* USE_MPI */
     omrpc_stub_hp = NULL;
 
 #if 0
@@ -174,6 +180,7 @@ omrpc_stub_INIT(int argc, char * argv[])
         }
     }
 
+#ifdef USE_MPI
     if(strcmp(omrpc_sched_type,"MPI")==0){
       short short_buf[6];
       MPI_Status status;
@@ -215,7 +222,8 @@ omrpc_stub_INIT(int argc, char * argv[])
       if(omrpc_debug_flag) omrpc_prf("stub init End ...\n");
       return;
     } // if(strcmp(omrpc_sched_type,"MPI")==0)
-
+#endif /* USE_MPI */
+    
     if(port == 0) omrpc_fatal("port is not specified");
 
     if(omrpc_debug_flag)
@@ -296,11 +304,16 @@ omrpc_stub_REQ()
 //    pthread_mutex_lock(&omrpc_ft_mutex);
 //    pthread_cond_wait(&omrpc_ft_cond,&omrpc_ft_mutex);
 #endif
+#ifdef USE_MPI
     if(strcmp(omrpc_sched_type,"MPI")==0){
         omrpcm_recv_char(omrpc_stub_mp, &request, 1, 0, omrpc_stub_mp->tag++);
     }else{
+#endif /* USE_MPI */
         request = omrpc_recv_cmd(omrpc_stub_hp);
+#ifdef USE_MPI
     }
+#endif /* USE_MPI */
+
 #ifdef USE_FT
 //    pthread_mutex_unlock(&omrpc_ft_mutex);
 #endif
@@ -313,6 +326,7 @@ omrpc_stub_REQ()
     switch(request){
     case OMRPC_REQ_KILL:
     killed:
+#ifdef USE_MPI
         if(strcmp(omrpc_sched_type,"MPI")==0){
 #ifdef USE_FT
             if(omrpc_stub_mp->ft_pname) omrpc_free(omrpc_stub_mp->ft_pname);
@@ -320,11 +334,15 @@ omrpc_stub_REQ()
             omrpc_free(omrpc_stub_mp);
             omrpc_stub_mp=NULL;
         }else{
+#endif /* USE_MPI */
 	    omrpc_io_handle_close(omrpc_stub_hp);
+#ifdef USE_MPI
         }
+#endif /* USE_MPI */
 	return -1;	/* exit loop */
 
     case OMRPC_REQ_CALL:
+#ifdef USE_MPI
         if(strcmp(omrpc_sched_type,"MPI")==0){ // MpiBackend 
 	    // get request function index 
             omrpcm_recv_short(omrpc_stub_mp, &index, 1, 0, omrpc_stub_mp->tag++);
@@ -333,7 +351,7 @@ omrpc_stub_REQ()
             // receive scalar args
 	    ninfm_recv_scalar_args(omrpc_stub_mp,stub_info,stub_args,FALSE);
             // receive vector data 
-            for (i = 0; i < stub_info->nparam; i++){
+n            for (i = 0; i < stub_info->nparam; i++){
                 dp = &stub_info->params[i];
                 if(dp->ndim == 0) continue;         // scalar 
 
@@ -355,6 +373,7 @@ omrpc_stub_REQ()
             }
             if(omrpc_debug_flag) omrpc_prf("REQ_CALL end\n");
         }else{
+#endif /* USE_MPI */
 	    // get request function index 
    	    omrpc_recv_short(omrpc_stub_hp,&index,1);
 	    if(omrpc_debug_flag) omrpc_prf("requested call index=%d\n",index);
@@ -386,17 +405,22 @@ omrpc_stub_REQ()
             }
             if(omrpc_debug_flag) omrpc_prf("REQ_CALL end\n");
             omrpc_recv_done(omrpc_stub_hp);
+#ifdef USE_MPI
 	}
-	
+#endif /* USE_MPI */
 	return index;		/* continue */
 
     case OMRPC_REQ_STUB_INFO:
+#ifdef USE_MPI
         if(strcmp(omrpc_sched_type,"MPI")==0){
             omrpcm_recv_str(omrpc_stub_mp, name, 0, omrpc_stub_mp->tag++); 
         }else{
+#endif /* USE_MPI */
 	    omrpc_recv_string(omrpc_stub_hp,name);
 	    omrpc_recv_done(omrpc_stub_hp);
+#ifdef USE_MPI
         }
+#endif /* USE_MPI */
 	if(omrpc_debug_flag){
 	    omrpc_prf("requested stub: name = %s\n",name);
 	}
@@ -407,6 +431,7 @@ omrpc_stub_REQ()
 		break;
 	}
 
+#ifdef USE_MPI
         if(strcmp(omrpc_sched_type,"MPI")==0){
             if(i == omrpc_n_entry){
                 char ack=OMRPC_ACK_NG;
@@ -415,13 +440,16 @@ omrpc_stub_REQ()
             }
             omrpcm_send_stub_info(omrpc_stub_mp,omrpc_stub_info_table[i]);
         }else{
-            if(i == omrpc_n_entry){
+#endif /* USE_MPI */
+	    if(i == omrpc_n_entry){
                 omrpc_send_cmd(omrpc_stub_hp,OMRPC_ACK_NG);
                 omrpc_send_done(omrpc_stub_hp);
                 goto next;
             }
             omrpc_send_stub_info(omrpc_stub_hp,omrpc_stub_info_table[i]);
+#ifdef USE_MPI
         }
+#endif /* USE_MPI */
 	goto next;
 	
     case OMRPC_REQ_STUB_INFO_BY_INDEX:
@@ -608,6 +636,7 @@ omrpc_stub_END()
         }
     
         omrpc_send_done(omrpc_stub_hp);
+#ifdef USE_MPI
     }else{ // MPI 
         char ack=OMRPC_ACK_OK;
         omrpcm_send_char(omrpc_stub_mp,&ack,1,0,OMRPC_END_STUB_TAG);
@@ -622,6 +651,7 @@ omrpc_stub_END()
             if(omrpc_debug_flag) omrpc_prf("Ninf_stub_END send array(%d)\n",i);
             ninfm_send_array(omrpc_stub_mp,stub_args[i].p,&array_shape,0);
         }
+#endif /* USE_MPI */
     }
     
 

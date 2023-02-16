@@ -52,8 +52,11 @@ int omrpc_exec_worker_by_ssh(char *exec_host,char *user_name,
                              unsigned short port_num,int mx_flag,
                              int globus_flag,char *job_sched_type,
                              char *working_path);
+#ifdef USE_MPI
 int omrpc_exec_by_mpi(char *path,char *host,unsigned short port_num, 
-                      char *working_path, int nprocs, char *schd, MPI_Comm *intercomm);
+                      char *working_path, int nprocs, char *schd,
+		      MPI_Comm *intercomm);
+#endif /* USE_MPI */
 
 
 #endif /*_OMRPC_EXEC_H_*/

@@ -52,6 +52,7 @@ OmniRpcRequest OmniRpcCallAsyncByHandleV(OmniRpcHandle handle,
 void OmniRpcDestroyHandle(OmniRpcHandle handle);
 void OmniRpcDestroyRequest(OmniRpcRequest req0);
 
+#ifdef USE_MPI
 /*********************************************************
  * APIs for RPC with parallel-remote-programs            *
  *********************************************************/
@@ -91,3 +92,4 @@ char *OmniRpcMpiGetPort(void *handle);
  *********************************************************/
 void *OmniRpcCallAsyncMPI(char *entry_name,int nprocs,...);
 void *OmniRpcCallAsyncVMPI(char *entry_name,int nprocs,va_list ap);
+#endif /* USE_MPI */

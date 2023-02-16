@@ -23,12 +23,12 @@ include $(MKRULESDIR)/vars.mk
 SRCS = omrpc_gen_main.c ninf_IDL.c omrpc_gen_mem.c omrpc_gen_misc.c \
 	omrpc_gen_compile.c omrpc_gen_stub.c omrpc_mpi_lib.c
 
-OBJS = omrpc_gen_main.o ninf_IDL.o omrpc_gen_mem.o omrpc_gen_misc.o \
+OBJS = omrpc_gen_main.lo ninf_IDL.lo omrpc_gen_mem.lo omrpc_gen_misc.lo \
 	omrpc_gen_compile.o omrpc_gen_stub.o 
 
-MPI_LIB_OBJS = omrpc_mpi_lib.o
+MPI_LIB_OBJS = omrpc_mpi_lib.lo
 
-TARGET = omrpc-gen-mpi omrpc-cc-mpi libomrpcmpi.a
+TARGET = omrpc-gen-mpi omrpc-cc-mpi libomrpcmpi.la
 
 buildall: $(TARGET)
 
@@ -36,10 +36,13 @@ buildall: $(TARGET)
 #  OmniRPC Ninf stub program generator
 #
 
+omrpc-cc-mpi:
+	@true
+
 omrpc-gen-mpi: $(OBJS)
 	$(CC) $(CC_OPT_SWITCH) -o omrpc-gen-mpi $(OBJS)
 
-libomrpcmpi.a: $(MPI_LIB_OBJS)
+libomrpcmpi.la: $(MPI_LIB_OBJS)
 	rm -f $@
 	$(AR) $@ $(MPI_LIB_OBJS)
 	$(RANLIB) $@
@@ -54,4 +57,5 @@ ninf_IDL.c: ninf_IDL.y ninf_IDL_lex.c
 	mv y.tab.c ninf_IDL.c
 
 distclean::
-	$(RM) -f ninf_IDL.c y.tab.h
+	$(RM) -f ninf_IDL.c y.tab.h omnitpc-gen-mpi
+

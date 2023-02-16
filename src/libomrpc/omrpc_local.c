@@ -80,8 +80,10 @@ omrpc_rpc_t *omrpc_exec_on_host(omrpc_host_t *hostp, char *prog_name)
     globus_io_handle_t listener_handle;
     void *job_info;
 #endif
+#ifdef USE_MPI
     MPI_Comm intercomm;
-
+#endif /* USE_MPI */
+    
     port = 0; /* ANY */
     if(hostp != NULL && hostp->fork_type == FORK_GRAM){
 #ifdef USE_GLOBUS
@@ -122,9 +124,12 @@ omrpc_rpc_t *omrpc_exec_on_host(omrpc_host_t *hostp, char *prog_name)
                                      &job_info);
             break;
 #endif
+#ifdef USE_MPI
         case FORK_MPI:         /* MPI_Comm_Spawn */
             pid = omrpc_exec_by_mpi(prog_name,omrpc_my_hostname,port,hostp->working_path,1,"mpi",&intercomm);
             break;
+#endif /* USE_MPI */
+	    
         default:
 
             return NULL;        /* unknown type */

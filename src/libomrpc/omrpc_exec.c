@@ -466,6 +466,7 @@ int omrpc_exec_worker_by_ssh(char *exec_host,
     return pid;
 }
 
+#ifdef USE_MPI
 int omrpc_exec_by_mpi(char *path,
                       char *host,
                       unsigned short port_num,
@@ -500,7 +501,7 @@ int omrpc_exec_by_mpi(char *path,
     MPI_Comm_spawn(path,arg,nprocs,MPI_INFO_NULL,0,MPI_COMM_SELF,comm,MPI_ERRCODES_IGNORE);
     return pid; 
 }
-
+#endif /* USE_MPI */
 
 static void dump_exec_args(char *args[])
 {

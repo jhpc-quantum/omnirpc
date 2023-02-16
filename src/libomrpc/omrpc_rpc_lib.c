@@ -23,8 +23,10 @@
 #include "OmniRpc.h"
 #include "omrpc_defs.h"
 #include "omrpc_rpc.h"
+#ifdef USE_MPI
 #include "omrpc_mpi_io.h"
 #include "omrpc_mpi.h"
+#endif /* USE_MPI */
 #include "myx_master_wrapper.h"
 #ifdef USE_GLOBUS
 #include "omrpc_globus.h"
@@ -146,6 +148,7 @@ skip:
 #endif
 }
 
+#ifdef USE_MPI
 /* MPI ONLY VERSION */
 void OmniRpcMpiInit(int *argc, char **argv[])
 {
@@ -259,6 +262,7 @@ skip:
 #endif
 
 } /* OmniRpcMpiInit */
+#endif /* USE_MPI */
 
 void OmniRpcFinalize()
 {
@@ -272,6 +276,7 @@ void OmniRpcFinalize()
     omrpc_finalize_client();
 }
 
+#ifdef USE_MPI
 void OmniRpcMpiFinalize()
 {
     omrpcm_finalize_rexes();
@@ -279,7 +284,7 @@ void OmniRpcMpiFinalize()
     omrpc_finalize_client();
     MPI_Finalize();
 } /*  OmniRpcMpiFinalize */
-
+#endif /* USE_MPI */
 
 /*
  * RPC interface
@@ -335,6 +340,7 @@ void *OmniRpcCallAsync(char *entry_name,...)
     return r;
 }
 
+#ifdef USE_MPI
 void *OmniRpcCallAsyncV(char *entry_name,va_list ap)
 {
     omrpc_rpc_t *rp;
@@ -443,6 +449,7 @@ void *OmniRpcMpiCallAsync(char *entry_name,int nprocs,...)
 
     return r;
 } /* OmniRpcMpiCallAsync */
+#endif /(* USE_MPI */
 
 int OmniRpcWait(void *request)
 {
@@ -644,6 +651,7 @@ int OmniRpcModuleReserve(int nstub)
   return 0;
 }
 
+#ifdef USE_MPI
 void *OmniRpcMpiCallAsyncByHandle(void *handle,int nprocs,char *entry_name,...)
 {
     va_list ap;
@@ -823,6 +831,7 @@ int OmniRpcMpiCheckHandle(void *handle)
 
   return ierr;
 }
+#endif /* USE_MPI */
 
 #ifdef USE_FT
 // Send signal to rex to stop heart beat (for test)

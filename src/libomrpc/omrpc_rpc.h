@@ -22,7 +22,11 @@
 #include <pthread.h>
 #include "omrpc_io.h"
 #include "omrpc_host.h"
+#ifdef USE_MPI
 #include "omrpc_mpi_io.h"
+#else
+typedef void *omrpc_mpi_handle_t;
+#endif /* USE_MPI */
 #include "ninf_comm_lib.h"
 #include "ninf_stub_info.h"
 

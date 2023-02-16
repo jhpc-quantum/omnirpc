@@ -20,14 +20,19 @@ MKRULESDIR      = @MKRULESDIR@
 
 include $(MKRULESDIR)/vars.mk
 
-#DIRS		=	./include ./src/libomrpc ./src/omrpc-agent ./src/omrpc-daemon \
-#			./src/omrpc-gen ./src/omrpc-gen-xmp ./src/omrpc-gen-mpi ./src/omrpc-register \
-#			./tools/tlogview ./tools/monitor ./src/omrpc-register-yml
-DIRS		=	./include ./src/libomrpc ./src/omrpc-gen-mpi ./src/omrpc-gen-xmp ./src/omrpc-gen ./src/omrpc-register-yml
+DIRS	=	./include ./src/libomrpc \
+		./src/omrpc-gen ./src/omrpc-register-yml
+ifdef USE_XMP
+DIRS	+=	./src/omrpc-gen-xmp 
+endif
+ifdef USE_MPI
+DIRS	+=	./src/omrpc-gen-mpi
+endif
 
 TESTDIRS	=	./test/exec-test ./test/call-test ./test/stub-test
-
 EXAMPLEDIRS	=	./example/ep ./example/cpi ./example/knap
+
+DIRS	+=	$(TESTDIR)
 
 include $(MKRULESDIR)/rules.mk
 
@@ -41,7 +46,7 @@ clean::
 	\) -exec rm -f {} \;
 
 distclean::	clean
-	$(RM) config.* mk/vars.mk mk/doxygen.conf ./libtool
+	$(RM) config.* mk/vars.mk mk/mpi.mk mk/doxygen.conf ./libtool
 	find . -type f \( \
 		-name '.depend' \
 	\) | xargs $(RM)
@@ -51,11 +56,10 @@ distclean::	clean
 
 ultimateclean:	distclean
 	@git clean -n -f -d -x | \
-	sed 's:^Would[[:space:]][[:space:]]*remove[[:space:]][[:space:]]*::' | \
-	grep -v tools/unity | \
-	xargs rm -rf
+	sed 's:^Would[[:space:]][[:space:]]*remove[[:space:]][[:space:]]*::' \
+	| grep -v tools/unity | xargs rm -rf
 
 show-garbage:
 	@git clean -n -f -d -x | \
-	sed 's:^Would[[:space:]][[:space:]]*remove[[:space:]][[:space:]]*::' | \
-	grep -v tools/unity
+	sed 's:^Would[[:space:]][[:space:]]*remove[[:space:]][[:space:]]*::' \
+	| grep -v tools/unity
