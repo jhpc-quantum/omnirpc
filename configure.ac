@@ -298,6 +298,7 @@ if test ! -z "${mpi_flavor}"; then
     esac
     mk/genflags.sh ${mpi_flavor} | sed 's:^PKG_:MPI_:' > mk/mpi.mk
     if test $? -eq 0; then
+	USE_MPI=yes
 	AC_DEFINE(USE_MPI)
 	AC_MSG_RESULT([${mpi_flavor}.])
     else

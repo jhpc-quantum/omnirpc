@@ -131,10 +131,12 @@ OPT_CXXFLAGS	?= -O0
 CODEGEN_CFLAGS		+= -fkeep-inline-functions
 CODEGEN_CXXFLAGS	+= -fkeep-inline-functions
 
-ifdef IS_DEVELOPER
-DEVELOPER_CFLAGS	+= -fsanitize=address
-DEVELOPER_CXXFLAGS	+= -fsanitize=address
-CPPFLAGS	+=	-D__UNDER_SANITIZER__
+USE_MPI		=	@USE_MPI@
+ifdef USE_MPI
+include $(MKRULESDIR)/mpi.mk
+CPPFLAGS	+=	$(MPI_CPPFLAGS)
+CFLAGS		+=	$(MPI_CFLAGS)
+LDFLAGS		+=	$(MPI_LIBS)
 endif
 
 COMMON_CFLAGS	= $(WARN_CFLAGS) $(DEBUG_CFLAGS) $(OPT_CFLAGS) \
@@ -202,8 +204,4 @@ HAVE_PAPI		= @HAVE_PAPI@
 ifdef SITECONF_MK
 __SITECONF__=.post.
 include $(SITECONF_MK)
-endif
-
-ifdef USE_MPI
-include $(MKRULESDIR)/mpi.mk
 endif

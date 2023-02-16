@@ -19695,6 +19695,7 @@ printf %s "checking MPI... " >&6; }
     esac
     mk/genflags.sh ${mpi_flavor} | sed 's:^PKG_:MPI_:' > mk/mpi.mk
     if test $? -eq 0; then
+	USE_MPI=yes
 	printf "%s\n" "#define USE_MPI 1" >>confdefs.h
 
 	{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: ${mpi_flavor}." >&5
