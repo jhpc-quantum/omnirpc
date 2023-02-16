@@ -65,7 +65,7 @@ void omrpc_free(void *p)
     free(p);
 }
 
-void omrpc_fatal(char *msg,...)
+void omrpc_fatal(const char *msg,...)
 {
   extern char *omrpc_my_hostname;
     va_list ap;
@@ -77,7 +77,7 @@ void omrpc_fatal(char *msg,...)
     exit(1);
 }
 
-void omrpc_error(char *msg,...)
+void omrpc_error(const char *msg,...)
 {
     va_list ap;
     va_start(ap,msg);
@@ -88,7 +88,7 @@ void omrpc_error(char *msg,...)
     exit(1);
 }
 
-void omrpc_prf(char *msg,...)
+void omrpc_prf(const char *msg,...)
 {
     extern char *omrpc_my_hostname;
     int l;

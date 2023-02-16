@@ -20,48 +20,52 @@ MKRULESDIR      = @MKRULESDIR@
 
 include $(MKRULESDIR)/vars.mk
 
-SRCS = omrpc_io.c omrpc_io_event.c omrpc_io_rw.c omrpc_exec.c \
+SRCS =	omrpc_io.c omrpc_io_event.c omrpc_io_rw.c omrpc_exec.c \
 	omrpc_call.c omrpc_misc.c ninf_comm_lib.c ninf_misc.c \
 	omrpc_exec_lib.c omrpc_rpc_lib.c omrpc_rpc_flib.c omrpc_local.c \
 	omrpc_client.c omrpc_host.c omrpc_schedule.c omrpc_rpc.c \
 	omrpc_stub_lib.c xml_reader.c \
 	tlog.c tlog-time.c tlog-omrpc.c \
 	omrpc_mon.c \
-	omrpc_globus.c omrpc_io_globus.c omrpc_io_rw_file.c \
-        omrpc_mpi_client.c omrpc_mpi_lib.c omrpc_mpi.c omrpc_mpi_io.c omrpc_mpi_event.c
+	omrpc_globus.c omrpc_io_globus.c omrpc_io_rw_file.c
+ifdef USE_MPI
+SRCS +=	omrpc_mpi_client.c omrpc_mpi_lib.c omrpc_mpi.c \
+	omrpc_mpi_io.c omrpc_mpi_event.c
+endif
 
-IO_LIB_OBJS = omrpc_io.o omrpc_io_event.o omrpc_io_rw.o omrpc_exec.o \
-	omrpc_call.o omrpc_misc.o ninf_comm_lib.o ninf_misc.o \
-	omrpc_globus.o omrpc_io_globus.o omrpc_io_rw_file.o \
-	omrpc_mpi_lib.o omrpc_mpi_io.o omrpc_mpi.o
+IO_LIB_OBJS = omrpc_io.lo omrpc_io_event.lo omrpc_io_rw.lo omrpc_exec.lo \
+	omrpc_call.lo omrpc_misc.lo ninf_comm_lib.lo ninf_misc.lo \
+	omrpc_globus.lo omrpc_io_globus.lo omrpc_io_rw_file.lo
+ifdef USE_MPI
+IO_LIB_OBJS +=	omrpc_mpi_lib.lo omrpc_mpi_io.lo omrpc_mpi.lo
+endif
 
-CLIENT_LIB_OBJS = omrpc_exec_lib.o omrpc_rpc_lib.o omrpc_rpc_flib.o \
-	omrpc_local.o tlog.o tlog-time.o tlog-omrpc.o \
-	omrpc_client.o omrpc_host.o omrpc_schedule.o omrpc_rpc.o xml_reader.o \
-        omrpc_mpi_client.o omrpc_mpi.o omrpc_mpi_event.o
+CLIENT_LIB_OBJS = omrpc_exec_lib.lo omrpc_rpc_lib.lo omrpc_rpc_flib.lo \
+	omrpc_local.lo tlog.lo tlog-time.lo tlog-omrpc.lo \
+	omrpc_client.lo omrpc_host.lo omrpc_schedule.lo omrpc_rpc.lo \
+	xml_reader.lo 
+ifdef USE_MPI
+CLIENT_LIB_OBJS +=	omrpc_mpi_client.lo omrpc_mpi.lo omrpc_mpi_event.lo
+endif
 
+STUB_LIB_OBJS = omrpc_stub_lib.lo \
+	omrpc_globus.lo omrpc_io_globus.lo omrpc_mon.lo
 
-STUB_LIB_OBJS = omrpc_stub_lib.o \
-	omrpc_globus.o omrpc_io_globus.o omrpc_mon.o
+TARGET_LIBS = libomrpc_io.la libomrpc_client.la libomrpc_stub.la
 
-TARGET_LIBS = libomrpc_io.a libomrpc_client.a libomrpc_stub.a
+all:: $(TARGET_LIBS)
 
-buildlibs: $(TARGET_LIBS)
+libomrpc_io.la: $(IO_LIB_OBJS) 
+	$(RM) -f $@ .libs/$(@F:.la=.*)
+	$(LTLIB_CC) -o $@ $(IO_LIB_OBJS) $(LDFLAGS) $(DEP_LIBS)
 
-libomrpc_io.a: $(IO_LIB_OBJS) 
-	rm -f $@
-	$(AR) $@ $(IO_LIB_OBJS)
-	$(RANLIB) $@
+libomrpc_stub.la: $(STUB_LIB_OBJS)
+	$(RM) -f $@ .libs/$(@F:.la=.*)
+	$(LTLIB_CC) -o $@ $(STUB_LIB_OBJS) $(LDFLAGS) $(DEP_LIBS)
 
-libomrpc_stub.a: $(STUB_LIB_OBJS)
-	rm -f $@
-	$(AR) $@ $(STUB_LIB_OBJS)
-	$(RANLIB) $@
-
-libomrpc_client.a: $(CLIENT_LIB_OBJS) 
-	rm -f $@
-	$(AR) $@ $(CLIENT_LIB_OBJS)
-	$(RANLIB) $@
+libomrpc_client.la: $(CLIENT_LIB_OBJS) 
+	$(RM) -f $@ .libs/$(@F:.la=.*)
+	$(LTLIB_CC) -o $@ $(CLIENT_LIB_OBJS) $(LDFLAGS) $(DEP_LIBS)
 
 include $(MKRULESDIR)/rules.mk
 include .depend

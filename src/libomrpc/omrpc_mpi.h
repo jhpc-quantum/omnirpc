@@ -4,9 +4,8 @@
 #include "omrpc_defs.h"
 #include "omrpc_rpc.h"
 
-pthread_t mrpc_tid;
-
-omrpc_mpi_handle_t *mpi_handle_head;
+extern pthread_t mrpc_tid;
+extern omrpc_mpi_handle_t *mpi_handle_head;
 
 int  omrpcm_allocate_jobs(int host_id, int nprocs); // (omrpc_schedule.c)
 int  omrpcm_request_wait_done(omrpc_request_t *req, char is_sig_wait);

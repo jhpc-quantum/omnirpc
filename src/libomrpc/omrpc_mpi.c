@@ -10,6 +10,9 @@
 static pthread_mutex_t  mpi_lock;       /* general lock for omrpc_rpc */
 static pthread_cond_t   mpi_cond; 
 
+pthread_t mrpc_tid;
+omrpc_mpi_handle_t *mpi_handle_head;
+
 //static omrpc_rpc_t *free_rpc_obj = NULL;       /* free list */
 
 volatile static char omrpcm_locked_flag = 0;
