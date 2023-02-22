@@ -23,19 +23,18 @@ include $(MKRULESDIR)/vars.mk
 SRCS = omrpc_gen_main.c ninf_IDL.c omrpc_gen_mem.c omrpc_gen_misc.c \
 	omrpc_gen_compile.c omrpc_gen_stub.c
 
-TARGET = omrpc-gen omrpc-cc omrpc-fc
+INSTALL_EXE_TARGETS = omrpc-gen omrpc-cc omrpc-fc
+TARGET_EXE = omrpc-gen
 
-buildall: $(TARGET)
-
-# 
-#  OmniRPC Ninf stub program generator
-#
-
-omrpc-gen: $(OBJS)
-	$(CC) $(CC_OPT_SWITCH) -o omrpc-gen $(OBJS)
+all:: $(INSTALL_EXE_TARGETS)
 
 include $(MKRULESDIR)/rules.mk
 include .depend
+
+omrpc-cc omprc-fc:
+	if test -f $$@; then \
+		chmod 755 $$@; \
+	fi
 
 generate::	ninf_IDL.c
 

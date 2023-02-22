@@ -20,32 +20,30 @@ MKRULESDIR      = @MKRULESDIR@
 
 include $(MKRULESDIR)/vars.mk
 
-SRCS = omrpc_gen_main.c ninf_IDL.c omrpc_gen_mem.c omrpc_gen_misc.c \
-	omrpc_gen_compile.c omrpc_gen_stub.c omrpc_mpi_lib.c
+SRCS	=	omrpc_gen_main.c ninf_IDL.c omrpc_gen_mem.c omrpc_gen_misc.c \
+		omrpc_gen_compile.c omrpc_gen_stub.c omrpc_mpi_lib.c
 
-OBJS = omrpc_gen_main.lo ninf_IDL.lo omrpc_gen_mem.lo omrpc_gen_misc.lo \
-	omrpc_gen_compile.o omrpc_gen_stub.o 
+BINOBJS	=	omrpc_gen_main.lo ninf_IDL.lo omrpc_gen_mem.lo \
+		omrpc_gen_misc.lo omrpc_gen_compile.lo omrpc_gen_stub.lo
 
-MPI_LIB_OBJS = omrpc_mpi_lib.lo
+TARGET_LIB		=	libomrpcmpi.la
+INSTALL_LIB_TARGETS	=	$(TARGET_LIB)
+INSTALL_EXE_TARGETS	=	omrpc-gen-mpi omrpc-cc-mpi
 
-TARGET = omrpc-gen-mpi omrpc-cc-mpi libomrpcmpi.la
+all::	$(INSTALL_LIB_TARGETS) $(INSTALL_EXE_TARGETS)
 
-buildall: $(TARGET)
 
 # 
 #  OmniRPC Ninf stub program generator
 #
 
 omrpc-cc-mpi:
-	@true
+	if test -f $$@; then \
+		chmod 755 $$@; \
+	fi
 
-omrpc-gen-mpi: $(OBJS)
-	$(CC) $(CC_OPT_SWITCH) -o omrpc-gen-mpi $(OBJS)
-
-libomrpcmpi.la: $(MPI_LIB_OBJS)
-	rm -f $@
-	$(AR) $@ $(MPI_LIB_OBJS)
-	$(RANLIB) $@
+omrpc-gen-mpi:	$(BINOBJS)
+	$(LTLINK_CC) -o $@ $(BINOBJS) $(DEP_LIBS) $(LDFLAGS)
 
 include $(MKRULESDIR)/rules.mk
 include .depend
@@ -57,5 +55,5 @@ ninf_IDL.c: ninf_IDL.y ninf_IDL_lex.c
 	mv y.tab.c ninf_IDL.c
 
 distclean::
-	$(RM) -f ninf_IDL.c y.tab.h omnitpc-gen-mpi
+	$(RM) -f ninf_IDL.c y.tab.h
 

@@ -51,9 +51,9 @@ endif
 STUB_LIB_OBJS = omrpc_stub_lib.lo \
 	omrpc_globus.lo omrpc_io_globus.lo omrpc_mon.lo
 
-TARGET_LIBS = libomrpc_io.la libomrpc_client.la libomrpc_stub.la
+INSTALL_LIB_TARGETS = libomrpc_io.la libomrpc_client.la libomrpc_stub.la
 
-all:: $(TARGET_LIBS)
+all:: $(INSTALL_LIB_TARGETS)
 
 libomrpc_io.la: $(IO_LIB_OBJS) 
 	$(RM) -f $@ .libs/$(@F:.la=.*)
