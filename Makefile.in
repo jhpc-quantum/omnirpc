@@ -20,8 +20,9 @@ MKRULESDIR      = @MKRULESDIR@
 
 include $(MKRULESDIR)/vars.mk
 
-DIRS	=	./include ./src/libomrpc \
-		./src/omrpc-gen ./src/omrpc-register-yml
+DIRS	=	./include ./src/libomrpc ./src/omrpc-gen \
+		./src/omrpc-register
+
 ifdef USE_XMP
 DIRS	+=	./src/omrpc-gen-xmp 
 endif

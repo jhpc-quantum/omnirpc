@@ -22,21 +22,12 @@ include $(MKRULESDIR)/vars.mk
 
 SRCS = omrpc_daemon_main.c omrpc_daemon_job.c 
 
-OBJS = omrpc_daemon_main.o omrpc_daemon_job.o 
+DEP_LIBS	= -L../libomrpc -lomrpc_stub -lomrpc_io
 
-LIBS = -L../libomrpc -lomrpc_stub -lomrpc_io @SOCK_LIBS@ -lpthread  \
-	@GLOBUS_LIBS@
+TARGET_EXE		=	omrpc-daemon
+INSTALL_EXE_TARGETS	=	$(TARGET_EXE)
 
-TARGET = omrpc-daemon
-
-all: $(TARGET)
-
-# 
-#  OmniRPC daemon program
-#
-
-$(TARGET): $(OBJS)
-	$(CC) $(CC_OPT_SWITCH) -o $(TARGET) $(OBJS) $(LIBS)
+all:: $(TARGET_EXE)
 
 include $(MKRULESDIR)/rules.mk
 include .depend

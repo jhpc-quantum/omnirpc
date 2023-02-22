@@ -44,7 +44,6 @@ void omrpc_put_reg(char **ptr, char *fin_name);
 void omrpc_set_dir();
 void omrpc_rename_func(char *file_name, char *func_name);
 
-
 #define CC         "mpicc"
 #define PREFIX_DIR "@prefix@"
 #define REX_DIR    "var/yml/dr/binaries"
@@ -52,8 +51,10 @@ void omrpc_rename_func(char *file_name, char *func_name);
 #define INC_DIR    "var/yml/DefaultExecutionCatalog/generators/XMP/include"
 #define IMP_DIR    "var/yml/DefaultDevelopmentCatalog/implementation"
 
-char prefix_dir[MAXPATHLEN];
-char rex_dir[MAXPATHLEN];
-char lib_dir[MAXPATHLEN];
-char inc_dir[MAXPATHLEN];
-char imp_dir[MAXPATHLEN];
+#if 0
+extern char prefix_dir[MAXPATHLEN];
+extern char rex_dir[MAXPATHLEN];
+extern char lib_dir[MAXPATHLEN];
+extern char inc_dir[MAXPATHLEN];
+extern char imp_dir[MAXPATHLEN];
+#endif

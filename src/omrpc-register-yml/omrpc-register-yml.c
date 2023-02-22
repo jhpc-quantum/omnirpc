@@ -31,10 +31,16 @@
 #define MUST_MODULE_DIR "-L/home/tsuji/local/MUST3/MUST-v1.6/modules/"
 #define MUST_LIB_DIR "-L/home/tsuji/local/MUST3/MUST-v1.6/lib/"
 #endif
-int  prt_log = 1;
+static int  prt_log = 1;
 
-int  n_entries = 0;
-int  n_rexes = 0;
+static int  n_entries = 0;
+static int  n_rexes = 0;
+
+static char prefix_dir[MAXPATHLEN];
+static char rex_dir[MAXPATHLEN];
+static char lib_dir[MAXPATHLEN];
+static char inc_dirn[MAXPATHLEN];
+static char imp_dir[MAXPATHLEN];
 
 int main(int argc, char **argv)
 {

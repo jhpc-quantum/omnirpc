@@ -20,24 +20,18 @@ MKRULESDIR      = @MKRULESDIR@
 
 include $(MKRULESDIR)/vars.mk
 
-SRCS = omrpc-register.c
+SRCS		=	omrpc-register.c
+CPPFLAGS	+=	-I../libomrpc
+DEP_LIBS	=	-L../libomrpc -lomrpc_client -lomrpc_io -lpthread
 
-OBJS = omrpc-register.o
+TARGET_EXE		=	omrpc-register
+INSTALL_EXE_TARGETS	=	$(TARGET_EXE)
 
-LIBS = -L../libomrpc -lomrpc_client -lomrpc_io -lpthread @SOCK_LIBS@ @GLOBUS_LIBS@
-
-TARGET = omrpc-register
-
-CPPFLAGS	+=	-I$(BUILD_LIBDIR)
-
-buildall: $(TARGET)
+all::	$(TARGET_EXE)
 
 # 
 #  OmniRPC stub register program
 #
-
-$(TARGET): $(OBJS)
-	$(CC) $(CC_OPT_SWITCH) -o $(TARGET) $(OBJS) $(LIBS)
 
 include $(MKRULESDIR)/rules.mk
 include .depend
