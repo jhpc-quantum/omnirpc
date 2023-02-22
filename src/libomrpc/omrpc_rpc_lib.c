@@ -340,7 +340,6 @@ void *OmniRpcCallAsync(char *entry_name,...)
     return r;
 }
 
-#ifdef USE_MPI
 void *OmniRpcCallAsyncV(char *entry_name,va_list ap)
 {
     omrpc_rpc_t *rp;
@@ -369,6 +368,7 @@ void *OmniRpcCallAsyncV(char *entry_name,va_list ap)
     return (void *)req;
 }
 
+#ifdef USE_MPI
 /*********************************************************
  * OmniRpcCallAsyncMPI & OmniRpcCallAsyncVMPI are legacy *
  * functions. Generally, you don't have to use them      *
@@ -449,7 +449,7 @@ void *OmniRpcMpiCallAsync(char *entry_name,int nprocs,...)
 
     return r;
 } /* OmniRpcMpiCallAsync */
-#endif /(* USE_MPI */
+#endif /* USE_MPI */
 
 int OmniRpcWait(void *request)
 {
