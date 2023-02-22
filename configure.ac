@@ -307,6 +307,12 @@ if test ! -z "${mpi_flavor}"; then
 fi
 AC_SUBST(USE_MPI)
 
+### Globus (deprecated)
+USE_GLOBUS=''
+GLOBUS_LIBS=''
+AC_SUBST(USE_GLOBUS)
+AC_SUBST(GLOBUS_LIBS)
+
 # emit.
 AC_CONFIG_FILES(
 	mk/vars.mk

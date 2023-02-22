@@ -6,12 +6,12 @@
 FC="f77"
 CC="cc"
 FCLINKER="f77"
-STUBGEN="@orgPrefix@/bin/omrpc-gen"
-CCOPT="-I@orgPrefix@/include"
-FCOPT="-I@orgPrefix@/include"
+STUBGEN="@prefix@/bin/omrpc-gen"
+CCOPT="-I@prefix@/include"
+FCOPT="-I@prefix@/include"
 LINKOPT=
-STUB_LINKLIB="-L@orgPrefix@/lib -lomrpc_stub -lomrpc_io @GLOBUS_LIBS@ -lpthread"
-CLIENT_LINKLIB="-L@orgPrefix@/lib -lomrpc_client -lomrpc_io @GLOBUS_LIBS@ -lpthread"
+STUB_LINKLIB="-Wl,-rpath -Wl,@prefix@/lib -L@prefix@/lib -lomrpc_stub -lomrpc_io -lpthread"
+CLIENT_LINKLIB="-Wl,-rpath -Wl,@prefix@/lib -L@prefix@/lib -lomrpc_client -lomrpc_io @GLOBUS_LIBS@ -lpthread"
 
 DoLink=1
 DoCompile=0

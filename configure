@@ -657,6 +657,8 @@ ac_includes_default="\
 ac_header_c_list=
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
+GLOBUS_LIBS
+USE_GLOBUS
 USE_MPI
 PCAP_LIBS
 HAVE_GCOVR
@@ -19704,6 +19706,12 @@ printf "%s\n" "${mpi_flavor}." >&6; }
         as_fn_error $? "failed to find ${mpi_flavor}." "$LINENO" 5
     fi
 fi
+
+
+### Globus (deprecated)
+USE_GLOBUS=''
+GLOBUS_LIBS=''
+
 
 
 # emit.
