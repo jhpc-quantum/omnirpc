@@ -16,12 +16,6 @@ static char rcsid[] = "$Id: omrpc_agent_main.c,v 1.2 2006-01-25 16:06:18 ynaka E
  *  
  *  $
  */
-#include <stdio.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <sys/wait.h>
-#include <errno.h>
 #include "omrpc_defs.h"
 #include "omrpc_io.h"
 #include "omrpc_agent.h"
@@ -29,7 +23,9 @@ static char rcsid[] = "$Id: omrpc_agent_main.c,v 1.2 2006-01-25 16:06:18 ynaka E
 
 #include "omrpc_agent_defs.h"
 
+#ifdef USE_MPI
 #include <mpi.h>
+#endif /* USE_MPI */
 
 short omrpc_stub_version_major,omrpc_stub_version_minor;
 short omrpc_stub_init = 0;

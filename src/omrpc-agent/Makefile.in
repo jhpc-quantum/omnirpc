@@ -23,22 +23,14 @@ include $(MKRULESDIR)/vars.mk
 SRCS = omrpc_agent_main.c omrpc_agent_job.c omrpc_agent_mxio.c \
 	omrpc_agent_globus.c
 
-OBJS = omrpc_agent_main.o omrpc_agent_job.o omrpc_agent_mxio.o \
-	omrpc_agent_globus.o
-
 LIBS = -L../libomrpc -lomrpc_stub -lomrpc_io @SOCK_LIBS@ -lpthread \
 	@GLOBUS_LIBS@
 
-TARGET = omrpc-agent
+CPPFLAGS	+=	-I../libomrpc
+TARGET_EXE	=	omrpc-agent
+INSTALL_EXE_TARGETS	=	$(TARGET_EXE)
 
-all: $(TARGET)
-
-# 
-#  OmniRPC agent program
-#
-
-$(TARGET): $(OBJS)
-	$(CC) $(CC_OPT_SWITCH) -o $(TARGET) $(OBJS) $(LIBS)
+all::	$(INSTALL_EXE_TARGETS)
 
 include $(MKRULESDIR)/rules.mk
 include .depend

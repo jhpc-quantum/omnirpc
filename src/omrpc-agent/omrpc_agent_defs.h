@@ -42,11 +42,15 @@ extern omrpc_rex_proc_t *omrpc_agent_procs[MAX_HANDLE_PER_PORT];
 #define JOB_AGENT_RR   1
 #define JOB_AGENT_PBS  2
 #define JOB_AGENT_SGE  3
+#ifdef USE_MPI
 #define JOB_AGENT_MPI  4
+#endif /* USE_MPI */
 
 #define WORKER_SH_RSH  0
 #define WORKER_SH_SSH  1
+#ifdef USE_MPI
 #define WORKER_SH_MPI  2 
+#endif /* USE_MPI */
 
 extern int omrpc_agent_job_type;
 
@@ -64,7 +68,9 @@ omrpc_rex_proc_t *omrpc_agent_mxio_submit(char *path, int port_num);
 void omrpc_agent_mxio_recv_widen(void);
 
 void omrpc_agent_sched_init(void);
+#ifdef USE_MPI
 void omrpc_agent_sched_init_mpi(void);
+#endif /* USE_MPI */
 
 #ifdef USE_GLOBUS
 void omrpc_agent_globus_mxio_init(omrpc_io_port_t *port);

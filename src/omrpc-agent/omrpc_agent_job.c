@@ -16,8 +16,6 @@ static char rcsid[] = "$Id: omrpc_agent_job.c,v 1.2 2006-01-25 16:06:18 ynaka Ex
  *  
  *  $
  */
-#include <stdio.h>
-#include <string.h>
 #include "omrpc_defs.h"
 #include "omrpc_io.h"
 #include "omrpc_exec.h"
