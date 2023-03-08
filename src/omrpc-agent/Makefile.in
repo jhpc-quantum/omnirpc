@@ -23,8 +23,7 @@ include $(MKRULESDIR)/vars.mk
 SRCS = omrpc_agent_main.c omrpc_agent_job.c omrpc_agent_mxio.c \
 	omrpc_agent_globus.c
 
-LIBS = -L../libomrpc -lomrpc_stub -lomrpc_io @SOCK_LIBS@ -lpthread \
-	@GLOBUS_LIBS@
+DEP_LIBS = -L../libomrpc -lomrpc_stub -lomrpc_io -lomrpc_client @GLOBUS_LIBS@
 
 CPPFLAGS	+=	-I../libomrpc
 TARGET_EXE	=	omrpc-agent

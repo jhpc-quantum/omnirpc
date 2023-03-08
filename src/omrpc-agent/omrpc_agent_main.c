@@ -48,8 +48,10 @@ int main(int argc, char *argv[])
     int fd;
     omrpc_io_handle_t *stub_hp;
     char buf[256],*registry_path;
-  
+
+#ifdef USE_MPI    
     MPI_Init(&argc, &argv);
+#endif /* USE_MPI */
     /* use same sequence */
     omrpc_stub_INIT(argc,argv);  
     stub_hp = omrpc_stub_hp;
@@ -63,13 +65,15 @@ int main(int argc, char *argv[])
             omrpc_agent_mxio_init(stub_hp->port);
     }
     if(omrpc_sched_type != NULL){
-        if(strcmp(omrpc_sched_type, "pbs") == 0){
+	if(strcmp(omrpc_sched_type, "pbs") == 0){
             omrpc_agent_job_type = JOB_AGENT_PBS;
         } else if(strcmp(omrpc_sched_type, "sge") == 0){
             omrpc_agent_job_type = JOB_AGENT_SGE;
+#ifdef USE_MPI
         } else if(strcmp(omrpc_sched_type, "mpi") == 0){
             omrpc_agent_job_type = JOB_AGENT_MPI;
             omrpc_agent_sched_init_mpi();
+#endif /* USE_MPI */
         } else {
             if(strcmp(omrpc_sched_type, "rr") != 0)
                 fprintf(stderr, "Unknown scheduler type. Set RR\n");
@@ -141,8 +145,10 @@ next:
         omrpc_recv_done(stub_hp);
         if(omrpc_debug_flag){
             omrpc_prf("OMRPC_AGENT_EXEC: file='%s' port=%u\n",path,(unsigned short)port_num);
+#ifdef USE_MPI
             if(omrpc_agent_job_type == JOB_AGENT_MPI)
             omrpc_prf("                : MPI Mode (nprocs=%d)\n",nprocs);
+#endif /* USE_MPI */
         }
 
         if(omrpc_mxio_flag){ /* for multi IO */
@@ -197,7 +203,9 @@ next:
 
 exit:
     if(omrpc_debug_flag) omrpc_prf("omrpc-agent is terminated\n");
+#ifdef USE_MPI
     if(omrpc_agent_job_type == JOB_AGENT_MPI)  MPI_Finalize();
+#endif /* USE_MPI */
     exit(0);
 }
 

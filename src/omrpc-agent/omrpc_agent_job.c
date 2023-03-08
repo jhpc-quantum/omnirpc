@@ -23,7 +23,9 @@ static char rcsid[] = "$Id: omrpc_agent_job.c,v 1.2 2006-01-25 16:06:18 ynaka Ex
 #include "omrpc_agent_defs.h"
 #include "omrpc_stub_lib.h"
 
+#ifdef USE_MPI
 #include "../../include/omrpc_mpi_lib.h"
+#endif /* USE_MPI */
 
 #define MAXPATHLEN 256
 #define MAX_LINE_LEN 4096
@@ -55,10 +57,12 @@ omrpc_agent_submit(char *path, char *client_hostname, int port, int nprocs)
 {
     int pid = -1;
     int i,j;
-    omrpc_mpi_node_t *worker_nodes;
     omrpc_rex_proc_t *rp;
+#ifdef USE_MPI    
+    omrpc_mpi_node_t *worker_nodes;
     MPI_Comm         intercomm;
-
+#endif /* USE_MPI */
+    
     switch(omrpc_agent_job_type){
     case JOB_AGENT_FORK:
         pid = omrpc_exec_by_fork(path,client_hostname,port,
@@ -103,6 +107,7 @@ omrpc_agent_submit(char *path, char *client_hostname, int port, int nprocs)
                                 NULL,omrpc_working_path);
         break;
 
+#ifdef USE_MPI	
     case JOB_AGENT_MPI:
         pid = omrpc_exec_by_mpi(path, client_hostname, port, 
                                 omrpc_working_path, nprocs, "mpi", &intercomm);
@@ -121,6 +126,7 @@ omrpc_agent_submit(char *path, char *client_hostname, int port, int nprocs)
 
         free(worker_nodes);
         break;
+#endif /* USE_MPI */
 
     default:
         omrpc_fatal("unknown job agent type %d",omrpc_agent_job_type);
@@ -235,6 +241,7 @@ void omrpc_agent_sched_init()
     omrpc_agent_job_type = JOB_AGENT_RR;       /* set round robin scheduler */
 }
 
+#ifdef USE_MPI
 /*
  * scheduler for MPI+OmniRPC
  */
@@ -295,6 +302,7 @@ void omrpc_agent_sched_init_mpi()
     if(n_nodes == 0)
       return;
 }
+#endif /* USE_MPI */
 
 static void dump_nodes_list(omrpc_worker_node_t node[], int n)
 {
@@ -315,8 +323,10 @@ char *omrpc_agent_get_worker_sh(omrpc_worker_node_t node)
         return RSH_COMMAND;
     if(node.sh_type == WORKER_SH_SSH)
         return SSH_COMMAND;
+#ifdef USE_MPI
     if(node.sh_type == WORKER_SH_MPI)
         return "mpi";
+#endif /* USE_MPI */
     else
         return "Unknown";
 }
