@@ -36,7 +36,7 @@ ep.rex: ep.idl $(EP_OBJ)
 	$(CC) ep.idl $(EP_OBJ) $(DEP_LIBS)
 
 clean:
-	/bin/rm -f $(PROGRAM) $(REX) *.rex.c *.o *~
+	/bin/rm -f $(PROGRAM) $(REX) *.rex.c *.o *~ core core.*
 
 distclean: clean
 	/bin/rm -f Makefile
