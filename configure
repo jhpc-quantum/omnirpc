@@ -9455,11 +9455,11 @@ printf "%s\n" "$lt_cv_ld_force_load" >&6; }
       # to the OS version, if on x86, and 10.4, the deployment
       # target defaults to 10.4. Don't you love it?
       case ${MACOSX_DEPLOYMENT_TARGET-10.0},$host in
-	10.0,*86*-darwin8*|10.0,*-darwin[91]*)
+	10.0,*86*-darwin8*|10.0,*-darwin[912]*)
 	  _lt_dar_allow_undefined='$wl-undefined ${wl}dynamic_lookup' ;;
 	10.[012][,.]*)
 	  _lt_dar_allow_undefined='$wl-flat_namespace $wl-undefined ${wl}suppress' ;;
-	10.*)
+	10.*|11.*)
 	  _lt_dar_allow_undefined='$wl-undefined ${wl}dynamic_lookup' ;;
       esac
     ;;
@@ -19715,7 +19715,7 @@ GLOBUS_LIBS=''
 
 
 # emit.
-ac_config_files="$ac_config_files mk/vars.mk Makefile include/Makefile src/libomrpc/Makefile src/libomrpc/omrpc_defs.h src/omrpc-agent/Makefile src/omrpc-gen/Makefile src/omrpc-gen/omrpc-cc src/omrpc-gen/omrpc-fc src/omrpc-gen-mpi/Makefile src/omrpc-gen-mpi/omrpc-cc-mpi src/omrpc-gen-xmp/Makefile src/omrpc-gen-xmp/omrpc-cc-xmp src/omrpc-register/Makefile src/omrpc-register-yml/Makefile src/omrpc-register-yml/omrpc_reg_defs.h test/call-test/Makefile test/exec-test/Makefile test/comm-test/Makefile test/stub-test/Makefile"
+ac_config_files="$ac_config_files mk/vars.mk Makefile include/Makefile src/libomrpc/Makefile src/libomrpc/omrpc_defs.h src/omrpc-agent/Makefile src/omrpc-gen/Makefile src/omrpc-gen/omrpc-cc src/omrpc-gen/omrpc-fc src/omrpc-gen-mpi/Makefile src/omrpc-gen-mpi/omrpc-cc-mpi src/omrpc-gen-xmp/Makefile src/omrpc-gen-xmp/omrpc-cc-xmp src/omrpc-register/Makefile src/omrpc-register-yml/Makefile src/omrpc-register-yml/omrpc_reg_defs.h test/call-test/Makefile test/exec-test/Makefile test/comm-test/Makefile test/stub-test/Makefile example/cpi/Makefile example/ep/Makefile example/knap/Makefile"
 
 
 # emit and set executable attribute.
@@ -20826,6 +20826,9 @@ do
     "test/exec-test/Makefile") CONFIG_FILES="$CONFIG_FILES test/exec-test/Makefile" ;;
     "test/comm-test/Makefile") CONFIG_FILES="$CONFIG_FILES test/comm-test/Makefile" ;;
     "test/stub-test/Makefile") CONFIG_FILES="$CONFIG_FILES test/stub-test/Makefile" ;;
+    "example/cpi/Makefile") CONFIG_FILES="$CONFIG_FILES example/cpi/Makefile" ;;
+    "example/ep/Makefile") CONFIG_FILES="$CONFIG_FILES example/ep/Makefile" ;;
+    "example/knap/Makefile") CONFIG_FILES="$CONFIG_FILES example/knap/Makefile" ;;
     "mk/initdepend") CONFIG_FILES="$CONFIG_FILES mk/initdepend" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;

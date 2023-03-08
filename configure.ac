@@ -335,6 +335,9 @@ AC_CONFIG_FILES(
 	test/exec-test/Makefile
 	test/comm-test/Makefile
 	test/stub-test/Makefile
+	example/cpi/Makefile
+	example/ep/Makefile
+	example/knap/Makefile
 )
 
 # emit and set executable attribute.

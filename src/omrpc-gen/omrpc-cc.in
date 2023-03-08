@@ -6,10 +6,11 @@
 CC="cc"
 CLINKER="cc"
 STUBGEN="@prefix@/bin/omrpc-gen"
-CCOPT="-I@prefix@/include"
+CPPOPT="-I@prefix@/include"
+CCOPT=
 LINKOPT=
-STUB_LINKLIB="-Wl,-rpath -Wl,@prefix@/lib -L@prefix@/lib -lomrpc_stub -lomrpc_io -lpthread"
-CLIENT_LINKLIB="-Wl,-rpath -Wl,@prefix@/lib -L@prefix@/lib -lomrpc_client -lomrpc_io @GLOBUS_LIBS@ -lpthread"
+STUB_LINKLIB="-Wl,-rpath -Wl,@prefix@/lib -L@prefix@/lib -lomrpc_stub -lomrpc_io -lomrpc_client -lpthread"
+CLIENT_LINKLIB="-Wl,-rpath -Wl,@prefix@/lib -L@prefix@/lib -lomrpc_client -lomrpc_io -lomrpc_io @GLOBUS_LIBS@ -lpthread"
 
 DoLink=1
 DoCompile=0
@@ -31,13 +32,13 @@ verbose=0
 for arg in "$@" ; do
 #    echo procssing arg $arg
     # Special processing for -o name
-    if [ $gettinglinkarg = 1 ] ; then
+    if [ $gettinglinkarg -eq 1 ] ; then
 	linkargs="$linkargs $arg"
 	outputfilename="$arg"
 	gettinglinkarg=0
 	continue
     fi
-    if [ $gettinglinkerarg = 1 ] ; then
+    if [ $gettinglinkerarg -eq 1 ] ; then
 	CLINKER = "$arg"
 	gettinglinkerarg=0
     fi
@@ -52,7 +53,7 @@ for arg in "$@" ; do
         # If -o was set, then we need to move the output file option
         # to the compile line (note that this is non-standard, and should
         # not be used in portable codes)
-        if [ $DoLink = 1 -a -n "$outputfilename" ] ; then
+        if [ $DoLink -eq 1 -a -n "$outputfilename" ] ; then
 	    compileargs="$compileargs -o $outputfilename"
         fi
 	DoLink=0
@@ -61,7 +62,7 @@ for arg in "$@" ; do
         -o)
 	# Need to link
 	allargs="$allargs $arg"
-        if [ $HasDashC = 1 ] ; then
+        if [ $HasDashC -eq 1 ] ; then
             # Some BUT NOT ALL compilers support -o with -c.  Allow
             # the user to make use of the feature, IF IT EXISTS.
             compileargs="$compileargs $arg"	
@@ -124,20 +125,20 @@ for arg in "$@" ; do
         *) allargs="$allargs $arg"
 	if [ -s "$arg" ] ; then
 	    ext=`expr "$arg" : '.*\(\..*\)'`
-	    if [ "$ext" = ".c" ] ; then
+	    if [ "x$ext" = "x.c" ] ; then
 	        DoCompile=1
 	        compileargs="$compileargs $arg"
 	        fname=`basename $arg .c`
 	        linkobjs="$linkobjs $fname.o"
-	    elif [ "$ext" = ".o" ] ; then
-		if [ $HasDashC = 1 ] ; then
+	    elif [ "x$ext" = "x.o" ] ; then
+		if [ $HasDashC -eq 1 ] ; then
 	            compileargs="$compileargs $arg"
                 else
 	            DoLink=1
 	            linkobjs="$linkobjs $arg"
                 fi
-	    elif [ "$ext" = ".idl" ] ; then
-		if [ DoStubGen = 1 ]; then
+	    elif [ "x$ext" = "x.idl" ] ; then
+		if [ $DoStubGen -eq 1 ]; then
 		       echo "More than two *.idl are found in arguments"
 		       exit 1
 		fi
@@ -161,35 +162,35 @@ for arg in "$@" ; do
 done
 #
 status=0
-if [ $DoStubGen = 1 ] ; then
+if [ $DoStubGen -eq 1 ] ; then
     $Show $STUBGEN $stubgenargs
     status=$?
-    if [ $status != 0 ] ; then 
+    if [ $status -ne 0 ] ; then 
 	exit $status
     fi
 fi
 #
-if [ $DoCompile = 1 ] ; then
-    if [ $HasDashC != 1 ] ; then
+if [ $DoCompile -eq 1 ] ; then
+    if [ $HasDashC -ne 1 ] ; then
         compileargs="-c $compileargs"
     fi
-    $Show $CC $CCOPT $compileargs
+    $Show $CC $CPPOPT $CCOPT $compileargs
     status=$?
-    if [ $status != 0 ] ; then 
+    if [ $status -ne 0 ] ; then 
 	exit $status
     fi
 fi
 #
 # 
-if [ $DoLink = 1 ] ; then
-    if [ $HasDashO != 1 ] ; then
+if [ $DoLink -eq 1 ] ; then
+    if [ $HasDashO -ne 1 ] ; then
 	linkargs="$linkargs $targetargs"
     fi
-    if [ $DoStubGen == 1 ] ; then
-	$Show $CLINKER $LINKOPT $linkobjs $linkargs $STUB_LINKLIB
+    if [ $DoStubGen -eq 1 ] ; then
+	$Show $CLINKER $CCOPT $LINKOPT $linkobjs $linkargs $STUB_LINKLIB
     	status=$?
     else
-	$Show $CLINKER $LINKOPT $linkobjs $linkargs $CLIENT_LINKLIB
+	$Show $CLINKER $CCOPT $LINKOPT $linkobjs $linkargs $CLIENT_LINKLIB
     	status=$?
     fi
 fi

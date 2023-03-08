@@ -3,14 +3,12 @@
 # 
 OMRPC_DIR = @prefix@
 
-OMRPC_CC = omrpc-cc
-OMRPC_REG = omrpc-register
+OMRPC_CC = @prefix@/bin/omrpc-cc
+OMRPC_REG = @prefix@/bin/omrpc-register
 
 CC = cc
-CFLAGS = -g -I$(OMRPC_DIR)/include
-
-OMRPC_CLIENT_LIBS = -L$(OMRPC_DIR)/lib -lomrpc_client -lomrpc_io -lpthread
-OMRPC_STUB_LIBS = -L$(OMRPC_DIR)/lib -lomrpc_stub -lomrpc_io -lpthread
+CFLAGS	=
+CPPFLAGS	=	 -I$(OMRPC_DIR)/include
 
 PROGRAM = cpi-omrpc
 REX = cpi.rex
@@ -18,19 +16,18 @@ REX = cpi.rex
 all: $(PROGRAM) $(REX)
 
 # client
-cpi-omrpc: cpi-omrpc.c
-	$(OMRPC_CC) $(CFLAGS) -o cpi-omrpc cpi-omrpc.c $(OMRPC_CLIENT_LIBS)
+cpi-omrpc: cpi-omrpc.o
+	$(OMRPC_CC) $(CFLAGS) -o $@ cpi-omrpc.o
 
 reg_stub: $(REX)
 	$(OMRPC_REG) -register cpi.rex
 
 cpi.rex: cpi.idl cpi-lib.o
-	$(OMRPC_CC) cpi.idl cpi-lib.o
+	$(OMRPC_CC) $(CFLAGS) cpi.idl cpi-lib.o
 
 clean:
 	/bin/rm -f $(PROGRAM) $(REX) *.rex.c *.o *~
 
 distclean: clean
 	/bin/rm -f Makefile
-
 

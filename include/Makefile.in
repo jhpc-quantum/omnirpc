@@ -21,7 +21,7 @@ MKRULESDIR      = @MKRULESDIR@
 include $(MKRULESDIR)/vars.mk
 
 INSTALL_HEADER_TARGETS	= OmniRpc.h ninf_stub_info.h omni_config.h \
-	omni_platform.h omrpc_stub_lib.h omrpc_mpi_lib.h
+	omni_platform.h omni_headers.h omrpc_stub_lib.h omrpc_mpi_lib.h
 
 include $(MKRULESDIR)/rules.mk
 
