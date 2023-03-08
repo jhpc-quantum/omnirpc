@@ -11,11 +11,30 @@
   c   not affect the results.
 */
 
-#include "npb-C.h"
-#include "npbparams.h"
 #ifdef USE_OMRPC
 #include "OmniRpc.h"
 #endif
+#include "npb-C.h"
+#include "npbparams.h"
+
+void c_print_results( char   *name,
+                      char   class,
+                      int    n1, 
+                      int    n2,
+                      int    n3,
+                      int    niter,
+                      double t,
+                      double mops,
+                      char   *optype,
+                      int    passed_verification,
+                      char   *npbversion,
+                      char   *compiletime,
+                      char   *cc,
+                      char   *clink,
+                      char   *c_lib,
+                      char   *c_inc,
+                      char   *cflags,
+                      char   *clinkflags );
 
 /* parameters (compile-time constants) */
 #define	MK		16
@@ -243,11 +262,24 @@ int main(int argc, char **argv) {
     printf("%3d %15.0f\n", i, q[i]);
   }
 	  
-  c_print_results("EP", CLASS, M+1, 0, 0, nit,
-		  tm, Mops, 	
+  c_print_results("EP",
+		  CLASS,
+		  M+1,
+		  0,
+		  0,
+		  nit,
+		  tm,
+		  Mops, 	
 		  "Random numbers generated",
-		  verified, NPBVERSION, COMPILETIME,
-		  CS1, CS2, CS3, CS4, CS5, CS6, CS7);
+		  verified,
+		  NPBVERSION,
+		  COMPILETIME,
+		  CS1,
+		  CS2,
+		  CS3,
+		  CS4,
+		  CS5,
+		  CS6);
 
   if (TIMERS_ENABLED == TRUE) {
     printf("Total time:     %f", timer_read(1));

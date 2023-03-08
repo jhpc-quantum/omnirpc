@@ -8,7 +8,6 @@ OMRPC_REG = @prefix@/bin/omrpc-register
 
 CC = $(OMRPC_CC)
 CFLAGS	=	-g3 -O0 -W -Wall
-#CPPFLAGS	=	 -I$(OMRPC_DIR)/include
 
 PROGRAM = cpi-omrpc
 REX = cpi.rex
