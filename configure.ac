@@ -224,13 +224,13 @@ fi
 
 # headers/macros
 
-oLIBS=${LIBS}
-LIBS=''
-AC_CHECK_HEADER(pcap/pcap.h,, [AC_MSG_ERROR([pcap/pcap.h is required!])])
-AC_CHECK_LIB(pcap, pcap_create,, [AC_MSG_ERROR([libpcap is required!])])
-PCAP_LIBS=${LIBS}
-AC_SUBST(PCAP_LIBS)
-LIBS=${oLIBS}
+#oLIBS=${LIBS}
+#LIBS=''
+#AC_CHECK_HEADER(pcap/pcap.h,, [AC_MSG_ERROR([pcap/pcap.h is required!])])
+#AC_CHECK_LIB(pcap, pcap_create,, [AC_MSG_ERROR([libpcap is required!])])
+#PCAP_LIBS=${LIBS}
+#AC_SUBST(PCAP_LIBS)
+#LIBS=${oLIBS}
 
 AC_C_BIGENDIAN
 
