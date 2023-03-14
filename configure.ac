@@ -307,6 +307,20 @@ if test ! -z "${mpi_flavor}"; then
 fi
 AC_SUBST(USE_MPI)
 
+### qc-rpc
+USE_QC_RPC=''
+do_qc_rpc=no
+AC_ARG_ENABLE([qcrpc],
+	[AS_HELP_STRING([--enable-qcrpc], [Support qc-rpc feature [default: no]])],
+	[do_qc_rpc="$enableval"], [do_qc_rpc=no])
+AC_MSG_CHECKING([qc-rpc])
+if test "x${do_qc_rpc}" != "xno"; then
+    USE_QC_RPC=yes
+    AC_DEFINE(USE_QC_RPC)
+fi
+AC_MSG_RESULT([${do_qc_rpc}.])
+AC_SUBST(USE_QC_RPC)    
+
 ### Globus (deprecated)
 USE_GLOBUS=''
 GLOBUS_LIBS=''
@@ -331,6 +345,7 @@ AC_CONFIG_FILES(
 	src/omrpc-register/Makefile
 	src/omrpc-register-yml/Makefile
 	src/omrpc-register-yml/omrpc_reg_defs.h
+	qcrpc/Makefile
 	test/call-test/Makefile
 	test/exec-test/Makefile
 	test/comm-test/Makefile

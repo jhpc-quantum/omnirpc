@@ -1,0 +1,7 @@
+TOPDIR          = @TOPDIR@
+MKRULESDIR      = @MKRULESDIR@
+
+include $(MKRULESDIR)/vars.mk
+
+
+include $(MKRULESDIR)/rules.mk

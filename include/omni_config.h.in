@@ -59,5 +59,6 @@
 #undef SIZEOF_PTHREAD_T
 
 #undef USE_MPI
+#undef USE_QC_RPC
 
 #endif /* ! __OMNI_CONFIG_H__ */

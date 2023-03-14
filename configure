@@ -632,6 +632,7 @@ ac_subst_vars='LTLIBOBJS
 LIBOBJS
 GLOBUS_LIBS
 USE_GLOBUS
+USE_QC_RPC
 USE_MPI
 HAVE_GCOVR
 HAVE_NKF
@@ -760,6 +761,7 @@ with_gnu_ld
 with_sysroot
 enable_libtool_lock
 with_mpi
+enable_qcrpc
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1405,6 +1407,7 @@ Optional Features:
   --enable-fast-install[=PKGS]
                           optimize for fast installation [default=yes]
   --disable-libtool-lock  avoid locking (might break parallel builds)
+  --enable-qcrpc          Support qc-rpc feature [default: no]
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -18536,6 +18539,27 @@ $as_echo "${mpi_flavor}." >&6; }
 fi
 
 
+### qc-rpc
+USE_QC_RPC=''
+do_qc_rpc=no
+# Check whether --enable-qcrpc was given.
+if test "${enable_qcrpc+set}" = set; then :
+  enableval=$enable_qcrpc; do_qc_rpc="$enableval"
+else
+  do_qc_rpc=no
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking qc-rpc" >&5
+$as_echo_n "checking qc-rpc... " >&6; }
+if test "x${do_qc_rpc}" != "xno"; then
+    USE_QC_RPC=yes
+    $as_echo "#define USE_QC_RPC 1" >>confdefs.h
+
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: ${do_qc_rpc}." >&5
+$as_echo "${do_qc_rpc}." >&6; }
+
+
 ### Globus (deprecated)
 USE_GLOBUS=''
 GLOBUS_LIBS=''
@@ -18543,7 +18567,7 @@ GLOBUS_LIBS=''
 
 
 # emit.
-ac_config_files="$ac_config_files mk/vars.mk Makefile include/Makefile src/libomrpc/Makefile src/libomrpc/omrpc_defs.h src/omrpc-agent/Makefile src/omrpc-gen/Makefile src/omrpc-gen/omrpc-cc src/omrpc-gen/omrpc-fc src/omrpc-gen-mpi/Makefile src/omrpc-gen-mpi/omrpc-cc-mpi src/omrpc-gen-xmp/Makefile src/omrpc-gen-xmp/omrpc-cc-xmp src/omrpc-register/Makefile src/omrpc-register-yml/Makefile src/omrpc-register-yml/omrpc_reg_defs.h test/call-test/Makefile test/exec-test/Makefile test/comm-test/Makefile test/stub-test/Makefile example/cpi/Makefile example/ep/Makefile example/knap/Makefile"
+ac_config_files="$ac_config_files mk/vars.mk Makefile include/Makefile src/libomrpc/Makefile src/libomrpc/omrpc_defs.h src/omrpc-agent/Makefile src/omrpc-gen/Makefile src/omrpc-gen/omrpc-cc src/omrpc-gen/omrpc-fc src/omrpc-gen-mpi/Makefile src/omrpc-gen-mpi/omrpc-cc-mpi src/omrpc-gen-xmp/Makefile src/omrpc-gen-xmp/omrpc-cc-xmp src/omrpc-register/Makefile src/omrpc-register-yml/Makefile src/omrpc-register-yml/omrpc_reg_defs.h qcrpc/Makefile test/call-test/Makefile test/exec-test/Makefile test/comm-test/Makefile test/stub-test/Makefile example/cpi/Makefile example/ep/Makefile example/knap/Makefile"
 
 
 # emit and set executable attribute.
@@ -19655,6 +19679,7 @@ do
     "src/omrpc-register/Makefile") CONFIG_FILES="$CONFIG_FILES src/omrpc-register/Makefile" ;;
     "src/omrpc-register-yml/Makefile") CONFIG_FILES="$CONFIG_FILES src/omrpc-register-yml/Makefile" ;;
     "src/omrpc-register-yml/omrpc_reg_defs.h") CONFIG_FILES="$CONFIG_FILES src/omrpc-register-yml/omrpc_reg_defs.h" ;;
+    "qcrpc/Makefile") CONFIG_FILES="$CONFIG_FILES qcrpc/Makefile" ;;
     "test/call-test/Makefile") CONFIG_FILES="$CONFIG_FILES test/call-test/Makefile" ;;
     "test/exec-test/Makefile") CONFIG_FILES="$CONFIG_FILES test/exec-test/Makefile" ;;
     "test/comm-test/Makefile") CONFIG_FILES="$CONFIG_FILES test/comm-test/Makefile" ;;
