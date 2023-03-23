@@ -10,67 +10,6 @@
 #include"qcs_ket.hpp"
 #endif
 
-#define MAX_N_GATES 128 
-#define MAX_I_ARGS  8
-#define MAX_R_ARGS  8
-
-enum enum_gates{
-  _IGate,
-  _XGate,
-  _YGate,
-  _ZGate,
-  _HGate,
-  _SGate,
-  _SdgGate,
-  _TGate,
-  _TdgGate,
-  _SXGate,
-  _SXdgGate,
-  _SYGate,
-  _SYdgGate,
-  _CXGate, 
-  _CYGate, 
-  _CZGate, 
-  _SwapGate,
-  _RXGate,
-  _RYGate,
-  _RZGate,
-  _U1Gate,
-  _U2Gate,
-  _U3Gate,
-  _CRXGate,
-  _CRYGate,
-  _CRZGate,
-  _CCXGate,
-  _NGates, // # of gates 
-};
-
-enum enum_simlators{
-  _qulacs,
-  _braket_riken,
-  _rpc_qulacs,
-  _rpc_braket_riken,
-  _Nsims,
-};
-
-typedef struct{
-  qint   id;
-  int    niarg;
-  int    nrarg;
-  qint   iarg[MAX_I_ARGS];
-  double rarg[MAX_R_ARGS];
-} gate_info;
-
-typedef struct{
-  // --- common parameters --- 
-  int            qcs_id;
-  int            nprocs;
-  qint           qubits;
-  int            ngates; 
-  gate_info      gate[MAX_N_GATES]; 
-} qcs_info_t;
-
-
 __BEGIN_DECLS
 
 void QC_Init(int *argc, char ***argv, int qubits, int qcs_id);
@@ -114,34 +53,33 @@ void qcs_finalize_lib(void);
 void qcs_measure(qcs_info_t *qcs_info);
 void *qcs_update(void);
 
-
-void add_IGate(gate_info *gate_info);
-void add_XGate(gate_info *gate_info);
-void add_YGate(gate_info *gate_info);
-void add_ZGate(gate_info *gate_info);
-void add_HGate(gate_info *gate_info);
-void add_SGate(gate_info *gate_info);
-void add_SdgGate(gate_info *gate_info);
-void add_TGate(gate_info *gate_info);
-void add_TdgGate(gate_info *gate_info);
-void add_SXGate(gate_info *gate_info);
-void add_SXdgGate(gate_info *gate_info);
-void add_SYGate(gate_info *gate_info);
-void add_SYdgGate(gate_info *gate_info);
-void add_CXGate(gate_info *gate_info);
-void add_CYGate(gate_info *gate_info);
-void add_CZGate(gate_info *gate_info);
-void add_SwapGate(gate_info *gate_info);
-void add_RXGate(gate_info *gate_info);
-void add_RYGate(gate_info *gate_info);
-void add_RZGate(gate_info *gate_info);
-void add_U1Gate(gate_info *gate_info);
-void add_U2Gate(gate_info *gate_info);
-void add_U3Gate(gate_info *gate_info);
-void add_CRXGate(gate_info *gate_info);
-void add_CRYGate(gate_info *gate_info);
-void add_CRZGate(gate_info *gate_info);
-void add_CCXGate(gate_info *gate_info);
+void add_IGate(gate_info *ginfo);
+void add_XGate(gate_info *ginfo);
+void add_YGate(gate_info *ginfo);
+void add_ZGate(gate_info *ginfo);
+void add_HGate(gate_info *ginfo);
+void add_SGate(gate_info *ginfo);
+void add_SdgGate(gate_info *ginfo);
+void add_TGate(gate_info *ginfo);
+void add_TdgGate(gate_info *ginfo);
+void add_SXGate(gate_info *ginfo);
+void add_SXdgGate(gate_info *ginfo);
+void add_SYGate(gate_info *ginfo);
+void add_SYdgGate(gate_info *ginfo);
+void add_CXGate(gate_info *ginfo);
+void add_CYGate(gate_info *ginfo);
+void add_CZGate(gate_info *ginfo);
+void add_SwapGate(gate_info *ginfo);
+void add_RXGate(gate_info *ginfo);
+void add_RYGate(gate_info *ginfo);
+void add_RZGate(gate_info *ginfo);
+void add_U1Gate(gate_info *ginfo);
+void add_U2Gate(gate_info *ginfo);
+void add_U3Gate(gate_info *ginfo);
+void add_CRXGate(gate_info *ginfo);
+void add_CRYGate(gate_info *ginfo);
+void add_CRZGate(gate_info *ginfo);
+void add_CCXGate(gate_info *ginfo);
 
 __END_DECLS
 

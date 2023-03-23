@@ -1,4 +1,5 @@
 #include "omni_platform.h"
+#include "qcs_types.h"
 #if 0
 #include <complex.h>
 #endif

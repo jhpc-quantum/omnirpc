@@ -1,4 +1,5 @@
 #include "omni_platform.h"
+#include "qcs_types.h"
 #include "qcs_api.hpp"
 #include "qcs_qulacs.hpp"
 
