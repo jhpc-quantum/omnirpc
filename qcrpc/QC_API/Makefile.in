@@ -1,5 +1,5 @@
-TOPDIR          = /home/m-hirano/src/omnirpc
-MKRULESDIR      = /home/m-hirano/src/omnirpc/mk
+TOPDIR          = @TOPDIR@
+MKRULESDIR      = @MKRULESDIR@
 
 include $(MKRULESDIR)/vars.mk
 
