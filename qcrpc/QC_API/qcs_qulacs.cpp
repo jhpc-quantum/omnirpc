@@ -1,5 +1,4 @@
-#include<stdio.h>
-#include<stdlib.h>
+#include "omni_platform.h"
 #if 0
 #include <complex.h>
 #endif
@@ -15,21 +14,21 @@
 #ifdef _DEBUG_OUT_
 #define _DEBUG_FUNC_OUT()  printf("%s :",__func__); \
   for(int i=0; i<gate_info->niarg; i++){ \
-    printf("%d ",gate_info->iarg[i]); \
+    fprintf(stderr, "%d ",gate_info->iarg[i]);   \
   } \
   for(int i=0; i<gate_info->nrarg; i++){	\
-    printf("%f ",gate_info->rarg[i]); \
+    fprintf(stderr, "%f ",gate_info->rarg[i]);    \
   } \
   printf("\n")
 #else
 #define _DEBUG_FUNC_OUT() ""
 #endif
 
-qulacs_info *qi; 
+static qulacs_info *qi = NULL;
 
 extern "C" void error(std::string s, std::string fname, int n)
 {
-  printf("%s %s %d\n", s.c_str(), fname.c_str(), n);
+  fprintf(stderr, "%s %s %d\n", s.c_str(), fname.c_str(), n);
   exit(1);
 }
 

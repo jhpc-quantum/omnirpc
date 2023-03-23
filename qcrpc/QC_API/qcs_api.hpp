@@ -1,5 +1,4 @@
-#ifndef _QCS_API_H_
-#define _QCS_API_H_
+#pragma once
 
 #include "qcs_types.h"
 
@@ -60,7 +59,7 @@ typedef struct{
   int    nrarg;
   qint   iarg[MAX_I_ARGS];
   double rarg[MAX_R_ARGS];
-}gate_info;
+} gate_info;
 
 typedef struct{
   // --- common parameters --- 
@@ -69,15 +68,16 @@ typedef struct{
   qint           qubits;
   int            ngates; 
   gate_info      gate[MAX_N_GATES]; 
-}qcs_info_t;
+} qcs_info_t;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+
+__BEGIN_DECLS
 
 void QC_Init(int *argc, char ***argv, int qubits, int qcs_id);
-void QC_Measure();
-void QC_Finalize();
+void QC_INitRemote(int *argc, char **argv[]);
+void QC_Measure(void);
+void QC_MeasureRemote(void);
+void QC_Finalize(void);
 void QC_SetNodes(int nprocs);
 
 void IGate(qint target_qubit);
@@ -110,9 +110,9 @@ void CCXGate(qint target_qubit, qint control_qubit0, qint control_qubit1);
 
 // --- functions defined in <lib wrapper>.so -- 
 void qcs_init_lib(qint nqubits);
-void qcs_finalize_lib();
+void qcs_finalize_lib(void);
 void qcs_measure(qcs_info_t *qcs_info);
-void *qcs_update();
+void *qcs_update(void);
 
 
 void add_IGate(gate_info *gate_info);
@@ -142,7 +142,6 @@ void add_CRXGate(gate_info *gate_info);
 void add_CRYGate(gate_info *gate_info);
 void add_CRZGate(gate_info *gate_info);
 void add_CCXGate(gate_info *gate_info);
-#ifdef __cplusplus
-} // extern "C"
-#endif
-#endif
+
+__END_DECLS
+

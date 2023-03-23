@@ -1,364 +1,399 @@
-#include<stdio.h>
-#include<stdlib.h>
-#include"qcs_api.hpp"
-#include"qcs_qulacs.hpp"
+#include "omni_platform.h"
+#include "qcs_api.hpp"
+#include "qcs_qulacs.hpp"
 
-#define MAX_THREADS 48
-qcs_info_t qcs_info[MAX_THREADS];
-int thread_id;
+#define MAX_INFO 48
+static qcs_info_t qcs_info[MAX_INFO];
+static ssize_t n_infos = 0;
+static pthread_key_t idx_key;
+static pthread_once_t once = PTHREAD_ONCE_INIT;
+static bool s_is_rpc_inited = false;
 
-#ifndef _OPENMP
-int omp_get_thread_num(){return 0;}
-int omp_get_num_threads(){return 1;}
-#endif
-
-extern "C" void QC_Init(int *argc, char ***argv, qint qubits, int qcs_id)
-{
-  if(qcs_id>=_Nsims || qcs_id<0){
-    printf("Error: simultion id number is invalid\n");
-  }
-
-#pragma omp parallel
-{
-  thread_id = omp_get_thread_num();
-}
-
-  // 必要な部分を初期化 （ここでは仮にqulacsを用いる初期化）
-  qcs_info[thread_id].qcs_id  = qcs_id;
-  qcs_info[thread_id].qubits  = qubits;
-  qcs_info[thread_id].ngates  = 0; 
-  qcs_info[thread_id].nprocs  = 1;
-  qcs_init_lib(qubits); // 特定のライブラリを初期化
-}
-
-extern "C" void QC_n_gate_check(int n)
-{
-  if(n>=MAX_N_GATES){
-    fprintf(stderr,"max gate number %d exceed\n",MAX_N_GATES);
+static void once_proc(void) {
+  int st = pthread_key_create(&idx_key, NULL);
+  if (unlikely(st != 0)) {
+    fprintf(stderr, "Error: can't crete info index key.\n");
     exit(1);
   }
 }
 
-extern "C" void QC_SetNodes(int nprocs)
+static inline qcs_info_t * QC_check_ninfo_ngate(void)
 {
-  qcs_info[thread_id].nprocs = nprocs;
+  int n;
+  int st;
+  qcs_info_t *ret = (qcs_info_t *)pthread_getspecific(idx_key);
+  if (likely(ret >= &qcs_info[0] && ret < &qcs_info[MAX_INFO - 1] &&
+             (n = ret->ngates) < MAX_INFO)) {
+    return ret;
+  } else {
+    if (ret == 0) {
+      fprintf(stderr, "Error: invalid qcs_info index.\n");
+    }
+    exit(1);
+    /* not reached */
+    return NULL;
+  }
 }
 
-extern "C" void QC_Finalize()
+void QC_Init(int *argc, char ***argv, qint qubits, int qcs_id)
+{
+  int st;
+  ssize_t idx;
+  if (likely(qcs_id < _Nsims && qcs_id >= 0 /* qulacs == 0 */ &&
+             (idx = __atomic_fetch_add(&n_infos, 1, __ATOMIC_ACQ_REL)) >= 0 &&
+             idx < MAX_INFO && n_infos > 0)) {
+    (void)pthread_once(&once, once_proc);
+    st = pthread_setspecific(idx_key, &qcs_info[idx]);
+    if (likely(st == 0)) {
+      // 必要な部分を初期化 （ここでは仮にqulacsを用いる初期化）
+      qcs_info[idx].qcs_id  = qcs_id;
+      qcs_info[idx].qubits  = qubits;
+      qcs_info[idx].ngates  = 0; 
+      qcs_info[idx].nprocs  = 1;
+      qcs_init_lib(qubits); // 特定のライブラリを初期化
+
+      return;
+    } else {
+      fprintf(stderr, "Error: can'r set info index.\n");
+      exit(1);
+    }
+  } else {
+    if (idx >= MAX_INFO) {
+      fprintf(stderr, "Error: too many info, < %d.\n", MAX_INFO);
+    } else if (qcs_id >= _Nsims || qcs_id < 0) {
+      fprintf(stderr, "Error: simultion id number is invalid\n");
+    }
+    exit(1);
+  }
+}
+
+void QC_InitRemote(int *argc, char **argv[])
+{
+  return;
+}
+
+void QC_SetNodes(int nprocs)
+{
+  qcs_info_t *info = QC_check_ninfo_ngate();
+  info->nprocs = nprocs;
+}
+
+void QC_Finalize(void)
 {
   qcs_finalize_lib();
 }
 
-extern "C" void QC_Measure()
+void QC_Measure(void)
 {
-  qcs_measure(&(qcs_info[thread_id]));
+  qcs_info_t *info = QC_check_ninfo_ngate();
+  qcs_measure(info);
 }
 
-extern "C" void IGate(qint target_qubit)
+void IGate(qint target_qubit)
 {
-  int n = qcs_info[thread_id].ngates; 
-  QC_n_gate_check(n);
-  qcs_info[thread_id].gate[n].id      = _IGate;
-  qcs_info[thread_id].gate[n].niarg   = 1; 
-  qcs_info[thread_id].gate[n].iarg[0] = target_qubit;
-  qcs_info[thread_id].gate[n].nrarg   = 0; 
-  qcs_info[thread_id].ngates++;
+  qcs_info_t *info = QC_check_ninfo_ngate();
+  int n = info->ngates; 
+  info->gate[n].id      = _IGate;
+  info->gate[n].niarg   = 1; 
+  info->gate[n].iarg[0] = target_qubit;
+  info->gate[n].nrarg   = 0; 
+  info->ngates++;
 }
 
-extern "C" void XGate(qint target_qubit)
+void XGate(qint target_qubit)
 {
-  int n = qcs_info[thread_id].ngates; 
-  QC_n_gate_check(n);
-  qcs_info[thread_id].gate[n].id      = _XGate;
-  qcs_info[thread_id].gate[n].niarg   = 1; 
-  qcs_info[thread_id].gate[n].iarg[0] = target_qubit;
-  qcs_info[thread_id].gate[n].nrarg   = 0; 
-  qcs_info[thread_id].ngates++;
+  qcs_info_t *info = QC_check_ninfo_ngate();
+  int n = info->ngates; 
+  info->gate[n].id      = _XGate;
+  info->gate[n].niarg   = 1; 
+  info->gate[n].iarg[0] = target_qubit;
+  info->gate[n].nrarg   = 0; 
+  info->ngates++;
 }
 
-extern "C" void ZGate(qint target_qubit)
+void ZGate(qint target_qubit)
 {
-  int n = qcs_info[thread_id].ngates; 
-  QC_n_gate_check(n);
-  qcs_info[thread_id].gate[n].id      = _ZGate;
-  qcs_info[thread_id].gate[n].niarg   = 1; 
-  qcs_info[thread_id].gate[n].iarg[0] = target_qubit;
-  qcs_info[thread_id].gate[n].nrarg   = 0; 
-  qcs_info[thread_id].ngates++;
+  qcs_info_t *info = QC_check_ninfo_ngate();
+  int n = info->ngates; 
+  info->gate[n].id      = _ZGate;
+  info->gate[n].niarg   = 1; 
+  info->gate[n].iarg[0] = target_qubit;
+  info->gate[n].nrarg   = 0; 
+  info->ngates++;
 }
 
-extern "C" void HGate(qint target_qubit)
+void HGate(qint target_qubit)
 {
-  int n = qcs_info[thread_id].ngates; 
-  QC_n_gate_check(n);
-  qcs_info[thread_id].gate[n].id      = _HGate;
-  qcs_info[thread_id].gate[n].niarg   = 1; 
-  qcs_info[thread_id].gate[n].iarg[0] = target_qubit;
-  qcs_info[thread_id].gate[n].nrarg   = 0; 
-  qcs_info[thread_id].ngates++;
+  qcs_info_t *info = QC_check_ninfo_ngate();
+  int n = info->ngates; 
+  info->gate[n].id      = _HGate;
+  info->gate[n].niarg   = 1; 
+  info->gate[n].iarg[0] = target_qubit;
+  info->gate[n].nrarg   = 0; 
+  info->ngates++;
 }
 
-extern "C" void SGate(qint target_qubit)
+void SGate(qint target_qubit)
 {
-  int n = qcs_info[thread_id].ngates; 
-  QC_n_gate_check(n);
-  qcs_info[thread_id].gate[n].id      = _SGate;
-  qcs_info[thread_id].gate[n].niarg   = 1; 
-  qcs_info[thread_id].gate[n].iarg[0] = target_qubit;
-  qcs_info[thread_id].gate[n].nrarg   = 0; 
-  qcs_info[thread_id].ngates++;
+  qcs_info_t *info = QC_check_ninfo_ngate();
+  int n = info->ngates; 
+  info->gate[n].id      = _SGate;
+  info->gate[n].niarg   = 1; 
+  info->gate[n].iarg[0] = target_qubit;
+  info->gate[n].nrarg   = 0; 
+  info->ngates++;
 }
 
-extern "C" void SdgGate(qint target_qubit)
+void SdgGate(qint target_qubit)
 {
-  int n = qcs_info[thread_id].ngates; 
-  QC_n_gate_check(n);
-  qcs_info[thread_id].gate[n].id      = _SdgGate;
-  qcs_info[thread_id].gate[n].niarg   = 1; 
-  qcs_info[thread_id].gate[n].iarg[0] = target_qubit;
-  qcs_info[thread_id].gate[n].nrarg   = 0; 
-  qcs_info[thread_id].ngates++;
+  qcs_info_t *info = QC_check_ninfo_ngate();
+  int n = info->ngates; 
+  info->gate[n].id      = _SdgGate;
+  info->gate[n].niarg   = 1; 
+  info->gate[n].iarg[0] = target_qubit;
+  info->gate[n].nrarg   = 0; 
+  info->ngates++;
 }
 
-extern "C" void TGate(qint target_qubit)
+void TGate(qint target_qubit)
 {
-  int n = qcs_info[thread_id].ngates; 
-  QC_n_gate_check(n);
-  qcs_info[thread_id].gate[n].id      = _TGate;
-  qcs_info[thread_id].gate[n].niarg   = 1; 
-  qcs_info[thread_id].gate[n].iarg[0] = target_qubit;
-  qcs_info[thread_id].gate[n].nrarg   = 0; 
-  qcs_info[thread_id].ngates++;
+  qcs_info_t *info = QC_check_ninfo_ngate();
+  int n = info->ngates; 
+  info->gate[n].id      = _TGate;
+  info->gate[n].niarg   = 1; 
+  info->gate[n].iarg[0] = target_qubit;
+  info->gate[n].nrarg   = 0; 
+  info->ngates++;
 }
 
-extern "C" void TdgGate(qint target_qubit)
+void TdgGate(qint target_qubit)
 {
-  int n = qcs_info[thread_id].ngates; 
-  QC_n_gate_check(n);
-  qcs_info[thread_id].gate[n].id      = _TdgGate;
-  qcs_info[thread_id].gate[n].niarg   = 1; 
-  qcs_info[thread_id].gate[n].iarg[0] = target_qubit;
-  qcs_info[thread_id].gate[n].nrarg   = 0; 
-  qcs_info[thread_id].ngates++;
+  qcs_info_t *info = QC_check_ninfo_ngate();
+  int n = info->ngates; 
+  info->gate[n].id      = _TdgGate;
+  info->gate[n].niarg   = 1; 
+  info->gate[n].iarg[0] = target_qubit;
+  info->gate[n].nrarg   = 0; 
+  info->ngates++;
 }
 
-extern "C" void SXGate(qint target_qubit)
+void SXGate(qint target_qubit)
 {
-  int n = qcs_info[thread_id].ngates; 
-  QC_n_gate_check(n);
-  qcs_info[thread_id].gate[n].id      = _SXGate;
-  qcs_info[thread_id].gate[n].niarg   = 1; 
-  qcs_info[thread_id].gate[n].iarg[0] = target_qubit;
-  qcs_info[thread_id].gate[n].nrarg   = 0; 
-  qcs_info[thread_id].ngates++;
+  qcs_info_t *info = QC_check_ninfo_ngate();
+  int n = info->ngates; 
+  info->gate[n].id      = _SXGate;
+  info->gate[n].niarg   = 1; 
+  info->gate[n].iarg[0] = target_qubit;
+  info->gate[n].nrarg   = 0; 
+  info->ngates++;
 }
 
-extern "C" void SXdgGate(qint target_qubit)
+void SXdgGate(qint target_qubit)
 {
-  int n = qcs_info[thread_id].ngates; 
-  QC_n_gate_check(n);
-  qcs_info[thread_id].gate[n].id      = _SXdgGate;
-  qcs_info[thread_id].gate[n].niarg   = 1; 
-  qcs_info[thread_id].gate[n].iarg[0] = target_qubit;
-  qcs_info[thread_id].gate[n].nrarg   = 0; 
-  qcs_info[thread_id].ngates++;
+  qcs_info_t *info = QC_check_ninfo_ngate();
+  int n = info->ngates; 
+  info->gate[n].id      = _SXdgGate;
+  info->gate[n].niarg   = 1; 
+  info->gate[n].iarg[0] = target_qubit;
+  info->gate[n].nrarg   = 0; 
+  info->ngates++;
 }
 
-extern "C" void SYGate(qint target_qubit)
+void SYGate(qint target_qubit)
 {
-  int n = qcs_info[thread_id].ngates; 
-  QC_n_gate_check(n);
-  qcs_info[thread_id].gate[n].id      = _SYGate;
-  qcs_info[thread_id].gate[n].niarg   = 1; 
-  qcs_info[thread_id].gate[n].iarg[0] = target_qubit;
-  qcs_info[thread_id].gate[n].nrarg   = 0; 
-  qcs_info[thread_id].ngates++;
+  qcs_info_t *info = QC_check_ninfo_ngate();
+  int n = info->ngates; 
+  info->gate[n].id      = _SYGate;
+  info->gate[n].niarg   = 1; 
+  info->gate[n].iarg[0] = target_qubit;
+  info->gate[n].nrarg   = 0; 
+  info->ngates++;
 }
 
-extern "C" void SYdgGate(qint target_qubit)
+void SYdgGate(qint target_qubit)
 {
-  int n = qcs_info[thread_id].ngates; 
-  QC_n_gate_check(n);
-  qcs_info[thread_id].gate[n].id      = _SYdgGate;
-  qcs_info[thread_id].gate[n].niarg   = 1; 
-  qcs_info[thread_id].gate[n].iarg[0] = target_qubit;
-  qcs_info[thread_id].gate[n].nrarg   = 0; 
-  qcs_info[thread_id].ngates++;
+  qcs_info_t *info = QC_check_ninfo_ngate();
+  int n = info->ngates; 
+  info->gate[n].id      = _SYdgGate;
+  info->gate[n].niarg   = 1; 
+  info->gate[n].iarg[0] = target_qubit;
+  info->gate[n].nrarg   = 0; 
+  info->ngates++;
 }
 
-extern "C" void CXGate(qint target_qubit, qint control_qubit)
+void CXGate(qint target_qubit, qint control_qubit)
 {
-  int n = qcs_info[thread_id].ngates; 
-  QC_n_gate_check(n);
-  qcs_info[thread_id].gate[n].id      = _CXGate;
-  qcs_info[thread_id].gate[n].niarg   = 2; 
-  qcs_info[thread_id].gate[n].iarg[0] = target_qubit;
-  qcs_info[thread_id].gate[n].iarg[1] = control_qubit;
-  qcs_info[thread_id].gate[n].nrarg   = 0; 
-  qcs_info[thread_id].ngates++;
+  qcs_info_t *info = QC_check_ninfo_ngate();
+  int n = info->ngates; 
+  info->gate[n].id      = _CXGate;
+  info->gate[n].niarg   = 2; 
+  info->gate[n].iarg[0] = target_qubit;
+  info->gate[n].iarg[1] = control_qubit;
+  info->gate[n].nrarg   = 0; 
+  info->ngates++;
 }
 
-extern "C" void CYGate(qint target_qubit, qint control_qubit)
+void CYGate(qint target_qubit, qint control_qubit)
 {
-  int n = qcs_info[thread_id].ngates; 
-  QC_n_gate_check(n);
-  qcs_info[thread_id].gate[n].id      = _CYGate;
-  qcs_info[thread_id].gate[n].niarg   = 2; 
-  qcs_info[thread_id].gate[n].iarg[0] = target_qubit;
-  qcs_info[thread_id].gate[n].iarg[1] = control_qubit;
-  qcs_info[thread_id].gate[n].nrarg   = 0; 
-  qcs_info[thread_id].ngates++;
+  qcs_info_t *info = QC_check_ninfo_ngate();
+  int n = info->ngates; 
+  info->gate[n].id      = _CYGate;
+  info->gate[n].niarg   = 2; 
+  info->gate[n].iarg[0] = target_qubit;
+  info->gate[n].iarg[1] = control_qubit;
+  info->gate[n].nrarg   = 0; 
+  info->ngates++;
 }
 
-extern "C" void CZGate(qint target_qubit, qint control_qubit)
+void CZGate(qint target_qubit, qint control_qubit)
 {
-  int n = qcs_info[thread_id].ngates; 
-  QC_n_gate_check(n);
-  qcs_info[thread_id].gate[n].id      = _CZGate;
-  qcs_info[thread_id].gate[n].niarg   = 2; 
-  qcs_info[thread_id].gate[n].iarg[0] = target_qubit;
-  qcs_info[thread_id].gate[n].iarg[1] = control_qubit;
-  qcs_info[thread_id].gate[n].nrarg   = 0; 
-  qcs_info[thread_id].ngates++;
+  qcs_info_t *info = QC_check_ninfo_ngate();
+  int n = info->ngates; 
+  info->gate[n].id      = _CZGate;
+  info->gate[n].niarg   = 2; 
+  info->gate[n].iarg[0] = target_qubit;
+  info->gate[n].iarg[1] = control_qubit;
+  info->gate[n].nrarg   = 0; 
+  info->ngates++;
 }
 
-extern "C" void SwapGate(qint target_qubit0, qint target_qubit1)
+void SwapGate(qint target_qubit0, qint target_qubit1)
 {
-  int n = qcs_info[thread_id].ngates; 
-  QC_n_gate_check(n);
-  qcs_info[thread_id].gate[n].id      = _SwapGate;
-  qcs_info[thread_id].gate[n].niarg   = 2; 
-  qcs_info[thread_id].gate[n].iarg[0] = target_qubit0;
-  qcs_info[thread_id].gate[n].iarg[1] = target_qubit1;
-  qcs_info[thread_id].gate[n].nrarg   = 0; 
-  qcs_info[thread_id].ngates++;
+  qcs_info_t *info = QC_check_ninfo_ngate();
+  int n = info->ngates; 
+  info->gate[n].id      = _SwapGate;
+  info->gate[n].niarg   = 2; 
+  info->gate[n].iarg[0] = target_qubit0;
+  info->gate[n].iarg[1] = target_qubit1;
+  info->gate[n].nrarg   = 0; 
+  info->ngates++;
 }
 
-extern "C" void RXGate(double theta, qint target_qubit)
+void RXGate(double theta, qint target_qubit)
 {
-  int n = qcs_info[thread_id].ngates; 
-  QC_n_gate_check(n);
-  qcs_info[thread_id].gate[n].id      = _RXGate;
-  qcs_info[thread_id].gate[n].niarg   = 1; 
-  qcs_info[thread_id].gate[n].iarg[0] = target_qubit;
-  qcs_info[thread_id].gate[n].nrarg   = 1; 
-  qcs_info[thread_id].gate[n].rarg[0] = theta;
-  qcs_info[thread_id].ngates++;
+  qcs_info_t *info = QC_check_ninfo_ngate();
+  int n = info->ngates; 
+  info->gate[n].id      = _RXGate;
+  info->gate[n].niarg   = 1; 
+  info->gate[n].iarg[0] = target_qubit;
+  info->gate[n].nrarg   = 1; 
+  info->gate[n].rarg[0] = theta;
+  info->ngates++;
 }
 
-extern "C" void RYGate(double theta, qint target_qubit)
+void RYGate(double theta, qint target_qubit)
 {
-  int n = qcs_info[thread_id].ngates; 
-  QC_n_gate_check(n);
-  qcs_info[thread_id].gate[n].id      = _RYGate;
-  qcs_info[thread_id].gate[n].niarg   = 1; 
-  qcs_info[thread_id].gate[n].iarg[0] = target_qubit;
-  qcs_info[thread_id].gate[n].nrarg   = 1; 
-  qcs_info[thread_id].gate[n].rarg[0] = theta;
-  qcs_info[thread_id].ngates++;
+  qcs_info_t *info = QC_check_ninfo_ngate();
+  int n = info->ngates; 
+  info->gate[n].id      = _RYGate;
+  info->gate[n].niarg   = 1; 
+  info->gate[n].iarg[0] = target_qubit;
+  info->gate[n].nrarg   = 1; 
+  info->gate[n].rarg[0] = theta;
+  info->ngates++;
 }
 
-extern "C" void RZGate(double theta, qint target_qubit)
+void RZGate(double theta, qint target_qubit)
 {
-  int n = qcs_info[thread_id].ngates; 
-  QC_n_gate_check(n);
-  qcs_info[thread_id].gate[n].id      = _RZGate;
-  qcs_info[thread_id].gate[n].niarg   = 1; 
-  qcs_info[thread_id].gate[n].iarg[0] = target_qubit;
-  qcs_info[thread_id].gate[n].nrarg   = 1; 
-  qcs_info[thread_id].gate[n].rarg[0] = theta;
-  qcs_info[thread_id].ngates++;
+  qcs_info_t *info = QC_check_ninfo_ngate();
+  int n = info->ngates; 
+  info->gate[n].id      = _RZGate;
+  info->gate[n].niarg   = 1; 
+  info->gate[n].iarg[0] = target_qubit;
+  info->gate[n].nrarg   = 1; 
+  info->gate[n].rarg[0] = theta;
+  info->ngates++;
 }
 
-extern "C" void U1Gate(double theta, qint target_qubit)
+void U1Gate(double theta, qint target_qubit)
 {
-  int n = qcs_info[thread_id].ngates; 
-  QC_n_gate_check(n);
-  qcs_info[thread_id].gate[n].id      = _U1Gate;
-  qcs_info[thread_id].gate[n].niarg   = 1; 
-  qcs_info[thread_id].gate[n].iarg[0] = target_qubit;
-  qcs_info[thread_id].gate[n].nrarg   = 1; 
-  qcs_info[thread_id].gate[n].rarg[0] = theta;
-  qcs_info[thread_id].ngates++;
+  qcs_info_t *info = QC_check_ninfo_ngate();
+  int n = info->ngates; 
+  info->gate[n].id      = _U1Gate;
+  info->gate[n].niarg   = 1; 
+  info->gate[n].iarg[0] = target_qubit;
+  info->gate[n].nrarg   = 1; 
+  info->gate[n].rarg[0] = theta;
+  info->ngates++;
 }
 
-extern "C" void U2Gate(double phi, double lam, qint target_qubit)
+void U2Gate(double phi, double lam, qint target_qubit)
 {
-  int n = qcs_info[thread_id].ngates; 
-  QC_n_gate_check(n);
-  qcs_info[thread_id].gate[n].id      = _U2Gate;
-  qcs_info[thread_id].gate[n].niarg   = 1; 
-  qcs_info[thread_id].gate[n].iarg[0] = target_qubit;
-  qcs_info[thread_id].gate[n].nrarg   = 2; 
-  qcs_info[thread_id].gate[n].rarg[0] = phi;
-  qcs_info[thread_id].gate[n].rarg[1] = lam;
-  qcs_info[thread_id].ngates++;
+  qcs_info_t *info = QC_check_ninfo_ngate();
+  int n = info->ngates; 
+  info->gate[n].id      = _U2Gate;
+  info->gate[n].niarg   = 1; 
+  info->gate[n].iarg[0] = target_qubit;
+  info->gate[n].nrarg   = 2; 
+  info->gate[n].rarg[0] = phi;
+  info->gate[n].rarg[1] = lam;
+  info->ngates++;
 }
 
-extern "C" void U3Gate(double theta, double phi, double lam, qint target_qubit)
+void U3Gate(double theta, double phi, double lam, qint target_qubit)
 {
-  int n = qcs_info[thread_id].ngates; 
-  QC_n_gate_check(n);
-  qcs_info[thread_id].gate[n].id      = _U3Gate;
-  qcs_info[thread_id].gate[n].niarg   = 1; 
-  qcs_info[thread_id].gate[n].iarg[0] = target_qubit;
-  qcs_info[thread_id].gate[n].nrarg   = 3; 
-  qcs_info[thread_id].gate[n].rarg[0] = phi;
-  qcs_info[thread_id].gate[n].rarg[1] = lam;
-  qcs_info[thread_id].gate[n].rarg[0] = theta;
-  qcs_info[thread_id].gate[n].rarg[1] = phi;
-  qcs_info[thread_id].gate[n].rarg[2] = lam;
-  qcs_info[thread_id].ngates++;
+  qcs_info_t *info = QC_check_ninfo_ngate();
+  int n = info->ngates; 
+  info->gate[n].id      = _U3Gate;
+  info->gate[n].niarg   = 1; 
+  info->gate[n].iarg[0] = target_qubit;
+  info->gate[n].nrarg   = 3; 
+  info->gate[n].rarg[0] = phi;
+  info->gate[n].rarg[1] = lam;
+  info->gate[n].rarg[0] = theta;
+  info->gate[n].rarg[1] = phi;
+  info->gate[n].rarg[2] = lam;
+  info->ngates++;
 }
 
-extern "C" void CRXGate(double theta, qint target_qubit, qint control_qubit)
+void CRXGate(double theta, qint target_qubit, qint control_qubit)
 {
-  int n = qcs_info[thread_id].ngates; 
-  QC_n_gate_check(n);
-  qcs_info[thread_id].gate[n].id      = _CRXGate;
-  qcs_info[thread_id].gate[n].niarg   = 2; 
-  qcs_info[thread_id].gate[n].iarg[0] = target_qubit;
-  qcs_info[thread_id].gate[n].iarg[1] = control_qubit;
-  qcs_info[thread_id].gate[n].nrarg   = 1; 
-  qcs_info[thread_id].gate[n].rarg[0] = theta;
-  qcs_info[thread_id].ngates++;
+  qcs_info_t *info = QC_check_ninfo_ngate();
+  int n = info->ngates; 
+  info->gate[n].id      = _CRXGate;
+  info->gate[n].niarg   = 2; 
+  info->gate[n].iarg[0] = target_qubit;
+  info->gate[n].iarg[1] = control_qubit;
+  info->gate[n].nrarg   = 1; 
+  info->gate[n].rarg[0] = theta;
+  info->ngates++;
 }
 
-extern "C" void CRYGate(double theta, qint target_qubit, qint control_qubit)
+void CRYGate(double theta, qint target_qubit, qint control_qubit)
 {
-  int n = qcs_info[thread_id].ngates; 
-  QC_n_gate_check(n);
-  qcs_info[thread_id].gate[n].id      = _CRYGate;
-  qcs_info[thread_id].gate[n].niarg   = 2; 
-  qcs_info[thread_id].gate[n].iarg[0] = target_qubit;
-  qcs_info[thread_id].gate[n].iarg[1] = control_qubit;
-  qcs_info[thread_id].gate[n].nrarg   = 1; 
-  qcs_info[thread_id].gate[n].rarg[0] = theta;
-  qcs_info[thread_id].ngates++;
+  qcs_info_t *info = QC_check_ninfo_ngate();
+  int n = info->ngates; 
+  info->gate[n].id      = _CRYGate;
+  info->gate[n].niarg   = 2; 
+  info->gate[n].iarg[0] = target_qubit;
+  info->gate[n].iarg[1] = control_qubit;
+  info->gate[n].nrarg   = 1; 
+  info->gate[n].rarg[0] = theta;
+  info->ngates++;
 }
 
-extern "C" void CRZGate(double theta, qint target_qubit, qint control_qubit)
+void CRZGate(double theta, qint target_qubit, qint control_qubit)
 {
-  int n = qcs_info[thread_id].ngates; 
-  QC_n_gate_check(n);
-  qcs_info[thread_id].gate[n].id      = _CRZGate;
-  qcs_info[thread_id].gate[n].niarg   = 2; 
-  qcs_info[thread_id].gate[n].iarg[0] = target_qubit;
-  qcs_info[thread_id].gate[n].iarg[1] = control_qubit;
-  qcs_info[thread_id].gate[n].nrarg   = 1; 
-  qcs_info[thread_id].gate[n].rarg[0] = theta;
-  qcs_info[thread_id].ngates++;
+  qcs_info_t *info = QC_check_ninfo_ngate();
+  int n = info->ngates; 
+  info->gate[n].id      = _CRZGate;
+  info->gate[n].niarg   = 2; 
+  info->gate[n].iarg[0] = target_qubit;
+  info->gate[n].iarg[1] = control_qubit;
+  info->gate[n].nrarg   = 1; 
+  info->gate[n].rarg[0] = theta;
+  info->ngates++;
 }
 
-extern "C" void CCXGate(qint target_qubit, qint control_qubit0, qint control_qubit1)
+void CCXGate(qint target_qubit, qint control_qubit0, qint control_qubit1)
 {
-  int n = qcs_info[thread_id].ngates; 
-  QC_n_gate_check(n);
-  qcs_info[thread_id].gate[n].id      = _CCXGate;
-  qcs_info[thread_id].gate[n].niarg   = 3; 
-  qcs_info[thread_id].gate[n].iarg[0] = target_qubit;
-  qcs_info[thread_id].gate[n].iarg[1] = control_qubit0;
-  qcs_info[thread_id].gate[n].iarg[2] = control_qubit1;
-  qcs_info[thread_id].gate[n].nrarg   = 0; 
-  qcs_info[thread_id].ngates++;
+  qcs_info_t *info = QC_check_ninfo_ngate();
+  int n = info->ngates; 
+  info->gate[n].id      = _CCXGate;
+  info->gate[n].niarg   = 3; 
+  info->gate[n].iarg[0] = target_qubit;
+  info->gate[n].iarg[1] = control_qubit0;
+  info->gate[n].iarg[2] = control_qubit1;
+  info->gate[n].nrarg   = 0; 
+  info->ngates++;
 }

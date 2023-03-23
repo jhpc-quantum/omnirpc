@@ -363,6 +363,8 @@ AC_CONFIG_FILES(
 	src/omrpc-register-yml/omrpc_reg_defs.h
 	qcrpc/Makefile
 	qcrpc/QC_API/Makefile
+	qcrpc/qcrex/Makefile
+	qcrpc/qcmeasure/Makefile
 	test/call-test/Makefile
 	test/exec-test/Makefile
 	test/comm-test/Makefile

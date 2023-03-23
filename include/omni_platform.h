@@ -16,10 +16,21 @@
  *  
  *  $
  */
-#ifndef _OMNI_PLATFORM_H
-#define _OMNI_PLATFORM_H
+#pragma once
 
 #include "omni_config.h"
 #include "omni_headers.h"
 
-#endif /* _OMNI_PLATFORM_H */
+#ifdef likely
+#undef likely
+#endif /* likely */
+#ifdef unlikely
+#undef unlikely
+#endif /* unlikely */
+#ifdef __GNUC__
+#define likely(x)       __builtin_expect(!!(x), 1)
+#define unlikely(x)     __builtin_expect(!!(x), 0)
+#else
+#define likely(x)       (x)
+#define unlikely(x)     (x)
+#endif /* __GNUC__ */
