@@ -3,5 +3,6 @@ MKRULESDIR      = @MKRULESDIR@
 
 include $(MKRULESDIR)/vars.mk
 
+DIRS	=	QC_API
 
 include $(MKRULESDIR)/rules.mk

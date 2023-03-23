@@ -632,6 +632,7 @@ ac_subst_vars='LTLIBOBJS
 LIBOBJS
 GLOBUS_LIBS
 USE_GLOBUS
+QULACS_SRCDIR
 USE_QC_RPC
 USE_MPI
 HAVE_GCOVR
@@ -762,6 +763,7 @@ with_sysroot
 enable_libtool_lock
 with_mpi
 enable_qcrpc
+with_qulacs
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1421,6 +1423,7 @@ Optional Packages:
   --with-sysroot[=DIR]    Search for dependent libraries within DIR (or the
                           compiler's sysroot if not specified).
   --with-mpi=flavor       specify MPI type to use
+  --with-qulacs           Specify a top source directory of Qulacs.
 
 Some influential environment variables:
   CC          C compiler command
@@ -18560,6 +18563,29 @@ fi
 $as_echo "${do_qc_rpc}." >&6; }
 
 
+QULACS_SRCDIR=''
+qulacs_dir=''
+
+# Check whether --with-qulacs was given.
+if test "${with_qulacs+set}" = set; then :
+  withval=$with_qulacs; qulacs_dir="$withval"
+else
+  qulacs_dir=''
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking qulacs" >&5
+$as_echo_n "checking qulacs... " >&6; }
+if test "x${do_qc_rpc}" != "xno" -a -d ${qulacs_dir}/include -a -d ${qulacs_dir}/lib; then
+    QULACS_SRCDIR=${qulacs_dir}
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: ${QULACS_SRCDIR}" >&5
+$as_echo "${QULACS_SRCDIR}" >&6; }
+
+if test "x${do_qc_rpc}" != "xno" -a -z "${QULACS_SRCDIR}"; then
+    as_fn_error $? "Qulacs source directory must be specified when --wnable-qcrpc." "$LINENO" 5
+    exit 1
+fi
+
 ### Globus (deprecated)
 USE_GLOBUS=''
 GLOBUS_LIBS=''
@@ -18567,7 +18593,7 @@ GLOBUS_LIBS=''
 
 
 # emit.
-ac_config_files="$ac_config_files mk/vars.mk Makefile include/Makefile src/libomrpc/Makefile src/libomrpc/omrpc_defs.h src/omrpc-agent/Makefile src/omrpc-gen/Makefile src/omrpc-gen/omrpc-cc src/omrpc-gen/omrpc-fc src/omrpc-gen-mpi/Makefile src/omrpc-gen-mpi/omrpc-cc-mpi src/omrpc-gen-xmp/Makefile src/omrpc-gen-xmp/omrpc-cc-xmp src/omrpc-register/Makefile src/omrpc-register-yml/Makefile src/omrpc-register-yml/omrpc_reg_defs.h qcrpc/Makefile test/call-test/Makefile test/exec-test/Makefile test/comm-test/Makefile test/stub-test/Makefile example/cpi/Makefile example/ep/Makefile example/knap/Makefile"
+ac_config_files="$ac_config_files mk/vars.mk Makefile include/Makefile src/libomrpc/Makefile src/libomrpc/omrpc_defs.h src/omrpc-agent/Makefile src/omrpc-gen/Makefile src/omrpc-gen/omrpc-cc src/omrpc-gen/omrpc-fc src/omrpc-gen-mpi/Makefile src/omrpc-gen-mpi/omrpc-cc-mpi src/omrpc-gen-xmp/Makefile src/omrpc-gen-xmp/omrpc-cc-xmp src/omrpc-register/Makefile src/omrpc-register-yml/Makefile src/omrpc-register-yml/omrpc_reg_defs.h qcrpc/Makefile qcrpc/QC_API/Makefile test/call-test/Makefile test/exec-test/Makefile test/comm-test/Makefile test/stub-test/Makefile example/cpi/Makefile example/ep/Makefile example/knap/Makefile"
 
 
 # emit and set executable attribute.
@@ -19680,6 +19706,7 @@ do
     "src/omrpc-register-yml/Makefile") CONFIG_FILES="$CONFIG_FILES src/omrpc-register-yml/Makefile" ;;
     "src/omrpc-register-yml/omrpc_reg_defs.h") CONFIG_FILES="$CONFIG_FILES src/omrpc-register-yml/omrpc_reg_defs.h" ;;
     "qcrpc/Makefile") CONFIG_FILES="$CONFIG_FILES qcrpc/Makefile" ;;
+    "qcrpc/QC_API/Makefile") CONFIG_FILES="$CONFIG_FILES qcrpc/QC_API/Makefile" ;;
     "test/call-test/Makefile") CONFIG_FILES="$CONFIG_FILES test/call-test/Makefile" ;;
     "test/exec-test/Makefile") CONFIG_FILES="$CONFIG_FILES test/exec-test/Makefile" ;;
     "test/comm-test/Makefile") CONFIG_FILES="$CONFIG_FILES test/comm-test/Makefile" ;;

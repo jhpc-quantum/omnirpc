@@ -321,6 +321,22 @@ fi
 AC_MSG_RESULT([${do_qc_rpc}.])
 AC_SUBST(USE_QC_RPC)    
 
+QULACS_SRCDIR=''
+qulacs_dir=''
+AC_ARG_WITH([qulacs],
+	[AS_HELP_STRING([--with-qulacs], [Specify a top source directory of Qulacs.])],
+	[qulacs_dir="$withval"], [qulacs_dir=''])
+AC_MSG_CHECKING(qulacs)
+if test "x${do_qc_rpc}" != "xno" -a -d ${qulacs_dir}/include -a -d ${qulacs_dir}/lib; then
+    QULACS_SRCDIR=${qulacs_dir}
+fi
+AC_MSG_RESULT([${QULACS_SRCDIR}])
+AC_SUBST(QULACS_SRCDIR)
+if test "x${do_qc_rpc}" != "xno" -a -z "${QULACS_SRCDIR}"; then
+    AC_MSG_ERROR([Qulacs source directory must be specified when --wnable-qcrpc.])
+    exit 1
+fi
+
 ### Globus (deprecated)
 USE_GLOBUS=''
 GLOBUS_LIBS=''
@@ -346,6 +362,7 @@ AC_CONFIG_FILES(
 	src/omrpc-register-yml/Makefile
 	src/omrpc-register-yml/omrpc_reg_defs.h
 	qcrpc/Makefile
+	qcrpc/QC_API/Makefile
 	test/call-test/Makefile
 	test/exec-test/Makefile
 	test/comm-test/Makefile

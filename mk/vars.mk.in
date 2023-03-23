@@ -90,8 +90,7 @@ WARN_BASE_CFLAGS	+= -W -Wall -Wextra \
 	-Wno-variadic-macros
 #	-Wlogical-op
 
-WARN_CFLAGS	+= 	-std=gnu99 \
-	$(WARN_BASE_CFLAGS) \
+WARN_CFLAGS	+=	$(WARN_BASE_CFLAGS) \
 	-Wstrict-prototypes \
 	-Wold-style-definition \
 	-Wmissing-declarations \
@@ -99,7 +98,7 @@ WARN_CFLAGS	+= 	-std=gnu99 \
 	-Wnested-externs \
 	-Wdeclaration-after-statement
 
-WARN_CXXFLAGS	+=	-std=gnu++11 \
+WARN_CXXFLAGS	+=	-std=c++14 \
 	$(WARN_BASE_CFLAGS) \
 	-Wnon-virtual-dtor \
 	-Wstrict-null-sentinel \
@@ -123,6 +122,12 @@ endif
 
 USE_QC_RPC	=	@USE_QC_RPC@
 
+QULACS_SRCDIR	=	@QULACS_SRCDIR@
+QULACS_INCDIR	=	$(QULACS_SRCDIR)/include
+QULACS_CSIM_LIBDIR	=	$(QULACS_SRCDIR)/build/src/csim
+QULACS_CPPSIM_LIBDIR	=	$(QULACS_SRCDIR)/build/src/cppsim
+CPPFLAGS	+=	-I$(QULACS_INCDIR)
+
 USE_GLOBUS	=	@USE_GLOBUS@
 ifndef USE_GLOBUS
 GLOBUS_LIBS	=	@GLOBUS_LIBS@
@@ -133,7 +138,7 @@ endif
 COMMON_CFLAGS	= $(WARN_CFLAGS) $(DEBUG_CFLAGS) $(OPT_CFLAGS) \
 	$(CODEGEN_CFLAGS) $(LOCAL_CFLAGS) $(DEVELOPER_CFLAGS)
 
-COMMON_CXXFLAGS	= -std=gnu++98 $(WARN_CXXFLAGS) $(DEBUG_CXXFLAGS) \
+COMMON_CXXFLAGS	= -std=gnu++17 $(WARN_CXXFLAGS) $(DEBUG_CXXFLAGS) \
 	$(OPT_CXXFLAGS) $(CODEGEN_CXXFLAGS) $(LOCAL_CXXFLAGS) $(DEVELOPER_CXXFLAGS)
 
 CFLAGS		+= @OS_CFLAGS@ @CFLAGS@ $(COMMON_CFLAGS)
@@ -150,6 +155,11 @@ ifdef TARGET_LIB
 SHLIB_VERSION	?= 0:0:0
 LTLINK_VERSION	= -version-info $(SHLIB_VERSION)
 endif
+ifdef TARGET_LIB_CXX
+SHLIB_VERSION	?= 0:0:0
+LTLINK_VERSION	= -version-info $(SHLIB_VERSION)
+endif
+
 LTLINK_RPATH	= -rpath $(DEST_LIBDIR)
 LTLINK_RUNPATH	= -R $(BUILD_RUNPATH)
 
