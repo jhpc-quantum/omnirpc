@@ -3,7 +3,6 @@
 #include "qcs_api.hpp"
 #include "qcs_qulacs.hpp"
 
-#define MAX_INFO 48
 static qcs_info_t qcs_info[MAX_INFO];
 static ssize_t n_infos = 0;
 static pthread_key_t idx_key;
@@ -51,11 +50,9 @@ void QC_Init(int *argc, char ***argv, qint qubits, int qcs_id)
       qcs_info[idx].qubits  = qubits;
       qcs_info[idx].ngates  = 0; 
       qcs_info[idx].nprocs  = 1;
-      qcs_init_lib(qubits); // 特定のライブラリを初期化
-
       return;
     } else {
-      fprintf(stderr, "Error: can'r set info index.\n");
+      fprintf(stderr, "Error: can't set info index.\n");
       exit(1);
     }
   } else {
@@ -81,7 +78,7 @@ void QC_SetNodes(int nprocs)
 
 void QC_Finalize(void)
 {
-  qcs_finalize_lib();
+  //qcs_info_t *info = QC_check_ninfo_ngate();
 }
 
 void QC_Measure(void)

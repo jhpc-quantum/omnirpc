@@ -10,6 +10,11 @@
 #undef _INC_QCS_QULACS_HPP_
 #include"qcs_gate_funcs.hpp"
 
+static qulacs_info_t qul_info[MAX_INFO];
+static ssize_t n_infos = 0;
+static pthread_key_t idx_key;
+static pthread_once_t once = PTHREAD_ONCE_INIT;
+
 #define _DEBUG_OUT_ 
 
 #ifdef _DEBUG_OUT_
@@ -25,30 +30,89 @@
 #define _DEBUG_FUNC_OUT() ""
 #endif
 
-static qulacs_info *qi = NULL;
-
 void error(std::string s, std::string fname, int n)
 {
   fprintf(stderr, "%s %s %d\n", s.c_str(), fname.c_str(), n);
   exit(1);
 }
 
-void qcs_init_lib(qint nqubits){
-  qi          = (qulacs_info *)malloc(sizeof(qulacs_info));
-  qi->circuit = new QuantumCircuit(nqubits);
-  qi->st      = new QuantumStateCpu(nqubits);
+static void once_proc(void) {
+  int st = pthread_key_create(&idx_key, NULL);
+  if (unlikely(st != 0)) {
+    fprintf(stderr, "Error: can't crete info index key.\n");
+    exit(1);
+  }
 }
 
-void qcs_finalize_lib()
+static inline qulacs_info_t *qcs_get_qul_info(void) {
+  qulacs_info_t *ret = (qulacs_info_t *)pthread_getspecific(idx_key);
+  if (likely(ret != NULL &&
+             ret >= &qul_info[0] && ret < &qul_info[MAX_INFO - 1])) {
+    return ret;
+  } else {
+    ssize_t idx;
+    if (likely((idx = __atomic_fetch_add(&n_infos, 1, __ATOMIC_ACQ_REL))
+               >= 0 &&
+               idx < MAX_INFO && n_infos > 0)) {
+      int st = pthread_setspecific(idx_key, &qul_info[idx]);
+      if (likely(st == 0)) {
+        ret = &qul_info[idx];
+        (void)memset(ret, 0, sizeof(*ret));
+        return ret;
+      } else {
+        fprintf(stderr, "Error: can't set info index.\n");
+        exit(1);
+      }
+    } else {
+      if (idx >= MAX_INFO) {
+        fprintf(stderr, "Error: too many info, < %d.\n", MAX_INFO);
+      }
+      exit(1);
+    }
+  }
+}
+
+void qcs_init_lib(qint nqubits) {
+  qulacs_info_t *qi = NULL;
+  (void)pthread_once(&once, once_proc);
+
+  if (unlikely((qi = qcs_get_qul_info()) != NULL)) {
+    qi->nqubits = nqubits;
+    qi->circuit = new QuantumCircuit(nqubits);
+    qi->st = new QuantumStateCpu(nqubits);
+  } else {
+    fprintf(stderr, "Error: qulacs object holder allocation failed.\n");
+    exit(1);
+  }
+}
+
+void qcs_finalize_lib(void)
 {
-  if(qi==NULL)    error("error", __FILE__, __LINE__);
-  if(qi->circuit) delete qi->circuit;
-  if(qi->st)      delete qi->st;
-  delete qi;
+  qulacs_info_t *qi = qcs_get_qul_info();
+  
+  if (qi == NULL) {
+    error("error", __FILE__, __LINE__);
+  }
+
+  if (qi->circuit) {
+#if 0
+    delete qi->circuit;
+#endif
+  }
+  if (qi->st) {
+#if 0
+    delete qi->st;
+#endif
+  }
+  (void)memset(qi, 0, sizeof(*qi));
+
+  (void)pthread_setspecific(idx_key, NULL);
 }
 
 void *qcs_update()
 {
+  qulacs_info_t *qi = qcs_get_qul_info();
+
   qi->circuit->update_quantum_state(qi->st);
   const CPPCTYPE* raw_data_cpp = qi->st->data_cpp();
   for(int i=0; i<8; i++){
@@ -59,7 +123,11 @@ void *qcs_update()
 
 void qcs_measure(qcs_info_t *qcs_info)
 {
+  qint qubits = qcs_info->qubits;
   int n = qcs_info->ngates;
+
+  qcs_init_lib(qubits);
+
   // 一気に gate を add or apply する
   for(int i=0; i<n; i++){
     void (*f)(gate_info*) = gate_func[qcs_info->gate[i].id];
@@ -75,8 +143,11 @@ void qcs_measure(qcs_info_t *qcs_info)
     printf("%e %e\n",_creal(state[i]),_cimag(state[i]));
 #endif
   }
+
+  qcs_finalize_lib();
 }
 
+
 
 void add_IGate(gate_info *ginfo)
 {
@@ -89,6 +160,8 @@ void add_IGate(gate_info *ginfo)
 
 void add_XGate(gate_info *ginfo)
 {
+  qulacs_info_t *qi = qcs_get_qul_info();
+
   _DEBUG_FUNC_OUT();
   if(ginfo==NULL){
     error("error",__FILE__,__LINE__);
@@ -98,6 +171,8 @@ void add_XGate(gate_info *ginfo)
 
 void add_YGate(gate_info *ginfo)
 {
+  qulacs_info_t *qi = qcs_get_qul_info();
+
   _DEBUG_FUNC_OUT();
   if(ginfo==NULL){
     error("error",__FILE__,__LINE__);
@@ -107,6 +182,8 @@ void add_YGate(gate_info *ginfo)
 
 void add_ZGate(gate_info *ginfo)
 {
+  qulacs_info_t *qi = qcs_get_qul_info();
+
   _DEBUG_FUNC_OUT();
   if(ginfo==NULL){
     error("error",__FILE__,__LINE__);
@@ -116,6 +193,8 @@ void add_ZGate(gate_info *ginfo)
 
 void add_HGate(gate_info *ginfo)
 {
+  qulacs_info_t *qi = qcs_get_qul_info();
+  
   _DEBUG_FUNC_OUT();
   if(ginfo==NULL){
     error("error",__FILE__,__LINE__);
@@ -125,6 +204,8 @@ void add_HGate(gate_info *ginfo)
 
 void add_SGate(gate_info *ginfo)
 {
+  qulacs_info_t *qi = qcs_get_qul_info();
+  
   _DEBUG_FUNC_OUT();
   if(ginfo==NULL){
     error("error",__FILE__,__LINE__);
@@ -134,6 +215,8 @@ void add_SGate(gate_info *ginfo)
 
 void add_SdgGate(gate_info *ginfo)
 {
+  qulacs_info_t *qi = qcs_get_qul_info();
+  
   _DEBUG_FUNC_OUT();
   if(ginfo==NULL){
     error("error",__FILE__,__LINE__);
@@ -143,6 +226,8 @@ void add_SdgGate(gate_info *ginfo)
 
 void add_TGate(gate_info *ginfo)
 {
+  qulacs_info_t *qi = qcs_get_qul_info();
+    
   _DEBUG_FUNC_OUT();
   if(ginfo==NULL){
     error("error",__FILE__,__LINE__);
@@ -152,6 +237,8 @@ void add_TGate(gate_info *ginfo)
 
 void add_TdgGate(gate_info *ginfo)
 {
+  qulacs_info_t *qi = qcs_get_qul_info();
+
   _DEBUG_FUNC_OUT();
   if(ginfo==NULL){
     error("error",__FILE__,__LINE__);
@@ -161,6 +248,8 @@ void add_TdgGate(gate_info *ginfo)
 
 void add_SXGate(gate_info *ginfo)
 {
+  qulacs_info_t *qi = qcs_get_qul_info();
+
   _DEBUG_FUNC_OUT();
   if(ginfo==NULL){
     error("error",__FILE__,__LINE__);
@@ -170,6 +259,8 @@ void add_SXGate(gate_info *ginfo)
 
 void add_SXdgGate(gate_info *ginfo)
 {
+  qulacs_info_t *qi = qcs_get_qul_info();
+
   _DEBUG_FUNC_OUT();
   if(ginfo==NULL){
     error("error",__FILE__,__LINE__);
@@ -179,6 +270,8 @@ void add_SXdgGate(gate_info *ginfo)
 
 void add_SYGate(gate_info *ginfo)
 {
+  qulacs_info_t *qi = qcs_get_qul_info();
+  
   _DEBUG_FUNC_OUT();
   if(ginfo==NULL){
     error("error",__FILE__,__LINE__);
@@ -188,6 +281,8 @@ void add_SYGate(gate_info *ginfo)
 
 void add_SYdgGate(gate_info *ginfo)
 {
+  qulacs_info_t *qi = qcs_get_qul_info();
+  
   _DEBUG_FUNC_OUT();
   if(ginfo==NULL){
     error("error",__FILE__,__LINE__);
@@ -198,6 +293,8 @@ void add_SYdgGate(gate_info *ginfo)
 
 void add_CXGate(gate_info *ginfo)
 {
+  qulacs_info_t *qi = qcs_get_qul_info();
+  
   _DEBUG_FUNC_OUT();
   if(ginfo==NULL){
     error("error",__FILE__,__LINE__);
@@ -212,6 +309,8 @@ void add_CXGate(gate_info *ginfo)
 
 void add_CYGate(gate_info *ginfo)
 {
+  qulacs_info_t *qi = qcs_get_qul_info();
+  
   _DEBUG_FUNC_OUT();
   error("error: The CYGate has not supported in qulacs ",__FILE__,__LINE__);
   if(ginfo==NULL){
@@ -221,6 +320,8 @@ void add_CYGate(gate_info *ginfo)
 
 void add_CZGate(gate_info *ginfo)
 {
+  qulacs_info_t *qi = qcs_get_qul_info();
+  
   _DEBUG_FUNC_OUT();
   if(ginfo==NULL){
     error("error",__FILE__,__LINE__);
@@ -234,6 +335,8 @@ void add_CZGate(gate_info *ginfo)
 
 void add_SwapGate(gate_info *ginfo)
 {
+  qulacs_info_t *qi = qcs_get_qul_info();
+  
   _DEBUG_FUNC_OUT();
   if(ginfo==NULL){
     error("error",__FILE__,__LINE__);
@@ -243,6 +346,8 @@ void add_SwapGate(gate_info *ginfo)
 
 void add_RXGate(gate_info *ginfo)
 {
+  qulacs_info_t *qi = qcs_get_qul_info();
+  
   _DEBUG_FUNC_OUT();
   if(ginfo==NULL){
     error("error",__FILE__,__LINE__);
@@ -252,6 +357,8 @@ void add_RXGate(gate_info *ginfo)
 
 void add_RYGate(gate_info *ginfo)
 {
+  qulacs_info_t *qi = qcs_get_qul_info();
+  
   _DEBUG_FUNC_OUT();
   if(ginfo==NULL){
     error("error",__FILE__,__LINE__);
@@ -261,6 +368,8 @@ void add_RYGate(gate_info *ginfo)
 
 void add_RZGate(gate_info *ginfo)
 {
+  qulacs_info_t *qi = qcs_get_qul_info();
+  
   _DEBUG_FUNC_OUT();
   if(ginfo==NULL){
     error("error",__FILE__,__LINE__);
@@ -270,6 +379,8 @@ void add_RZGate(gate_info *ginfo)
 
 void add_U1Gate(gate_info *ginfo)
 {
+  qulacs_info_t *qi = qcs_get_qul_info();
+  
   _DEBUG_FUNC_OUT();
   if(ginfo==NULL){
     error("error",__FILE__,__LINE__);
@@ -279,6 +390,8 @@ void add_U1Gate(gate_info *ginfo)
 
 void add_U2Gate(gate_info *ginfo)
 {
+  qulacs_info_t *qi = qcs_get_qul_info();
+  
   _DEBUG_FUNC_OUT();
   if(ginfo==NULL){
     error("error",__FILE__,__LINE__);
@@ -288,6 +401,8 @@ void add_U2Gate(gate_info *ginfo)
 
 void add_U3Gate(gate_info *ginfo)
 {
+  qulacs_info_t *qi = qcs_get_qul_info();
+    
   _DEBUG_FUNC_OUT();
   if(ginfo==NULL){
     error("error",__FILE__,__LINE__);
@@ -297,6 +412,8 @@ void add_U3Gate(gate_info *ginfo)
 
 void add_CRXGate(gate_info *ginfo)
 {
+  qulacs_info_t *qi = qcs_get_qul_info();
+  
   _DEBUG_FUNC_OUT();
   if(ginfo==NULL){
     error("error",__FILE__,__LINE__);
@@ -312,6 +429,8 @@ void add_CRXGate(gate_info *ginfo)
 
 void add_CRYGate(gate_info *ginfo)
 {
+  qulacs_info_t *qi = qcs_get_qul_info();
+    
   _DEBUG_FUNC_OUT();
   if(ginfo==NULL){
     error("error",__FILE__,__LINE__);
@@ -327,6 +446,8 @@ void add_CRYGate(gate_info *ginfo)
 
 void add_CRZGate(gate_info *ginfo)
 {
+  qulacs_info_t *qi = qcs_get_qul_info();
+  
   _DEBUG_FUNC_OUT();
   if(ginfo==NULL){
     error("error",__FILE__,__LINE__);
@@ -341,6 +462,8 @@ void add_CRZGate(gate_info *ginfo)
 }
 
 void add_CCXGate(gate_info *ginfo){
+  qulacs_info_t *qi = qcs_get_qul_info();
+  
   _DEBUG_FUNC_OUT();
   error("error: The CCXGate has not supported in qulacs ",__FILE__,__LINE__);
   if(ginfo==NULL){

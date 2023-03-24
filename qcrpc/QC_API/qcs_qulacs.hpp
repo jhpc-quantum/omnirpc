@@ -11,8 +11,8 @@
 #include <cppsim/circuit_optimizer.hpp>
 
 // --- qulacs parameters ---
-typedef struct{
+typedef struct {
   qint              nqubits;
   QuantumCircuit    *circuit;
   QuantumStateCpu   *st;
-}qulacs_info;
+} qulacs_info_t;

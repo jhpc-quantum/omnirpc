@@ -1,5 +1,6 @@
 #pragma once
 
+#define MAX_INFO 48
 #define MAX_N_GATES 128 
 #define MAX_I_ARGS  8
 #define MAX_R_ARGS  8
