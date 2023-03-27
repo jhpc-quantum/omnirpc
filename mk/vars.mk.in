@@ -138,6 +138,14 @@ else
 GLOBUS_LIBS	=
 endif
 
+OMNIRPC_LIBDIR	=	$(TOPDIR)/src/libomrpc
+OMRPC_STUBLIB	=	-R $(PWD)/.libs -R $(OMNIRPC_LIBDIR) \
+	-R $(DEST_LIBDIR) -L$(OMNIRPC_LIBDIR) \
+	-lomrpc_stub -lomrpc_io -lomrpc_client
+OMRPC_CLIENTLIB	=	-R $(PWD)/.libs -R $(OMNIRPC_LIBDIR) \
+	-R $(DEST_LIBDIR) -L$(OMNIRPC_LIBDIR) \
+	-lomrpc_client -lomrpc_io
+
 COMMON_CFLAGS	= $(WARN_CFLAGS) $(DEBUG_CFLAGS) $(OPT_CFLAGS) \
 	$(CODEGEN_CFLAGS) $(LOCAL_CFLAGS) $(DEVELOPER_CFLAGS)
 

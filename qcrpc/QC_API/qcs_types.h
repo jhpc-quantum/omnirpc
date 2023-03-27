@@ -5,6 +5,8 @@
 #define MAX_I_ARGS  8
 #define MAX_R_ARGS  8
 
+#define QC_RPC_STUB_NAME	(const char *)"qc_rpc"
+
 typedef int qint;
 
 enum enum_gates{

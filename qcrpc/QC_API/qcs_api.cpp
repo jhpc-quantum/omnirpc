@@ -3,6 +3,8 @@
 #include "qcs_api.hpp"
 #include "qcs_qulacs.hpp"
 
+#include "OmniRpc.h"
+
 static qcs_info_t qcs_info[MAX_INFO];
 static ssize_t n_infos = 0;
 static pthread_key_t idx_key;
@@ -17,8 +19,8 @@ static void once_proc(void) {
   }
 }
 
-static inline qcs_info_t * QC_check_ninfo_ngate(void)
-{
+static inline qcs_info_t *
+QC_check_ninfo_ngate(void) {
   int n;
   int st;
   qcs_info_t *ret = (qcs_info_t *)pthread_getspecific(idx_key);
@@ -30,9 +32,9 @@ static inline qcs_info_t * QC_check_ninfo_ngate(void)
       fprintf(stderr, "Error: invalid qcs_info index.\n");
     }
     exit(1);
-    /* not reached */
-    return NULL;
   }
+  /* not reached */
+  return NULL;
 }
 
 void QC_Init(int *argc, char ***argv, qint qubits, int qcs_id)
@@ -65,11 +67,6 @@ void QC_Init(int *argc, char ***argv, qint qubits, int qcs_id)
   }
 }
 
-void QC_InitRemote(int *argc, char **argv[])
-{
-  return;
-}
-
 void QC_SetNodes(int nprocs)
 {
   qcs_info_t *info = QC_check_ninfo_ngate();
@@ -78,7 +75,8 @@ void QC_SetNodes(int nprocs)
 
 void QC_Finalize(void)
 {
-  //qcs_info_t *info = QC_check_ninfo_ngate();
+  qcs_info_t *info = QC_check_ninfo_ngate();
+  (void)pthread_setspecific(idx_key, NULL);
 }
 
 void QC_Measure(void)
@@ -86,6 +84,76 @@ void QC_Measure(void)
   qcs_info_t *info = QC_check_ninfo_ngate();
   qcs_measure(info);
 }
+
+void
+QC_InitRemote(int *argc, char **argv[]) {
+  OmniRpcInit(argc, argv);
+  s_is_rpc_inited = true;
+}
+
+void
+QC_MeasureRemote(void) {
+  if (s_is_rpc_inited == true) {
+    qcs_info_t *qi = QC_check_ninfo_ngate();
+    if (likely(qi != NULL)) {
+      OmniRpcRequest r = OmniRpcCallAsync(QC_RPC_STUB_NAME, qi, sizeof(*qi));
+      OmniRpcWait(r);
+    }
+  }
+}
+
+void
+QC_SaveContext(const char *file) {
+  qcs_info_t *qi = QC_check_ninfo_ngate();
+  if (likely(file != NULL && *file != '\0' && qi != NULL)) {
+    int fd = open(file, O_WRONLY | O_CREAT, 0600);
+    if (likely(fd >= 0)) {
+      ssize_t n = write(fd, qi, sizeof(*qi));
+      if (n == sizeof(*qi)) {
+        fsync(fd);
+        close(fd);
+        return;
+      } else {
+        close(fd);
+        goto error;
+      }
+    } else {
+   error:
+      fprintf(stderr, "Error: save conotext failure.\n");
+      exit(1);
+    }
+  } else {
+    fprintf(stderr, "Error: conotext acquisition failure.\n");
+    exit(1);
+  }
+}
+
+void
+QC_LoadContext(const char *file) {
+  qcs_info_t *qi = QC_check_ninfo_ngate();  
+  if (likely(file != NULL && *file != '\0' && qi != NULL)) {
+    int fd = open(file, O_RDONLY);
+    if (likely(fd >= 0)) {
+      ssize_t n = read(fd, qi, sizeof(*qi));
+      if (n == sizeof(*qi)) {
+        close(fd);
+        return;
+      } else {
+        close(fd);
+        goto error;
+      }
+    } else {
+   error:
+      fprintf(stderr, "Error: load conotext failure.\n");
+      exit(1);
+    }
+  } else {
+    fprintf(stderr, "Error: conotext acquisition failure.\n");
+    exit(1);
+  }
+}
+
+
 
 void IGate(qint target_qubit)
 {

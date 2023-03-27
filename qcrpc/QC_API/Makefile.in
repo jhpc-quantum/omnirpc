@@ -13,7 +13,7 @@ INSTALL_LIB_TARGETS	=	$(TARGET_LIB)
 all::	$(INSTALL_LIB_TARGETS) apitest
 
 apitest:	main.o
-	$(LTLINK_CXX) -o $@ $< -R $(PWD)/.libs -L.libs -lqcs
+	$(LTLINK_CXX) -o $@ $< -R $(PWD)/.libs -L.libs -lqcs $(OMRPC_CLIENTLIB)
 
 include $(MKRULESDIR)/rules.mk
 

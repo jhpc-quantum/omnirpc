@@ -12,12 +12,16 @@
 
 __BEGIN_DECLS
 
+
 void QC_Init(int *argc, char ***argv, int qubits, int qcs_id);
-void QC_INitRemote(int *argc, char **argv[]);
 void QC_Measure(void);
-void QC_MeasureRemote(void);
 void QC_Finalize(void);
 void QC_SetNodes(int nprocs);
+
+void QC_InitRemote(int *argc, char **argv[]);
+void QC_MeasureRemote(void);
+void QC_SaveContext(const char *file);
+void QC_LoadContext(const char *file);
 
 void IGate(qint target_qubit);
 void XGate(qint target_qubit);
