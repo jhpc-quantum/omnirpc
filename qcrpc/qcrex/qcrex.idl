@@ -9,11 +9,13 @@ Globals{
 #include "qcrex_conf.h"  
 
 static inline void
-do_submit(const char *jobid) {
+do_submit(int qubits, const char *jobid) {
   const char *conf = SLURM_CONF;
   char job[4096];
+  char work_dir[4096];
+  char cmd[4096];
   char dump[4096];
-
+  
   int ret = 0;
   job_desc_msg_t job_desc_msg;
   submit_response_msg_t *slurm_response_msg = NULL;
@@ -22,19 +24,20 @@ do_submit(const char *jobid) {
   if (unlikely(jobid == NULL || *jobid == '\0')) {
     jobid = "qcrpc";
   }
-  ret = mkdir(jobid, 0600);
-  if (ret == -1) {
+  snprintf(work_dir, sizeof(work_dir), "/tmp/%s", jobid);
+  snprintf(cmd, sizeof(cmd), "mkdir -p %s", work_dir);
+  ret = system(cmd);
+  if (WEXITSTATUS(ret) != 0) {
     perror("mkdir");
     exit(1);
   }
-  ret = chdir(jobid);
+  ret = chdir(work_dir);
   if (ret == -1) {
     perror("chdir");
     exit(1);
   }
-
-  snprintf(dump, "%s.dump", jobid);
-
+  snprintf(dump, sizeof(dump), "%s.%s", jobid, "conf");
+  
   QC_SaveContext(dump);
 
   slurm_init(conf);
@@ -45,8 +48,8 @@ do_submit(const char *jobid) {
   job_desc_msg.partition = "part01";
   job_desc_msg.user_id = geteuid();
   job_desc_msg.group_id = getegid();
-  job_desc_msg.std_out = "%j.stdout.txt";
-  job_desc_msg.std_err = "%j.stderr.txt";
+  job_desc_msg.std_out = "stdout.txt";
+  job_desc_msg.std_err = "stderr.txt";
 
   // environment settings
   char **env = environ;
@@ -59,11 +62,11 @@ do_submit(const char *jobid) {
   job_desc_msg.env_size = env_count;
 
   // script settings
-  snprintf(job, sizeof(job), "#!/bin/sh\n%s %s\n",
-	   QCMEASURE, dump);
-
+  snprintf(job, sizeof(job), "#!/bin/sh\n%s %d %s\n",
+	   QCMEASURE, qubits, dump);
+  
   job_desc_msg.script = job;
-  job_desc_msg.work_dir = jobid;
+  job_desc_msg.work_dir = work_dir;
 
   // run job
   ret = slurm_submit_batch_job(&job_desc_msg, &slurm_response_msg);
@@ -81,10 +84,10 @@ do_submit(const char *jobid) {
     ret = slurm_load_job(&job_info_msg, slurm_response_msg->job_id, SHOW_ALL);
     if (ret == SLURM_SUCCESS) {
       //slurm_print_job_info_msg(stdout, job_info_msg, true);
-      slurm_print_job_info(stdout, job_info_msg->job_array, true);
+      //slurm_print_job_info(stdout, job_info_msg->job_array, true);
     } else {
       fprintf(stderr, "slurm_load_job failed: %s\n",
- slurm_strerror(slurm_get_errno()));
+	      slurm_strerror(slurm_get_errno()));
     }
 
     sleep(1);
@@ -99,7 +102,7 @@ do_submit(const char *jobid) {
   slurm_free_submit_response_response_msg(slurm_response_msg);
   slurm_free_job_info_msg(job_info_msg);
 
-  slurm_fini();
+  //slurm_fini();
 }
 
 }
@@ -118,7 +121,7 @@ Define qc_rpc(IN int len, IN char d[len], IN int do_job_submit)
     if (do_job_submit == 0) {
       QC_Measure();
     } else {
-      do_submit("test.test.test");
+      do_submit(qubits, "test.test.test");
     }
 
     QC_Finalize();
