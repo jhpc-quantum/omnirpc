@@ -1,5 +1,3 @@
-// Test without OmniRPC
-
 #include "omni_platform.h"
 #include "qcs_api.hpp"
 
