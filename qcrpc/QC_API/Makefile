@@ -6,7 +6,6 @@ include $(MKRULESDIR)/vars.mk
 SRCS	=	qcs_qulacs.cpp qcs_api.cpp
  
 LDFLAGS	+=	 $(QULACS_LIBS)
-#LDFLAGS	+=	 $(OMRPC_STUBLIB)
 
 TARGET_LIB	=	libqcs.la
 INSTALL_LIB_TARGETS	=	$(TARGET_LIB)

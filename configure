@@ -632,6 +632,7 @@ ac_subst_vars='LTLIBOBJS
 LIBOBJS
 GLOBUS_LIBS
 USE_GLOBUS
+SLURM_DIR
 QULACS_SRCDIR
 USE_QC_RPC
 USE_MPI
@@ -18586,6 +18587,10 @@ if test "x${do_qc_rpc}" != "xno" -a -z "${QULACS_SRCDIR}"; then
     exit 1
 fi
 
+### Slurm
+SLURM_DIR=/usr/local
+
+
 ### Globus (deprecated)
 USE_GLOBUS=''
 GLOBUS_LIBS=''
@@ -18593,7 +18598,7 @@ GLOBUS_LIBS=''
 
 
 # emit.
-ac_config_files="$ac_config_files mk/vars.mk Makefile include/Makefile src/libomrpc/Makefile src/libomrpc/omrpc_defs.h src/omrpc-agent/Makefile src/omrpc-gen/Makefile src/omrpc-gen/omrpc-cc src/omrpc-gen/omrpc-fc src/omrpc-gen-mpi/Makefile src/omrpc-gen-mpi/omrpc-cc-mpi src/omrpc-gen-xmp/Makefile src/omrpc-gen-xmp/omrpc-cc-xmp src/omrpc-register/Makefile src/omrpc-register-yml/Makefile src/omrpc-register-yml/omrpc_reg_defs.h qcrpc/Makefile qcrpc/QC_API/Makefile qcrpc/qcrex/Makefile qcrpc/qcmeasure/Makefile test/call-test/Makefile test/exec-test/Makefile test/comm-test/Makefile test/stub-test/Makefile example/cpi/Makefile example/ep/Makefile example/knap/Makefile"
+ac_config_files="$ac_config_files mk/vars.mk Makefile include/Makefile src/libomrpc/Makefile src/libomrpc/omrpc_defs.h src/omrpc-agent/Makefile src/omrpc-gen/Makefile src/omrpc-gen/omrpc-cc src/omrpc-gen/omrpc-fc src/omrpc-gen-mpi/Makefile src/omrpc-gen-mpi/omrpc-cc-mpi src/omrpc-gen-xmp/Makefile src/omrpc-gen-xmp/omrpc-cc-xmp src/omrpc-register/Makefile src/omrpc-register-yml/Makefile src/omrpc-register-yml/omrpc_reg_defs.h qcrpc/Makefile qcrpc/QC_API/Makefile qcrpc/qcrex/Makefile qcrpc/qcrex/qcrex_conf.h qcrpc/qcmeasure/Makefile test/call-test/Makefile test/exec-test/Makefile test/comm-test/Makefile test/stub-test/Makefile example/cpi/Makefile example/ep/Makefile example/knap/Makefile"
 
 
 # emit and set executable attribute.
@@ -19708,6 +19713,7 @@ do
     "qcrpc/Makefile") CONFIG_FILES="$CONFIG_FILES qcrpc/Makefile" ;;
     "qcrpc/QC_API/Makefile") CONFIG_FILES="$CONFIG_FILES qcrpc/QC_API/Makefile" ;;
     "qcrpc/qcrex/Makefile") CONFIG_FILES="$CONFIG_FILES qcrpc/qcrex/Makefile" ;;
+    "qcrpc/qcrex/qcrex_conf.h") CONFIG_FILES="$CONFIG_FILES qcrpc/qcrex/qcrex_conf.h" ;;
     "qcrpc/qcmeasure/Makefile") CONFIG_FILES="$CONFIG_FILES qcrpc/qcmeasure/Makefile" ;;
     "test/call-test/Makefile") CONFIG_FILES="$CONFIG_FILES test/call-test/Makefile" ;;
     "test/exec-test/Makefile") CONFIG_FILES="$CONFIG_FILES test/exec-test/Makefile" ;;

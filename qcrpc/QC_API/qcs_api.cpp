@@ -91,12 +91,21 @@ QC_InitRemote(int *argc, char **argv[]) {
   s_is_rpc_inited = true;
 }
 
+qcs_info_t *
+QC_GetContext(void) {
+  return QC_check_ninfo_ngate();
+}
+
 void
-QC_MeasureRemote(void) {
+QC_MeasureRemote(bool submit_job) {
   if (s_is_rpc_inited == true) {
     qcs_info_t *qi = QC_check_ninfo_ngate();
     if (likely(qi != NULL)) {
-      OmniRpcRequest r = OmniRpcCallAsync(QC_RPC_STUB_NAME, qi, sizeof(*qi));
+      int do_submit = (submit_job == true) ? 1 : 0;
+      OmniRpcRequest r = OmniRpcCallAsync("qc_rpc",
+                                          (int)sizeof(*qi),
+                                          (char *)qi,
+                                          do_submit);
       OmniRpcWait(r);
     }
   }

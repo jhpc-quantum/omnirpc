@@ -4,4 +4,24 @@ MKRULESDIR      = @MKRULESDIR@
 include $(MKRULESDIR)/vars.mk
 
 
+TARGET_EXE			=	qcrex.rex
+INSTALL_SBIN_EXE_TARGETS	=	$(TARGET_EXE)
+
+LDFLAGS	+=	$(QCS_LIB) $(OMRPC_STUBLIB) $(SLURM_LIB)
+CPPFLAGS	+=	-I../QC_API -I$(SLURM_INCDIR)
+
+OBJS	=	qcrex.lo
+
+all:: $(INSTALL_SBIN_EXE_TARGETS)
+
+qcrex.c:	qcrex.idl
+	../../src/omrpc-gen/omrpc-gen $< $@
+
+register:	$(TARGET_EXE)
+	(cd .libs && ../../../src/omrpc-register/omrpc-register -register $<)
+
 include $(MKRULESDIR)/rules.mk
+
+clean::
+	$(RM) -f qcrex.lo qcrex.rex qcrex.c
+

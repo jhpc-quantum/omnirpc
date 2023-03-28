@@ -337,6 +337,10 @@ if test "x${do_qc_rpc}" != "xno" -a -z "${QULACS_SRCDIR}"; then
     exit 1
 fi
 
+### Slurm
+SLURM_DIR=/usr/local
+AC_SUBST(SLURM_DIR)
+
 ### Globus (deprecated)
 USE_GLOBUS=''
 GLOBUS_LIBS=''
@@ -364,6 +368,7 @@ AC_CONFIG_FILES(
 	qcrpc/Makefile
 	qcrpc/QC_API/Makefile
 	qcrpc/qcrex/Makefile
+	qcrpc/qcrex/qcrex_conf.h
 	qcrpc/qcmeasure/Makefile
 	test/call-test/Makefile
 	test/exec-test/Makefile

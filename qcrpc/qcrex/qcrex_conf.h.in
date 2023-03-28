@@ -1,0 +1,2 @@
+#define SLURM_CONF	"@SLURM_DIR@/etc/slurm.conf"
+#define QCMEASURE	"@prefix@/libexec/qcmeasure"

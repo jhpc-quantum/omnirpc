@@ -1,0 +1,126 @@
+Module qc;
+
+Globals{
+#include "omni_platform.h"
+#include "qcs_api.hpp"
+#include "slurm/slurm.h"
+#include "slurm/slurm_errno.h"
+
+#include "qcrex_conf.h"  
+
+static inline void
+do_submit(const char *jobid) {
+  const char *conf = SLURM_CONF;
+  char job[4096];
+  char dump[4096];
+
+  int ret = 0;
+  job_desc_msg_t job_desc_msg;
+  submit_response_msg_t *slurm_response_msg = NULL;
+  job_info_msg_t *job_info_msg = NULL;
+
+  if (unlikely(jobid == NULL || *jobid == '\0')) {
+    jobid = "qcrpc";
+  }
+  ret = mkdir(jobid, 0600);
+  if (ret == -1) {
+    perror("mkdir");
+    exit(1);
+  }
+  ret = chdir(jobid);
+  if (ret == -1) {
+    perror("chdir");
+    exit(1);
+  }
+
+  snprintf(dump, "%s.dump", jobid);
+
+  QC_SaveContext(dump);
+
+  slurm_init(conf);
+
+  slurm_init_job_desc_msg(&job_desc_msg);
+
+  job_desc_msg.name = jobid;
+  job_desc_msg.partition = "part01";
+  job_desc_msg.user_id = geteuid();
+  job_desc_msg.group_id = getegid();
+  job_desc_msg.std_out = "%j.stdout.txt";
+  job_desc_msg.std_err = "%j.stderr.txt";
+
+  // environment settings
+  char **env = environ;
+  uint32_t env_count = 0;
+  while (*env) {
+    env++;
+    env_count++;
+  }
+  job_desc_msg.environment = environ;
+  job_desc_msg.env_size = env_count;
+
+  // script settings
+  snprintf(job, sizeof(job), "#!/bin/sh\n%s %s\n",
+	   QCMEASURE, dump);
+
+  job_desc_msg.script = job;
+  job_desc_msg.work_dir = jobid;
+
+  // run job
+  ret = slurm_submit_batch_job(&job_desc_msg, &slurm_response_msg);
+  if (ret == SLURM_SUCCESS) {
+    fprintf(stdout, "slurm_submit_batch_job succeeded. ID: %d\n",
+	    slurm_response_msg->job_id);
+  } else {
+    fprintf(stderr, "slurm_submit_batch_job failed: %s\n",
+	    slurm_strerror(slurm_get_errno()));
+    exit(1);
+  }
+
+  int wait_sec = 10;
+  for (int i = 0; i < wait_sec; i++) {
+    ret = slurm_load_job(&job_info_msg, slurm_response_msg->job_id, SHOW_ALL);
+    if (ret == SLURM_SUCCESS) {
+      //slurm_print_job_info_msg(stdout, job_info_msg, true);
+      slurm_print_job_info(stdout, job_info_msg->job_array, true);
+    } else {
+      fprintf(stderr, "slurm_load_job failed: %s\n",
+ slurm_strerror(slurm_get_errno()));
+    }
+
+    sleep(1);
+  }
+
+  if (job_info_msg->job_array->job_state == JOB_COMPLETE) {
+    fprintf(stdout, "job complete\n");
+  } else {
+    fprintf(stderr, "job did not run successfully\n");
+  }
+
+  slurm_free_submit_response_response_msg(slurm_response_msg);
+  slurm_free_job_info_msg(job_info_msg);
+
+  slurm_fini();
+}
+
+}
+
+Define qc_rpc(IN int len, IN char d[len], IN int do_job_submit)
+"QC RPC STUB"  
+{
+  qcs_info_t *qi = (qcs_info_t *)d;
+  int qubits = qi->qubits;
+  
+  QC_Init(NULL, NULL, qubits, 0);
+
+  if (likely(len == sizeof(qcs_info_t))) {
+    qi = QC_GetContext();
+    (void)memcpy(qi, d, len);
+    if (do_job_submit == 0) {
+      QC_Measure();
+    } else {
+      do_submit("test.test.test");
+    }
+
+    QC_Finalize();
+  }
+}
