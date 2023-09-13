@@ -333,12 +333,26 @@ fi
 AC_MSG_RESULT([${QULACS_SRCDIR}])
 AC_SUBST(QULACS_SRCDIR)
 if test "x${do_qc_rpc}" != "xno" -a -z "${QULACS_SRCDIR}"; then
-    AC_MSG_ERROR([Qulacs source directory must be specified when --wnable-qcrpc.])
+    AC_MSG_ERROR([Qulacs source directory must be specified when --enable-qcrpc.])
     exit 1
 fi
 
 ### Slurm
-SLURM_DIR=/usr/local
+SLURM_DIR=''
+slurm_dir=''
+HAVE_SLURM=''
+AC_ARG_WITH([slurm],
+	[AS_HELP_STRING([--with-slurm], [Specify Slurm install directory.])],
+	[slurm_dir="$withval"], [slurm_dir=''])
+AC_MSG_CHECKING(slurm)
+if test "x${do_qc_rpc}" != "xno" -a "x${slurm_dir}" != "x" -a -d ${slurm_dir}/include -a -d ${slurm_dir}/lib; then
+    HAVE_SLURM=yes
+    AC_DEFINE(HAVE_SLURM)
+    SLURM_DIR=${slurm_dir}
+    AC_MSG_RESULT([${SLURM_DIR}])
+else
+    AC_MSG_RESULT([no sluem])
+fi
 AC_SUBST(SLURM_DIR)
 
 ### Globus (deprecated)

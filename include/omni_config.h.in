@@ -60,5 +60,6 @@
 
 #undef USE_MPI
 #undef USE_QC_RPC
+#undef HAVE_SLURM
 
 #endif /* ! __OMNI_CONFIG_H__ */
