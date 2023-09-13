@@ -351,7 +351,7 @@ if test "x${do_qc_rpc}" != "xno" -a "x${slurm_dir}" != "x" -a -d ${slurm_dir}/in
     SLURM_DIR=${slurm_dir}
     AC_MSG_RESULT([${SLURM_DIR}])
 else
-    AC_MSG_RESULT([no sluem])
+    AC_MSG_RESULT([no slurm])
 fi
 AC_SUBST(SLURM_DIR)
 

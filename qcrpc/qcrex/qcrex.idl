@@ -3,13 +3,16 @@ Module qc;
 Globals{
 #include "omni_platform.h"
 #include "qcs_api.hpp"
+#ifdef HAVE_SlURM
 #include "slurm/slurm.h"
 #include "slurm/slurm_errno.h"
-
+#endif /* HAVE_SLURM */
+  
 #include "qcrex_conf.h"  
 
 static inline void
 do_submit(int qubits, const char *jobid) {
+#ifdef HAVE_SLURM
   const char *conf = SLURM_CONF;
   char job[4096];
   char work_dir[4096];
@@ -103,6 +106,10 @@ do_submit(int qubits, const char *jobid) {
   slurm_free_job_info_msg(job_info_msg);
 
   //slurm_fini();
+#else
+  (void)qubits;
+  (void)jobid;
+#endif /* HAVE_SLURM */
 }
 
 }

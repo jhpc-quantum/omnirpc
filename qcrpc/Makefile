@@ -1,5 +1,5 @@
-TOPDIR          = /home/u12066/local/local.x86_64/src/omnirpc
-MKRULESDIR      = /home/u12066/local/local.x86_64/src/omnirpc/mk
+TOPDIR          = /home/m-hirano/src/omnirpc
+MKRULESDIR      = /home/m-hirano/src/omnirpc/mk
 
 include $(MKRULESDIR)/vars.mk
 
