@@ -119,6 +119,8 @@ Define qc_rpc(IN int len, IN char d[len], IN int do_job_submit)
 {
   qcs_info_t *qi = (qcs_info_t *)d;
   int qubits = qi->qubits;
+
+  fprintf(stderr, "stub qc_rpc():%s: started.\n", __func__);
   
   QC_Init(NULL, NULL, qubits, 0);
 
@@ -133,4 +135,6 @@ Define qc_rpc(IN int len, IN char d[len], IN int do_job_submit)
 
     QC_Finalize();
   }
+
+  fprintf(stderr, "stub qc_rpc():%s: finished.\n", __func__);
 }
