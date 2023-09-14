@@ -1,1 +1,16 @@
-ssh login3 -t sh -c _tty=pts/1; who | grep "pts/1 " | awk '{ print $NF }' | sed -e 's:(::' -e 's:)::'
+#!/bin/sh
+
+if test -z "${1}"; then
+    exit 1
+fi
+
+entry=`ssh -t login3 sh -c \
+   "_tty=\`tty | sed 's:^/dev/::' 2>/dev/null\`; 
+   who | grep \"\`whoami\`\" | grep \"${_tty} \" 2>/dev/null" 2>/dev/null`
+
+ip_addr=`echo ${entry} | awk '{ print $NF }' | sed -e 's:(::' -e 's:)::' 2>/dev/null`
+
+echo "OMRPC_HOSTNAME=${ip_addr}"
+echo "export OMRPC_HOSTNAME"
+
+exit 0
