@@ -58,13 +58,14 @@ static void dumpBuffer(char *, int, char *);
 /* prototype */
 static omrpc_io_port_t *omrpc_new_port(int size,char type);
 
-void omrpc_io_init()
+void omrpc_io_init(void)
 {
     int r;
+    char *me;
     char hostname[MAXHOSTNAMELEN];
     struct hostent *hp;
 
-    if((omrpc_my_hostname = getenv("OMRPC_HOSTNAME")) == NULL){
+    if((me = getenv("OMRPC_HOSTNAME")) == NULL){
       /* get client host name */
       r = gethostname(hostname,MAXHOSTNAMELEN);
       if(r < 0){
@@ -72,13 +73,15 @@ void omrpc_io_init()
           exit(1);
       }
 
-      /* copy offical host name */
+      /* check FQDN and use it if any */
       hp = gethostbyname(hostname);
-      if(hp == NULL){
-          perror("gethostbyname");
-          omrpc_fatal("gethostbyname");
+      if (hp != NULL && hp->h_name != NULL && *(hp->h_name) != '\0') {
+        omrpc_my_hostname = strdup(hp->h_name);
+      } else {
+        omrpc_my_hostname = strdup(hostname);
       }
-      omrpc_my_hostname = strdup(hp->h_name);
+    } else {
+      omrpc_my_hostname = strdup(me);
     }
 
     /* initialize variable */
