@@ -1,0 +1,1 @@
+ssh login3 -t sh -c _tty=pts/1; who | grep "pts/1 " | awk '{ print $NF }' | sed -e 's:(::' -e 's:)::'
