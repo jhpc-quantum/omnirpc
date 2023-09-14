@@ -662,6 +662,7 @@ USE_GLOBUS
 SLURM_DIR
 QULACS_SRCDIR
 USE_QC_RPC
+home_reg_dir
 USE_MPI
 HAVE_GCOVR
 HAVE_NKF
@@ -789,6 +790,7 @@ with_gnu_ld
 with_sysroot
 enable_libtool_lock
 with_mpi
+enable_homeshare
 enable_qcrpc
 with_qulacs
 with_slurm
@@ -1434,6 +1436,7 @@ Optional Features:
   --enable-fast-install[=PKGS]
                           optimize for fast installation [default=yes]
   --disable-libtool-lock  avoid locking (might break parallel builds)
+  --enable-homeshare      Support home directory sharing [default: no]
   --enable-qcrpc          Support qc-rpc feature [default: no]
 
 Optional Packages:
@@ -19663,6 +19666,26 @@ printf "%s\n" "${mpi_flavor}." >&6; }
         as_fn_error $? "failed to find ${mpi_flavor}." "$LINENO" 5
     fi
 fi
+
+
+### homeshare
+do_homeshare='no'
+home_reg_dir='.omrpc_registry'
+# Check whether --enable-homeshare was given.
+if test ${enable_homeshare+y}
+then :
+  enableval=$enable_homeshare; do_homeshare="$enableval"
+else $as_nop
+  do_homeshare=no
+fi
+
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking home shareing" >&5
+printf %s "checking home shareing... " >&6; }
+if test "x${do_homeshare}" != "xno"; then
+    home_reg_dir="${home_reg_dir}.${CPU}"
+fi
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: ${do_homeshare}." >&5
+printf "%s\n" "${do_homeshare}." >&6; }
 
 
 ### qc-rpc

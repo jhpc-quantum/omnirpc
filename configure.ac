@@ -307,6 +307,19 @@ if test ! -z "${mpi_flavor}"; then
 fi
 AC_SUBST(USE_MPI)
 
+### homeshare
+do_homeshare='no'
+home_reg_dir='.omrpc_registry'
+AC_ARG_ENABLE([homeshare],
+	[AS_HELP_STRING([--enable-homeshare], [Support home directory sharing [default: no]])],
+	[do_homeshare="$enableval"], [do_homeshare=no])
+AC_MSG_CHECKING([home shareing])
+if test "x${do_homeshare}" != "xno"; then
+    home_reg_dir="${home_reg_dir}.${CPU}"
+fi
+AC_MSG_RESULT([${do_homeshare}.])
+AC_SUBST(home_reg_dir)
+
 ### qc-rpc
 USE_QC_RPC=''
 do_qc_rpc=no
