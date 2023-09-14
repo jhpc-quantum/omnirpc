@@ -554,8 +554,8 @@ int omrpc_io_socket(unsigned short *port)
 
     hp = gethostbyname(omrpc_my_hostname);
     if(hp == NULL){
-        perror("gethostbyname");
-        omrpc_fatal("gethostbyname");
+        herror("gethostbyname");
+        omrpc_fatal("gethostbyname failure");
     }
 
     sin.sin_addr.s_addr = htonl(INADDR_ANY);
@@ -650,8 +650,8 @@ int omrpc_io_connect(char *host, unsigned short port)
 
     hp = gethostbyname(host);
     if(hp == NULL){
-        perror("gethostbyname");
-        omrpc_fatal("gethostname host='%s'",host);
+        herror("gethostbyname");
+        omrpc_fatal("gethostbyname failure, gethostname host='%s'",host);
     }
 
     bcopy(hp->h_addr,&sin.sin_addr.s_addr,hp->h_length);
