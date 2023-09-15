@@ -32,6 +32,8 @@ ifdef USE_QC_RPC
 DIRS	+=	./qcrpc
 endif
 
+DIRS	+=	./bin
+
 TESTDIRS	=	./test/exec-test ./test/call-test ./test/stub-test
 EXAMPLEDIRS	=	./example/ep ./example/cpi ./example/knap
 

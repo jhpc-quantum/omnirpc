@@ -1,0 +1,10 @@
+TOPDIR          = @TOPDIR@
+MKRULESDIR      = @MKRULESDIR@
+
+include $(MKRULESDIR)/vars.mk
+
+TARGET_EXE			=	omrpc_hostname
+INSTALL_BIN_EXE_TARGETS		=	$(TARGET_EXE)
+
+all::	$(INSTALL_BIN_EXE_TARGETS)
+

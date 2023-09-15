@@ -404,6 +404,7 @@ AC_CONFIG_FILES(
 	example/cpi/Makefile
 	example/ep/Makefile
 	example/knap/Makefile
+	bin/Makefile
 )
 
 # emit and set executable attribute.
@@ -417,6 +418,7 @@ m4_foreach_w(
 
 CONFIG_EXECS(
 	mk/initdepend
+	bin/omrpc_hostname
 )
 
 AC_CONFIG_COMMANDS_POST([rm -rf ./config.log ./config.status.* autom4te.cache])
