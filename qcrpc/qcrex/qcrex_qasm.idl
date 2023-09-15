@@ -1,0 +1,51 @@
+Module qc;
+
+Globals{
+#include "omni_platform.h"
+#include "qcs_api.hpp"
+#ifdef HAVE_SlURM
+#include "slurm/slurm.h"
+#include "slurm/slurm_errno.h"
+#endif /* HAVE_SLURM */
+  
+#include "qcrex_conf.h"  
+}
+
+Define qc_rpc_qasm(IN int dlen, IN char d[dlen], IN int qlen, IN char q[qlen],
+		   OUT int ret[],
+		   INOUT int snum[], OUT int sidx[], OUT double sval[])
+"QC RPC QASM_STUB"
+{
+  int i;
+  int n_slots = *snum;
+  
+  fprintf(stderr, "stub qc_rpc_qasm():%s: started.\n", __func__);
+
+  if (d != NULL && *d != '\0' &&
+      chdir(d) == 0 &&
+      q != NULL && *q != '\0') {
+    char cmd[65536];
+
+    *ret = INT_MAX;
+
+    fprintf(stderr, "directory: %s\n", d);
+    fprintf(stderr, "QASM: %s/%s\n", d, q);
+
+    snprintf(cmd, sizeof(cmd), "%s %s %s", QURIWRAPPER, d, q);
+    *ret = system(cmd);
+
+    if (*ret >= 0) {
+      *snum = (n_slots < 10) ? n_slots : 10;
+
+      for (i = 0; i < *snum; i++) {
+	sidx[i] = i + 2;
+	sval[i] = (double)i * 3;
+      }
+    } else {
+      (void)memset(sidx, 0, sizeof(int) * n_slots);
+      (void)memset(sval, 0, sizeof(double) * n_slots);
+    }
+  }    
+
+  fprintf(stderr, "stub qc_rpc_qasm():%s: finished.\n", __func__);
+}

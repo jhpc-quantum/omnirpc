@@ -4,27 +4,44 @@ MKRULESDIR      = @MKRULESDIR@
 include $(MKRULESDIR)/vars.mk
 
 
-TARGET_EXE			=	qcrex.rex
-INSTALL_SBIN_EXE_TARGETS	=	$(TARGET_EXE)
+INSTALL_SBIN_EXE_TARGETS	=	qcrex.rex qcrex_qasm.rex \
+					qc-quri-wrapper.sh
 
-LDFLAGS	+=	$(QCS_LIB) $(OMRPC_STUBLIB) $(SLURM_LIB)
+LDFLAGS	+=	$(QCS_LIB) $(OMRPC_STUBLIB)
 CPPFLAGS	+=	-I../QC_API
 ifdef SLURM_INCDIR
 CPPFLAGS	+=	-I$(SLURM_INCDIR)
 endif
+ifdef SLURM_LIB
+LDFLAGS		+=	 $(SLURM_LIB)
+endif
 
-OBJS	=	qcrex.lo
+OBJS	=	qcrex.lo qcrex_qasm.lo
 
 all:: $(INSTALL_SBIN_EXE_TARGETS)
 
 qcrex.c:	qcrex.idl
 	../../src/omrpc-gen/omrpc-gen $< $@
 
-register:	$(TARGET_EXE)
+qcrex.rex:	qcrex.lo
+	$(RM) -f $@ .libs/lt-$@ .libs/$@
+	$(LTLINK_CC) -o $@ $< $(DEP_LIBS) $(LDFLAGS)
+
+qcrex_qasm.c:	qcrex_qasm.idl
+	../../src/omrpc-gen/omrpc-gen $< $@
+
+qcrex_qasm.rex:	qcrex_qasm.lo
+	$(RM) -f $@ .libs/lt-$@ .libs/$@
+	$(LTLINK_CC) -o $@ $< $(DEP_LIBS) $(LDFLAGS)
+
+registr::	qcrex.rex
+	(cd .libs && ../../../src/omrpc-register/omrpc-register -register $<)
+
+registr::	qcrex_quri.rex
 	(cd .libs && ../../../src/omrpc-register/omrpc-register -register $<)
 
 include $(MKRULESDIR)/rules.mk
 
 clean::
 	$(RM) -f qcrex.lo qcrex.rex qcrex.c
-
+	$(RM) -f qcrex_qasm.lo qcrex_qasm.rex qcrex_qasm.c
