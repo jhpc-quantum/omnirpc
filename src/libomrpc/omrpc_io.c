@@ -58,6 +58,20 @@ static void dumpBuffer(char *, int, char *);
 /* prototype */
 static omrpc_io_port_t *omrpc_new_port(int size,char type);
 
+/* If the server stub is launched vua ssh, SSH_CLIENT environment
+ * variable should be set and it could be usable when the client host
+ * is unknown. */
+static bool
+get_ssh_client_hostname(char *buf, size_t bufsz) {
+    char *e = NULL;
+    if ((e = getenv("SSH_CLIENT")) != NULL) {
+        snprintf(buf, bufsz, "%s", e);
+        if ((e = strchr(buf, ' ')) != NULL) {
+            *e = '\0';
+        }
+    }
+}
+
 void omrpc_io_init(void)
 {
     int r;
@@ -636,14 +650,8 @@ int omrpc_io_connect(char *host, unsigned short port)
     sin.sin_port = htons(port);
 
     if (host == NULL) {
-        char *e = NULL;
-
-        if ((e = getenv("SSH_CLIENT")) != NULL) {
+        if (get_ssh_client_hostname(hostname, sizeof(hostname)) == true) {
             /* 1st, try SSH_CLIENT. IMO it's the most likely */
-            snprintf(hostname, sizeof(hostname), "%s", e);
-            if ((e = strchr(hostname, ' ')) != NULL) {
-                *e = '\0';
-            }
             host = hostname;
         } else if ((r = gethostname(hostname, MAXHOSTNAMELEN)) == 0) {
             /* then assume launched by local host and avoiding to ssh
@@ -658,10 +666,18 @@ int omrpc_io_connect(char *host, unsigned short port)
     if(omrpc_debug_flag) omrpc_prf("connect host=%s:%d\n",host,port);
 
     hp = gethostbyname(host);
-    if(hp == NULL){
+    if (hp == NULL) {
+        if (get_ssh_client_hostname(hostname, sizeof(hostname)) == true) {
+            host = hostname;
+            hp = gethostbyname(host);
+            if (hp != NULL) {
+                goto got_addr;
+            }
+        }
         herror("gethostbyname");
         omrpc_fatal("gethostbyname failure, gethostname host='%s'",host);
     }
+    got_addr:
 
     bcopy(hp->h_addr,&sin.sin_addr.s_addr,hp->h_length);
 
