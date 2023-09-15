@@ -19769,7 +19769,7 @@ GLOBUS_LIBS=''
 
 
 # emit.
-ac_config_files="$ac_config_files mk/vars.mk Makefile include/Makefile src/libomrpc/Makefile src/libomrpc/omrpc_defs.h src/omrpc-agent/Makefile src/omrpc-gen/Makefile src/omrpc-gen/omrpc-cc src/omrpc-gen/omrpc-fc src/omrpc-gen-mpi/Makefile src/omrpc-gen-mpi/omrpc-cc-mpi src/omrpc-gen-xmp/Makefile src/omrpc-gen-xmp/omrpc-cc-xmp src/omrpc-register/Makefile src/omrpc-register-yml/Makefile src/omrpc-register-yml/omrpc_reg_defs.h qcrpc/Makefile qcrpc/QC_API/Makefile qcrpc/qcrex/Makefile qcrpc/qcrex/qcrex_conf.h qcrpc/qcmeasure/Makefile test/call-test/Makefile test/exec-test/Makefile test/comm-test/Makefile test/stub-test/Makefile example/cpi/Makefile example/ep/Makefile example/knap/Makefile"
+ac_config_files="$ac_config_files mk/vars.mk Makefile include/Makefile src/libomrpc/Makefile src/libomrpc/omrpc_defs.h src/omrpc-agent/Makefile src/omrpc-gen/Makefile src/omrpc-gen/omrpc-cc src/omrpc-gen/omrpc-fc src/omrpc-gen-mpi/Makefile src/omrpc-gen-mpi/omrpc-cc-mpi src/omrpc-gen-xmp/Makefile src/omrpc-gen-xmp/omrpc-cc-xmp src/omrpc-register/Makefile src/omrpc-register-yml/Makefile src/omrpc-register-yml/omrpc_reg_defs.h qcrpc/Makefile qcrpc/QC_API/Makefile qcrpc/qcrex/Makefile qcrpc/qcrex/qcrex_conf.h qcrpc/qcmeasure/Makefile test/call-test/Makefile test/exec-test/Makefile test/comm-test/Makefile test/stub-test/Makefile example/cpi/Makefile example/ep/Makefile example/knap/Makefile bin/Makefile"
 
 
 # emit and set executable attribute.
@@ -20888,6 +20888,7 @@ do
     "example/cpi/Makefile") CONFIG_FILES="$CONFIG_FILES example/cpi/Makefile" ;;
     "example/ep/Makefile") CONFIG_FILES="$CONFIG_FILES example/ep/Makefile" ;;
     "example/knap/Makefile") CONFIG_FILES="$CONFIG_FILES example/knap/Makefile" ;;
+    "bin/Makefile") CONFIG_FILES="$CONFIG_FILES bin/Makefile" ;;
     "mk/initdepend") CONFIG_FILES="$CONFIG_FILES mk/initdepend" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;

@@ -418,7 +418,6 @@ m4_foreach_w(
 
 CONFIG_EXECS(
 	mk/initdepend
-	bin/omrpc_hostname
 )
 
 AC_CONFIG_COMMANDS_POST([rm -rf ./config.log ./config.status.* autom4te.cache])
