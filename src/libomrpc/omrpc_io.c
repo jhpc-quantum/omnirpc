@@ -67,7 +67,7 @@ void omrpc_io_init(void)
 
     if((me = getenv("OMRPC_HOSTNAME")) == NULL){
       /* get client host name */
-      r = gethostname(hostname,MAXHOSTNAMELEN);
+      r = gethostname(hostname ,MAXHOSTNAMELEN);
       if(r < 0){
           perror("hostname");
           exit(1);
@@ -629,21 +629,30 @@ int omrpc_io_connect(char *host, unsigned short port)
     struct hostent *hp;
     int fd;
     int one = 1;
+    char hostname[MAXHOSTNAMELEN];
 
     memset(&sin, 0, sizeof(sin));
     sin.sin_family = AF_INET;
     sin.sin_port = htons(port);
 
-    if(host == NULL){
-#if 0
-        r = gethostname(hostname,MAXHOSTNAMELEN);
-        if(r < 0){
-            perror("hostname");
-            omrpc_fatal("hostname");
+    if (host == NULL) {
+        char *e = NULL;
+
+        if ((e = getenv("SSH_CLIENT")) != NULL) {
+            /* 1st, try SSH_CLIENT. IMO it's the most likely */
+            snprintf(hostname, sizeof(hostname), "%s", e);
+            if ((e = strchr(hostname, ' ')) != NULL) {
+                *e = '\0';
+            }
+            host = hostname;
+        } else if ((r = gethostname(hostname, MAXHOSTNAMELEN)) == 0) {
+            /* then assume launched by local host and avoiding to ssh
+             * publey confusion, try hostname 1st. */
+            host = hostname;
+        } else {
+            /* finally, use "localhost" */
+            host = "localhost";
         }
-        host = hostname;
-#endif
-        host = "localhost";
     }
 
     if(omrpc_debug_flag) omrpc_prf("connect host=%s:%d\n",host,port);
