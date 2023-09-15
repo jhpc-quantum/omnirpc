@@ -11,9 +11,14 @@ Globals{
 #include "qcrex_conf.h"  
 }
 
-Define qc_rpc_qasm(IN int dlen, IN char d[dlen], IN int qlen, IN char q[qlen],
-		   OUT int ret[],
-		   INOUT int snum[], OUT int sidx[], OUT double sval[])
+Define qc_rpc_qasm(/* 0 */ IN int dlen,
+		   /* 1 */ IN char d[dlen],
+		   /* 2 */ IN int qlen,
+		   /* 3 */ IN char q[qlen],
+		   /* 4 */ OUT int ret[],
+		   /* 5 */ INOUT int snum[],
+		   /* 6 */ OUT int sidx[],
+		   /* 7 */ OUT double sval[])
 "QC RPC QASM_STUB"
 {
   int i;
