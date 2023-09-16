@@ -1,72 +1,35 @@
-A brief description of qc-rpc usage
+A brief description of qc-rpc usage on the Super Computer Fugaku
 
 0. Prerequisite
 
-  Innstall Qulacs
-  	https://github.com/qulacs/qulacs.git
+  Build Qulacs:
+
+	https://github.com/qulacs/qulacs.git
+
+  For most environments, the easiest way to build this system is to
+issue ./script/build_gcc.sh under the cloned directory.
 	   
 1. Build
 
   At the source tree top directory, run the configure:
+
 	$ ./configure --prefix=/whare/to/install \
 	  --enable-qcrpc \
+	  --enable-homeshare \
 	  --with-qulacs=/whare/the/qulacs/insralled
+
+  The --enable-homeshare option is for separating ~/.omrpc_regitry by
+host architectures by augmenting the registry directory name by `uname
+-i` output, like ~/.omrpc_registry.aarch64. It is helpful on Fugaku or
+any other environments where the user home directories are shared
+between different architecture machines.
 
 2. Sample code
 
-the following is a sample code covering whole rthe qc-rpc APIs.
+  The following is a sample code covering whole the qc-rpc APIs,
+existig in QC_API directory main.c:
+
 ----------------------------------------------------------------
-     1	#include "omni_platform.h"
-     2	#include "qcs_api.hpp"
-     3	
-     4	int main(int argc, char *argv[])
-     5	{
-     6	  int qubits = 5;
-     7	  bool do_save = false;
-     8	  bool do_load = false;
-     9	  bool do_rpc = false;
-    10	  bool do_job_submit = false;
-    11	  
-    12	  if (argc == 2 && strcmp(argv[1], "-s") == 0) {
-    13	    do_save = true;
-    14	  } else if (argc == 2 && strcmp(argv[1], "-l") == 0) {
-    15	    do_load = true;
-    16	  } else if (argc == 2 && strcmp(argv[1], "-re") == 0) {
-    17	    do_rpc = true;
-    18	  } else if (argc == 2 && strcmp(argv[1], "-rs") == 0) {
-    19	    do_job_submit = true;
-    20	    do_rpc = true;
-    21	  }
-    22	
-    23	  if (do_rpc == true) {
-    24	    QC_InitRemote(&argc, &argv);
-    25	  }
-    26	  
-    27	  QC_Init(&argc, &argv, qubits, 0); // 0 = qulacs
-    28	
-    29	  if (do_load == false) {
-    30	
-    31	    HGate(0);
-    32	    U1Gate(0.1, 0);
-    33	    U2Gate(0.1, 0.2, 1);
-    34	    U3Gate(0.1, 0.2, 0.3, 2);
-    35	
-    36	    if (do_save == true) {
-    37	      QC_SaveContext("test.dump");
-    38	    } else if (do_rpc == true) {
-    39	      QC_MeasureRemote(do_job_submit);
-    40	    }
-    41	  } else {
-    42	    QC_LoadContext("test.dump");
-    43	  }
-    44	
-    45	  if (do_save == false && do_rpc == false) {
-    46	    QC_Measure();
-    47	  }
-    48	
-    49	  QC_Finalize();
-    50	}
-    51	
 ----------------------------------------------------------------
 
   Line 24, QC_InitRemote() is called to initilize OmniRPC layer. Call

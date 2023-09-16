@@ -7,7 +7,7 @@ Globals{
 #include "slurm/slurm.h"
 #include "slurm/slurm_errno.h"
 #endif /* HAVE_SLURM */
-  
+
 #include "qcrex_conf.h"  
 }
 

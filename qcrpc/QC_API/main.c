@@ -12,12 +12,7 @@ int main(int argc, char *argv[])
   char *file = NULL;
   char *dir = NULL;
 
-  if (argc == 4 && strcmp(argv[1], "-rq") == 0) {
-    do_rpc = true;
-    do_qasm = true;
-    dir = strdup(argv[2]);
-    file = strdup(argv[3]);
-  } else if (argc == 2 && strcmp(argv[1], "-s") == 0) {
+  if (argc == 2 && strcmp(argv[1], "-s") == 0) {
     do_save = true;
   } else if (argc == 2 && strcmp(argv[1], "-l") == 0) {
     do_load = true;
@@ -26,6 +21,11 @@ int main(int argc, char *argv[])
   } else if (argc == 2 && strcmp(argv[1], "-rs") == 0) {
     do_job_submit = true;
     do_rpc = true;
+  } else if (argc == 4 && strcmp(argv[1], "-rq") == 0) {
+    do_rpc = true;
+    do_qasm = true;
+    dir = strdup(argv[2]);
+    file = strdup(argv[3]);
   }
 
   if (do_rpc == true) {
@@ -34,7 +34,27 @@ int main(int argc, char *argv[])
   
   QC_Init(&argc, &argv, qubits, 0); // 0 = qulacs
 
-  if (do_qasm == true) {
+  if (do_qasm == false) {
+    if (do_load == false) {
+
+      HGate(0);
+      U1Gate(0.1, 0);
+      U2Gate(0.1, 0.2, 1);
+      U3Gate(0.1, 0.2, 0.3, 2);
+
+      if (do_save == true) {
+        QC_SaveContext("test.dump");
+      } else if (do_rpc == true) {
+        QC_MeasureRemote(do_job_submit);
+      }
+    } else {
+      QC_LoadContext("test.dump");
+    }
+
+    if (do_save == false && do_rpc == false) {
+      QC_Measure();
+    }
+  } else {
     if (dir != NULL && *dir != '\0' &&
         dir != NULL && *dir != '\0') {
       int max_shots = 1000;
@@ -53,30 +73,8 @@ int main(int argc, char *argv[])
       fprintf(stderr, "error: -rq flag requires work directory and "
               "QASM filename under the work directory.\n");
     }
-    goto done;
-  }
-      
-  if (do_load == false) {
-
-    HGate(0);
-    U1Gate(0.1, 0);
-    U2Gate(0.1, 0.2, 1);
-    U3Gate(0.1, 0.2, 0.3, 2);
-
-    if (do_save == true) {
-      QC_SaveContext("test.dump");
-    } else if (do_rpc == true) {
-      QC_MeasureRemote(do_job_submit);
-    }
-  } else {
-    QC_LoadContext("test.dump");
   }
 
-  if (do_save == false && do_rpc == false) {
-    QC_Measure();
-  }
-
-done:
   QC_Finalize();
 
   return 0;
