@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
       int n_shots = 0;
       int i;
 
-      QC_MeasureRemoteQASM(dir, file, idx, n_cnts, max_shots, &n_shots);
+      QC_MeasureRemoteQASMFile(dir, file, idx, n_cnts, max_shots, &n_shots);
 
       for (i = 0; i < n_shots; i++) {
         fprintf(stdout, "%4d: %4d\t%8.4f\n", i, idx[i], n_cnts[i]);

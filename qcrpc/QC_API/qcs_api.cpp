@@ -112,9 +112,9 @@ QC_MeasureRemote(bool submit_job) {
 }
 
 void
-QC_MeasureRemoteQASM(const char *dir, const char *file,
-                     int *qbit_ptns, double *n_ptns, int buflen, 
-                     int *n_shots) {
+QC_MeasureRemoteQASMFile(const char *dir, const char *file,
+                         int *qbit_ptns, double *n_ptns, int buflen, 
+                         int *n_shots) {
     if (s_is_rpc_inited == true) {
         int filelen = 0; 
         int dirlen = 0;
@@ -129,7 +129,7 @@ QC_MeasureRemoteQASM(const char *dir, const char *file,
             (void)memset(qbit_ptns, 0, sizeof(int) * buflen);
             (void)memset(n_ptns, 0, sizeof(double) * buflen);
 
-            OmniRpcRequest r = OmniRpcCallAsync("qc_rpc_qasm",
+            OmniRpcRequest r = OmniRpcCallAsync("qc_rpc_qasm_file",
                                                 /* need +1 byte for nul */
                                                 dirlen + 1, dir,
                                                 /* need +1 byte for nul, too */

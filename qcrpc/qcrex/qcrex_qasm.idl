@@ -11,16 +11,16 @@ Globals{
 #include "qcrex_conf.h"  
 }
 
-Define qc_rpc_qasm(/* 0 */ IN int dlen,
-		   /* 1 */ IN char d[dlen],
-		   /* 2 */ IN int qlen,
-		   /* 3 */ IN char q[qlen],
-		   /* 4 */ OUT int ret[],
-		   /* 5 */ IN int snum,
-		   /* 6 */ OUT int sidx[snum],
-		   /* 7 */ OUT double sval[snum],
-		   /* 8 */ OUT int n_shots[])
-"QC RPC QASM_STUB"
+Define qc_rpc_qasm_file(/* 0 */ IN int dlen,
+			/* 1 */ IN char d[dlen],
+			/* 2 */ IN int qlen,
+			/* 3 */ IN char q[qlen],
+			/* 4 */ OUT int ret[],
+			/* 5 */ IN int snum,
+			/* 6 */ OUT int sidx[snum],
+			/* 7 */ OUT double sval[snum],
+			/* 8 */ OUT int n_shots[])
+"QC RPC QASM-FILE STUB"
 {
   int i;
   
@@ -30,27 +30,66 @@ Define qc_rpc_qasm(/* 0 */ IN int dlen,
       chdir(d) == 0 &&
       q != NULL && *q != '\0') {
     char cmd[65536];
+    bool allOK = false;
 
-    *ret = INT_MAX;
+    *ret = -INT_MAX;
 
     fprintf(stderr, "directory: %s\n", d);
-    fprintf(stderr, "QASM: %s/%s\n", d, q);
+    fprintf(stderr, "QASM file: %s/%s\n", d, q);
+    fprintf(stderr, "output: %s/%s\n", d, QURIWRAPPER_OUT);
 
-    snprintf(cmd, sizeof(cmd), "%s %s %s", QURIWRAPPER, d, q);
+    snprintf(cmd, sizeof(cmd), "%s %s %s %s",
+	     QURIWRAPPER, d, q, QURIWRAPPER_OUT);
+
     *ret = system(cmd);
-
     if (*ret >= 0) {
-      *n_shots = (snum < 10) ? snum : 10;
-
-      for (i = 0; i < *n_shots; i++) {
-	sidx[i] = i + 2;
-	sval[i] = (double)i * 3;
-      }
+      *ret = WEXITSTATUS(*ret);
     } else {
+      *ret = -1;
+    }
+
+    if (*ret == 0) {
+      FILE *fd = fopen(QURIWRAPPER_OUT, "r");
+
+      if (fd != NULL) {
+	char buf[4096];
+	int n_tokens = 0;
+	int idx;
+	double cnt;
+	bool gotN = false;
+        int i;
+
+	while (fgets(buf, sizeof(buf), fd) != NULL) {
+	  n_tokens = sscanf(buf, "%d %lf", &idx, &cnt);
+          if (n_tokens == 1) {
+            *n_shots = idx;
+            i = 0;
+            gotN = true;
+          } else if (n_tokens == 2) {
+            if (gotN == true) {
+              sidx[i] = idx;
+              sval[i] = cnt;
+              i++;
+            }
+          }
+        }
+        (void)fclose(fd);
+        if (i == *n_shots) {
+          allOK = true;
+        } else {
+          *ret = 1;
+        }
+      } else {
+        *ret = -1;
+      }
+    }
+
+    if (allOK != true) {
       (void)memset(sidx, 0, sizeof(int) * *n_shots);
       (void)memset(sval, 0, sizeof(double) * *n_shots);
     }
-  }
+  }    
 
-  fprintf(stderr, "stub qc_rpc_qasm():%s: finished.\n", __func__);
+  fprintf(stderr, "stub qc_rpc_qasm():%s: finished, return code %d.\n",
+          __func__, *ret);
 }
