@@ -24,6 +24,9 @@ void QC_InitRemote(int *argc, char **argv[]);
 void QC_MeasureRemote(bool submit_job);
 void QC_SaveContext(const char *file);
 void QC_LoadContext(const char *file);
+void QC_MeasureRemoteQASM(const char *dir, const char *file,
+                          int *qbit_ptns, double *n_ptns, int buflen, 
+                          int *n_shots);
 
 void IGate(qint target_qubit);
 void XGate(qint target_qubit);

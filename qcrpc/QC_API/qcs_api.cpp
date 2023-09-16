@@ -112,6 +112,37 @@ QC_MeasureRemote(bool submit_job) {
 }
 
 void
+QC_MeasureRemoteQASM(const char *dir, const char *file,
+                     int *qbit_ptns, double *n_ptns, int buflen, 
+                     int *n_shots) {
+    if (s_is_rpc_inited == true) {
+        int filelen = 0; 
+        int dirlen = 0;
+        if ((dir != NULL && (dirlen = strlen(dir)) > 0) &&
+            (file != NULL && (filelen = strlen(file)) > 0) &&
+            (buflen > 0) &&
+            (qbit_ptns != NULL && n_ptns != NULL) &&
+            (n_shots != NULL)) {
+            int ret = -INT_MAX;
+
+            *n_shots = 0;
+            (void)memset(qbit_ptns, 0, sizeof(int) * buflen);
+            (void)memset(n_ptns, 0, sizeof(double) * buflen);
+
+            OmniRpcRequest r = OmniRpcCallAsync("qc_rpc_qasm",
+                                                /* need +1 byte for nul */
+                                                dirlen + 1, dir,
+                                                /* need +1 byte for nul, too */
+                                                filelen + 1, file,
+                                                &ret,
+                                                buflen, qbit_ptns, n_ptns,
+                                                n_shots);
+            OmniRpcWait(r);
+        }
+    }
+}
+
+void
 QC_SaveContext(const char *file) {
   qcs_info_t *qi = QC_check_ninfo_ngate();
   if (likely(file != NULL && *file != '\0' && qi != NULL)) {

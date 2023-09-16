@@ -1,4 +1,4 @@
-Module qc;
+Module qc_qasm;
 
 Globals{
 #include "omni_platform.h"
@@ -16,13 +16,13 @@ Define qc_rpc_qasm(/* 0 */ IN int dlen,
 		   /* 2 */ IN int qlen,
 		   /* 3 */ IN char q[qlen],
 		   /* 4 */ OUT int ret[],
-		   /* 5 */ INOUT int snum[],
-		   /* 6 */ OUT int sidx[],
-		   /* 7 */ OUT double sval[])
+		   /* 5 */ IN int snum,
+		   /* 6 */ OUT int sidx[snum],
+		   /* 7 */ OUT double sval[snum],
+		   /* 8 */ OUT int n_shots[])
 "QC RPC QASM_STUB"
 {
   int i;
-  int n_slots = *snum;
   
   fprintf(stderr, "stub qc_rpc_qasm():%s: started.\n", __func__);
 
@@ -40,17 +40,17 @@ Define qc_rpc_qasm(/* 0 */ IN int dlen,
     *ret = system(cmd);
 
     if (*ret >= 0) {
-      *snum = (n_slots < 10) ? n_slots : 10;
+      *n_shots = (snum < 10) ? snum : 10;
 
-      for (i = 0; i < *snum; i++) {
+      for (i = 0; i < *n_shots; i++) {
 	sidx[i] = i + 2;
 	sval[i] = (double)i * 3;
       }
     } else {
-      (void)memset(sidx, 0, sizeof(int) * n_slots);
-      (void)memset(sval, 0, sizeof(double) * n_slots);
+      (void)memset(sidx, 0, sizeof(int) * *n_shots);
+      (void)memset(sval, 0, sizeof(double) * *n_shots);
     }
-  }    
+  }
 
   fprintf(stderr, "stub qc_rpc_qasm():%s: finished.\n", __func__);
 }
