@@ -2,13 +2,33 @@ A brief description of qc-rpc usage on the Super Computer Fugaku
 
 0. Prerequisite
 
-  Build Qulacs:
+a)  Fugaku specific rule
 
-	https://github.com/qulacs/qulacs.git
+	The software installation and execution should be destinated
+	to under /data/<gid>/<uid>/ directory. Create directories
+	under this directory for convenience.
 
-  For most environments, the easiest way to build this system is to
-issue ./script/build_gcc.sh under the cloned directory.
-	   
+b)  Install QURI Parts riqu for RQC/QURI support on Fugaku
+
+	QURI Parts riqu is required to execute jobs on RQC/QURI
+	environment. It requires using spack and pip3, users must set
+	PYTHONUSERENV environment variable before the
+	installation. You can do this following steps on a Fugaku
+	login node:
+
+	$ export PYTHONUSERBASE=/data/<gid>/<uid>/somewhere
+	$ . /vol0004/apps/oss/spack/share/spack/setup-env.sh
+	$ spack load python@3.10.8/yt6afcn
+	$ spack load py-pip@23.0/wyuv6uh
+
+c)  Build Qulacs:
+
+		https://github.com/qulacs/qulacs.git
+
+	This is needed in any environment including Fugaku. For most
+	environments, the easiest way to build this system is to issue
+	./script/build_gcc.sh under the cloned git directory.
+
 1. Build
 
   At the source tree top directory, run the configure:
@@ -16,6 +36,7 @@ issue ./script/build_gcc.sh under the cloned directory.
 	$ ./configure --prefix=/whare/to/install \
 	  --enable-qcrpc \
 	  --enable-homeshare \
+	  --with-quri=/data/<gid>/<uid>/somewhere \
 	  --with-qulacs=/whare/the/qulacs/insralled
 
   The --enable-homeshare option is for separating ~/.omrpc_regitry by
@@ -140,7 +161,8 @@ QASM file, a qbit-pattern index array (for output,) a counts array
 (also for output,) the size of these two arrays, and a number of total
 shots (for output.) The QASM file and QURI/riqu-specific parameter
 file(s) must be placed in the working directory. For more details, see
-also qc-riqu-wrapper.sh description.
+also qc-riqu-wrapper.sh/run_riqu.py description
+(qcrex/README-run_riqu.txt.)
 
   Finally in line 79, QC_Finalize() finalizes the QC_API layer.
 
