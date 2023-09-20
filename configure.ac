@@ -368,6 +368,23 @@ else
 fi
 AC_SUBST(SLURM_DIR)
 
+### QURI/riqu
+QURI_DIR=''
+quri_dir=''
+AC_ARG_WITH([quri],
+	[AS_HELP_STRING([--with-quri],
+			[Specify QURI/riqu install directory.])],
+	[quri_dir="$withval"], [quri_dir=''])
+AC_MSG_CHECKING(QURI/riqu)
+if test "x${do_qc_rpc}" != "xno" -a "x${quri_dir}" != "x" -a -d "${quri_dir}/lib/python3.10/site-packages/quri_parts"; then
+    QURI_DIR=${quri_dir}
+    AC_MSG_RESULT([${QURI_DIR}])
+else
+    AC_MSG_RESULT([no QURI/riqu])
+fi
+AC_SUBST(QURI_DIR)
+
+
 ### Globus (deprecated)
 USE_GLOBUS=''
 GLOBUS_LIBS=''
@@ -396,6 +413,7 @@ AC_CONFIG_FILES(
 	qcrpc/QC_API/Makefile
 	qcrpc/qcrex/Makefile
 	qcrpc/qcrex/qcrex_conf.h
+	qcrpc/qcrex/qc-quri-wrapper.sh
 	qcrpc/qcmeasure/Makefile
 	test/call-test/Makefile
 	test/exec-test/Makefile

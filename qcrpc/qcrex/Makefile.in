@@ -20,6 +20,11 @@ OBJS	=	qcrex.lo qcrex_qasm.lo
 
 all:: $(INSTALL_SBIN_EXE_TARGETS)
 
+qc-quri-wrapper.sh:
+	if test -f $$@; then \
+		chmod 755 $$@; \
+	fi
+
 qcrex.c:	qcrex.idl
 	../../src/omrpc-gen/omrpc-gen $< $@
 
