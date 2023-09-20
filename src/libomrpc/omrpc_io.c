@@ -650,10 +650,7 @@ int omrpc_io_connect(char *host, unsigned short port)
     sin.sin_port = htons(port);
 
     if (host == NULL) {
-        if (get_ssh_client_hostname(hostname, sizeof(hostname)) == true) {
-            /* 1st, try SSH_CLIENT. IMO it's the most likely */
-            host = hostname;
-        } else if ((r = gethostname(hostname, MAXHOSTNAMELEN)) == 0) {
+        if ((r = gethostname(hostname, MAXHOSTNAMELEN)) == 0) {
             /* then assume launched by local host and avoiding to ssh
              * publey confusion, try hostname 1st. */
             host = hostname;
