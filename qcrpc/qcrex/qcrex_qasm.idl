@@ -38,7 +38,7 @@ Define qc_rpc_qasm_file(/* 0 */ IN int dlen,
     fprintf(stderr, "QASM file: %s/%s\n", d, q);
     fprintf(stderr, "output: %s/%s\n", d, QURIWRAPPER_OUT);
 
-    snprintf(cmd, sizeof(cmd), "%s %s %s %s",
+    snprintf(cmd, sizeof(cmd), "exec sh -x %s -d %s -q %s -w %s",
 	     QURIWRAPPER, d, q, QURIWRAPPER_OUT);
 
     *ret = system(cmd);

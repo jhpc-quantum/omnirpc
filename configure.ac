@@ -414,6 +414,7 @@ AC_CONFIG_FILES(
 	qcrpc/qcrex/Makefile
 	qcrpc/qcrex/qcrex_conf.h
 	qcrpc/qcrex/qc-quri-wrapper.sh
+	qcrpc/qcrex/run_riqu.py
 	qcrpc/qcmeasure/Makefile
 	test/call-test/Makefile
 	test/exec-test/Makefile

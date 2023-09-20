@@ -5,7 +5,7 @@ include $(MKRULESDIR)/vars.mk
 
 
 INSTALL_SBIN_EXE_TARGETS	=	qcrex.rex qcrex_qasm.rex \
-					qc-quri-wrapper.sh
+					qc-quri-wrapper.sh run_riqu.py
 
 LDFLAGS	+=	$(QCS_LIB) $(OMRPC_STUBLIB)
 CPPFLAGS	+=	-I../QC_API
@@ -19,11 +19,6 @@ endif
 OBJS	=	qcrex.lo qcrex_qasm.lo
 
 all:: $(INSTALL_SBIN_EXE_TARGETS)
-
-qc-quri-wrapper.sh:
-	if test -f $$@; then \
-		chmod 755 $$@; \
-	fi
 
 qcrex.c:	qcrex.idl
 	../../src/omrpc-gen/omrpc-gen $< $@
@@ -46,6 +41,11 @@ registr::	qcrex_quri.rex
 	(cd .libs && ../../../src/omrpc-register/omrpc-register -register $<)
 
 include $(MKRULESDIR)/rules.mk
+
+qc-quri-wrapper.sh run_riqu.y:
+	if test -f $$@; then \
+		chmod 755 $$@; \
+	fi
 
 clean::
 	$(RM) -f qcrex.lo qcrex.rex qcrex.c
