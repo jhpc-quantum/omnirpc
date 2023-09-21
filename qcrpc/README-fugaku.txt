@@ -1,49 +1,80 @@
-A brief description of qc-rpc usage on the Super Computer Fugaku
+A Brief Description of QC-RPC Usage on the Supercomputer Fugaku
 
-0. Prerequisite
+0. Prerequisites
 
-a)  Fugaku specific rule
+a) Fugaku-Specific Rules and Requirements
 
-	The software installation and execution should be destinated
-	to under /data/<gid>/<uid>/ directory. Create directories
-	under this directory for convenience.
+To install and execute software on Fugaku, it is essential to
+designate the destination as the /data/<gid>/<uid>/ directory. You
+should create subdirectories under this path for your convenience.
 
-b)  Install QURI Parts riqu for RQC/QURI support on Fugaku
+In the Fugaku QC-RPC environment, computational nodes always initiate
+Remote Procedure Calls (RPCs), and login nodes accept them. This is
+because computational nodes are unable to accept online remote job
+execution methods such as SSH or RSH.
 
-	QURI Parts riqu is required to execute jobs on RQC/QURI
-	environment. It requires using spack and pip3, users must set
-	PYTHONUSERENV environment variable before the
-	installation. You can do this following steps on a Fugaku
-	login node:
+b) Installing QURI Parts Riqu for RQC/QURI Support on Fugaku
 
-	$ export PYTHONUSERBASE=/data/<gid>/<uid>/somewhere
-	$ . /vol0004/apps/oss/spack/share/spack/setup-env.sh
-	$ spack load python@3.10.8/yt6afcn
-	$ spack load py-pip@23.0/wyuv6uh
+To execute jobs in the RQC/QURI environment on Fugaku, you must
+install QURI Parts Riqu. This installation requires the use of spack
+and pip3. Users are required to set the PYTHONUSERENV environment
+variable before proceeding with the installation. Follow these steps
+on a Fugaku login node:
 
-c)  Build Qulacs:
+---------------------------------------------------------------------------
+$ export PYTHONUSERBASE=/data/<gid>/<uid>/somewhere
+$ . /vol0004/apps/oss/spack/share/spack/setup-env.sh
+$ spack load python@3.10.8/yt6afcn
+$ spack load py-pip@23.0/wyuv6uh
+---------------------------------------------------------------------------
 
-		https://github.com/qulacs/qulacs.git
+This installation is only necessary once on a login node since QURI
+Parts Riqu is needed exclusively on the QC-RPC server side. It's
+advisable to remember the PYTHONUSERBASE value, as it will be required
+during the QC-RPC installation configuration.
 
-	This is needed in any environment including Fugaku. For most
-	environments, the easiest way to build this system is to issue
-	./script/build_gcc.sh under the cloned git directory.
+c) Building Qulacs
+
+The Qulacs library is a prerequisite for any environment, including
+Fugaku. In most cases, the easiest way to build this system is to run
+./script/build_gcc.sh within the cloned Git directory. Qulacs also
+relies on the Boost library, which can be managed using the spack
+utility on Fugaku, or you may choose to build Boost manually.
+
 
 1. Build
 
-  At the source tree top directory, run the configure:
+In the top directory of the source tree, run the configuration script:
 
-	$ ./configure --prefix=/whare/to/install \
-	  --enable-qcrpc \
-	  --enable-homeshare \
-	  --with-quri=/data/<gid>/<uid>/somewhere \
-	  --with-qulacs=/whare/the/qulacs/insralled
+----------------------------------------------------------------------
+$ ./configure --prefix=/where/to/install \
+  --enable-qcrpc \
+  --enable-homeshare \
+  --with-quri=/data/<gid>/<uid>/somewhere \
+  --with-qulacs=/where/the/qulacs/installed
+----------------------------------------------------------------------
 
-  The --enable-homeshare option is for separating ~/.omrpc_regitry by
-host architectures by augmenting the registry directory name by `uname
--i` output, like ~/.omrpc_registry.aarch64. It is helpful on Fugaku or
-any other environments where the user home directories are shared
-between different architecture machines.
+Use the following command to compile and install the software:
+
+----------------------------------------------------------------------
+$ make && make install
+----------------------------------------------------------------------
+
+The --enable-homeshare option is used to separate ~/.omrpc_registry by
+host architectures by appending the uname -i output to the registry
+directory name. For example, it will create directories like
+~/.omrpc_registry.aarch64. This feature is particularly useful on
+Fugaku or in other environments where user home directories are shared
+across different architecture machines.
+
+To enable RQC/QURI support, specify the --with-quri option with the
+value used as PYTHONUSERBASE in the previous description, which
+corresponds to the QURI Parts Riqu installation directory.
+
+It's important to note that both the build and installation processes
+must be performed separately on both a computational node and a login
+node, each with different --prefix values.
+
 
 2. Sample code
 
@@ -135,45 +166,99 @@ existig in QC_API directory main.c:
     82	}
 ----------------------------------------------------------------
 
-  In line 32, QC_InitRemote() is called to initialize OmniRPC
-layer. Call this if you need QC programs run on an RPC server (w/
-slurm.) The call must be the first function call of the application.
+Line 32: In line 32, the QC_InitRemote() function is called to
+initialize the OmniRPC layer. You should use this if you intend to run
+QC programs on an RPC server, particularly in conjunction with
+Slurm. This function must be the first function call within your
+application.
 
-  In line 35, QC_Init() is called to initialize QC_API layer. All the
-applications must call this function before using QC_APIs other than
-QC_InitRemote().
+Line 35: Moving on to line 35, the QC_Init() function is invoked to
+initialize the QC_API layer. All applications should call this
+function before utilizing QC_APIs, except for QC_InitRemote().
 
-  In lines 46 and 51, QC_{Save|Load}Context() is used to save/restore
-the QC application circuit configuration information to/from a
-file. These are mainly used on an RPC server/slurm side.
+Lines 46 and 51: Lines 46 and 51 demonstrate the use of
+QC_{Save|Load}Context(). These functions are employed to save and
+restore the configuration information of the QC application circuit to
+and from a file. They are primarily utilized in the context of an RPC
+server or Slurm environment.
 
-  In line 48, QC_MeasureRemote() starts the simulation (measurement)
-with given circuit configuratioon. The do_job_submit argiment controls
-how the simuration runs via, '1' for via slurm, '0' for OmniRPC REX
-direct execution.
+Line 48: Line 48 introduces QC_MeasureRemote(), which initiates the
+simulation (measurement) with a specified circuit configuration. The
+do_job_submit argument dictates how the simulation is executed, with
+'1' indicating execution via Slurm and '0' indicating direct execution
+through OmniRPC REX.
 
-  In line 55, contrary to QC_MeasureRemote(), QC_Measure() starts the
-measurement on the local machine.
+Line 55: In contrast to QC_MeasureRemote(), line 55 references
+QC_Measure(), which commences the measurement on the local machine.
 
-  In line 66, QC_MeasureRemoteQASMFile() is brought for a QASM program
-execution for RQC/QURI environment. It takes a temporary directory, a
-QASM file, a qbit-pattern index array (for output,) a counts array
-(also for output,) the size of these two arrays, and a number of total
-shots (for output.) The QASM file and QURI/riqu-specific parameter
-file(s) must be placed in the working directory. For more details, see
-also qc-riqu-wrapper.sh/run_riqu.py description
-(qcrex/README-run_riqu.txt.)
+Line 66: Line 66 introduces QC_MeasureRemoteQASMFile(), designed for
+executing QASM programs in the RQC/QURI environment. It requires
+various inputs, including a temporary directory, a QASM file, index
+arrays for qubit patterns (for output), count arrays (also for
+output), the sizes of these arrays, and the total number of shots (for
+output). Ensure that the QASM file and any QURI/Riqu-specific
+parameter files are placed in the working directory. For more detailed
+information, please refer to the descriptions in qc-riqu-wrapper.sh
+and run_riqu.py (found in qcrex/README-run_riqu.txt).
 
-  Finally in line 79, QC_Finalize() finalizes the QC_API layer.
+Line 79: Finally, in line 79, the QC_Finalize() function is used to
+conclude the QC_API layer.
 
-3. Compiling applications
+3. Testing RQC/QURI Support
 
-  All the needed headers are installed in ${prefix}/include, and all
-the required libraries are installed in ${prefix}/lib directory. Link
-libqcs.so, libomrpc_client.so, and libomrpc_io.so to the application.
+After the installation, you can test the functionality of RQC/QURI
+support on Fugaku by following these steps on the login node:
 
-e.g.
-	LIBDIR	=	$(PREFIX)/lib
-	CPPFLAGS	+=	-I$(PREFIX)/include
-	LDFLAGS += -Wl,-rpath -Wl,$(LIBDIR) -L$(LIBDIR} \
-		-lqcs -lomprpc_clinet -lomprpc_io
+-----------------------------------------------------------------------
+$ %prefix%/bin/omrpc-register --register \
+  %prefix%/sbin/qcrex_qasm.rex
+-----------------------------------------------------------------------
+
+Next, edit the ~/.omrpc_registry.aarch64/hosts.xml file as follows:
+
+-----------------------------------------------------------------------
+<OmniRpcConfig>
+  <Host name="login3">
+    <Agent invoker="ssh" path="%install_prefix_for_login_node%"/>
+  </Host>
+</OmniRpcConfig>
+-----------------------------------------------------------------------
+
+Replace %install_prefix_for_login_node% with the directory specified
+as --prefix for the login node configuration. "login3" is an RPC
+server, and you can change this hostname to your preference. Then,
+create a working directory under /data/<gid>/<uid>, and set up the
+necessary files as mentioned in qcrex/README-run_riqu.txt within the
+working directory.
+
+Now, launch an interactive session on a computational node and
+navigate to the top directory of the OmniRPC source tree. Then,
+execute the following commands:
+
+-----------------------------------------------------------------------
+$ cd qcrpc/QC_API
+$ ./apitest -rq %working_dir% %qasm_file%
+-----------------------------------------------------------------------
+
+Replace %working_dir% with the actual working directory, and
+%qasm_file% with the path to a QASM source file located within the
+working directory.
+
+4. Compiling Applications
+
+All the necessary headers are installed in ${prefix}/include, and the
+required libraries are located in ${prefix}/lib directory. To link
+your application successfully, you should include libqcs.so,
+libomrpc_client.so, and libomrpc_io.so.
+
+For example, in Makefile:
+
+-----------------------------------------------------------------------
+LIBDIR = $(PREFIX)/lib
+CPPFLAGS += -I$(PREFIX)/include
+LDFLAGS += -Wl,-rpath -Wl,$(LIBDIR) -L$(LIBDIR) \
+           -lqcs -lomrpc_client -lomrpc_io
+-----------------------------------------------------------------------
+
+Ensure that your Makefile or build configuration includes these
+settings for successful compilation of your applications.
