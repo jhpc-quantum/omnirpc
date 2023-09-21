@@ -371,6 +371,7 @@ AC_SUBST(SLURM_DIR)
 ### QURI/riqu
 QURI_DIR=''
 quri_dir=''
+HAVE_QURI=''
 AC_ARG_WITH([quri],
 	[AS_HELP_STRING([--with-quri],
 			[Specify QURI/riqu install directory.])],
@@ -378,6 +379,8 @@ AC_ARG_WITH([quri],
 AC_MSG_CHECKING(QURI/riqu)
 if test "x${do_qc_rpc}" != "xno" -a "x${quri_dir}" != "x" -a -d "${quri_dir}/lib/python3.10/site-packages/quri_parts"; then
     QURI_DIR=${quri_dir}
+    HAVE_QURI=yes
+    AC_DEFINE(HAVE_QURI)
     AC_MSG_RESULT([${QURI_DIR}])
 else
     AC_MSG_RESULT([no QURI/riqu])

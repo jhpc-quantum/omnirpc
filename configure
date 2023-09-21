@@ -19768,6 +19768,7 @@ fi
 ### QURI/riqu
 QURI_DIR=''
 quri_dir=''
+HAVE_QURI=''
 
 # Check whether --with-quri was given.
 if test ${with_quri+y}
@@ -19781,6 +19782,9 @@ fi
 printf %s "checking QURI/riqu... " >&6; }
 if test "x${do_qc_rpc}" != "xno" -a "x${quri_dir}" != "x" -a -d "${quri_dir}/lib/python3.10/site-packages/quri_parts"; then
     QURI_DIR=${quri_dir}
+    HAVE_QURI=yes
+    printf "%s\n" "#define HAVE_QURI 1" >>confdefs.h
+
     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: ${QURI_DIR}" >&5
 printf "%s\n" "${QURI_DIR}" >&6; }
 else
