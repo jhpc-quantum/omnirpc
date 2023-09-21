@@ -26,6 +26,7 @@ $ export PYTHONUSERBASE=/data/<gid>/<uid>/somewhere
 $ . /vol0004/apps/oss/spack/share/spack/setup-env.sh
 $ spack load python@3.10.8/yt6afcn
 $ spack load py-pip@23.0/wyuv6uh
+$ pip3 install quri-parts-riqu -U --user
 ---------------------------------------------------------------------------
 
 This installation is only necessary once on a login node since QURI
