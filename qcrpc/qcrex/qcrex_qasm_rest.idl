@@ -35,6 +35,11 @@ Define qc_rpc_rest_qasm_strig(/* input */
   fprintf(stderr,
 	  "stub qc_rpc_rest_qasm_string():%s: started.\n", __func__);
 
+  fprintf(stderr, "debug: url:\t\t%d, '%s'\n", ulen, url);
+  fprintf(stderr, "debug: token:\t\t%d, '%s'\n", tlen, token);
+  fprintf(stderr, "debug: qasm:\t\t%d, '%s'\n", qlen, qasm);
+  fprintf(stderr, "debug: rem:\t\t%d, '%s'\n", rlen, rem);
+
   if ((VALID_OMNIRPC_STRING(url, ulen) == true) &&
       (VALID_OMNIRPC_STRING(token, tlen) == true) &&
       (VALID_OMNIRPC_STRING(qasm, qlen) == true) &&

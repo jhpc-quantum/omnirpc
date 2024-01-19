@@ -160,12 +160,11 @@ QC_MeasureRemoteQASMStringREST(const char *url,
         int tlen = 0;
         int qlen = 0;
         int rlen = 0;
+        char remark[65536];
 
         if ((url != NULL && (ulen = strlen(url)) > 0) &&
             (token != NULL && (tlen = strlen(token)) > 0) &&
             (qasm != NULL && (qlen = strlen(qasm)) > 0) &&
-            ((rem != NULL && (rlen = strlen(rem) > 0)) ||
-             (rem == NULL || (rem != NULL && rem[0] == '\0'))) &&
             (qc_type >= 0) &&
             (shots > 0 && poll_ms > 0 && poll_max >= 0) &&
             (transpiler >= 0) &&
@@ -173,13 +172,23 @@ QC_MeasureRemoteQASMStringREST(const char *url,
             olen != NULL) {
             int ret = -INT_MAX;
 
+            if (rem != NULL && (rlen = strlen(rem)) > 0) {
+                snprintf(remark, sizeof(remark), "%s", rem);
+                rlen += 1;
+            } else {
+                remark[0] = '\0';
+                rlen = 0;
+            }
+
+            fprintf(stderr, "debug: rem %d, '%s'\n", rlen, rem);
+
             OmniRpcRequest r =
                 OmniRpcCallAsync("qc_rpc_rest_qasm_strig",
                                  /* 00, 01 */ ulen + 1, url,
                                  /* 02, 03 */ tlen + 1, token,
                                  /* 04, 05 */ qlen + 1, qasm,
                                  /* 06     */ qc_type,
-                                 /* 07, 08 */ rlen + 1, rem,
+                                 /* 07, 08 */ rlen, remark,
                                  /* 09     */ shots,
                                  /* 10     */ poll_ms,
                                  /* 11     */ poll_max,
