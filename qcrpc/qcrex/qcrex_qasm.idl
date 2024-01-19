@@ -3,7 +3,7 @@ Module qc_qasm;
 Globals{
 #include "omni_platform.h"
 #include "qcs_api.hpp"
-#ifdef HAVE_SlURM
+#ifdef HAVE_SLURM
 #include "slurm/slurm.h"
 #include "slurm/slurm_errno.h"
 #endif /* HAVE_SLURM */

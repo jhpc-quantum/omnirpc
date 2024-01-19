@@ -1,0 +1,59 @@
+Module qc_qasm_rest;
+
+Globals{
+#include "omni_platform.h"
+#include "qcs_api.hpp"
+#include "qcrex_conf.h"  
+}
+
+Define qc_rpc_rest_qasm_strig(/* input */
+			      /* 00 */ IN int ulen,
+			      /* 01 */ IN char url[ulen],
+			      /* 02 */ IN int tlen,
+			      /* 03 */ IN char token[tlen],
+			      /* 04 */ IN int qlen,
+			      /* 05 */ IN char qasm[qlen],
+			      /* 06 */ IN int qc_type, /* (enum) */
+			      /* 07 */ IN int rlen,
+			      /* 08 */ IN char rem[rlen],
+			      /* 09 */ IN int shots,
+			      /* 10 */ IN int poll_ms,
+			      /* 11 */ IN int poll_max,
+			      /* 12 */ IN int transpiler, /* (enum) */
+
+			      /* output */
+			      /* 13 */ OUT int ret[],
+			      /* 14 */ IN int olenmax,
+			      /* 15 */ OUT char output[olenmax],
+			      /* 16 */ OUT int olen[])
+  "QC RPC QASM STRING STUB (for REST API backend)"
+{
+#define VALID_OMNIRPC_STRING(ptr, len)					\
+  (((len > 1) && (ptr != NULL) && (ptr[0] != '\0') && (ptr[len - 1] == '\0')) \
+   ? true : false)
+  
+  fprintf(stderr,
+	  "stub qc_rpc_rest_qasm_string():%s: started.\n", __func__);
+
+  if ((VALID_OMNIRPC_STRING(url, ulen) == true) &&
+      (VALID_OMNIRPC_STRING(token, tlen) == true) &&
+      (VALID_OMNIRPC_STRING(qasm, qlen) == true) &&
+      ((VALID_OMNIRPC_STRING(rem, rlen) == true) || (rlen == 0)) &&
+      qc_type >= 0 &&
+      shots > 0 && poll_ms > 0 && poll_max >= 0 &&
+      transpiler >= 0 &&
+      ret != NULL &&
+      olenmax >= 2 && output != NULL &&
+      olen != NULL) {
+    *ret = -INT_MAX;
+    
+    *ret = *olen = snprintf(output, olenmax - 1,
+			    "ret: %d: '%s':'%s':'%s':'%s', "
+			    "'%d', '%d', '%d', '%d', '%d'",
+			    olenmax, url, token, qasm, rem,
+			    qc_type, shots, poll_ms, poll_max, transpiler);
+  }
+  fprintf(stderr,
+	  "stub qc_rpc_rest_qasm_string():%s: finished, return code %d.\n",
+          __func__, *ret);
+}

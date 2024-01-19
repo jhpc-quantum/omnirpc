@@ -143,6 +143,57 @@ QC_MeasureRemoteQASMFile(const char *dir, const char *file,
 }
 
 void
+QC_MeasureRemoteQASMStringREST(const char *url,
+                               const char *token,
+                               const char *qasm,
+                               int qc_type,
+                               const char *rem,
+                               int shots,
+                               int poll_ms,
+                               int poll_max,
+                               int transpiler,
+                               char *out,
+                               int maxout,
+                               int *olen) {
+    if (s_is_rpc_inited == true) {
+        int ulen = 0;
+        int tlen = 0;
+        int qlen = 0;
+        int rlen = 0;
+
+        if ((url != NULL && (ulen = strlen(url)) > 0) &&
+            (token != NULL && (tlen = strlen(token)) > 0) &&
+            (qasm != NULL && (qlen = strlen(qasm)) > 0) &&
+            ((rem != NULL && (rlen = strlen(rem) > 0)) ||
+             (rem == NULL || (rem != NULL && rem[0] == '\0'))) &&
+            (qc_type >= 0) &&
+            (shots > 0 && poll_ms > 0 && poll_max >= 0) &&
+            (transpiler >= 0) &&
+            (out != NULL && maxout > 1) &&
+            olen != NULL) {
+            int ret = -INT_MAX;
+
+            OmniRpcRequest r =
+                OmniRpcCallAsync("qc_rpc_rest_qasm_strig",
+                                 /* 00, 01 */ ulen + 1, url,
+                                 /* 02, 03 */ tlen + 1, token,
+                                 /* 04, 05 */ qlen + 1, qasm,
+                                 /* 06     */ qc_type,
+                                 /* 07, 08 */ rlen + 1, rem,
+                                 /* 09     */ shots,
+                                 /* 10     */ poll_ms,
+                                 /* 11     */ poll_max,
+                                 /* 12     */ transpiler,
+
+                                 /* 13     */ &ret,
+                                 /* 14, 15 */ maxout, out,
+                                 /* 16     */ olen);
+            OmniRpcWait(r);
+        }
+    }
+}
+
+void
 QC_SaveContext(const char *file) {
   qcs_info_t *qi = QC_check_ninfo_ngate();
   if (likely(file != NULL && *file != '\0' && qi != NULL)) {

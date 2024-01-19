@@ -27,7 +27,12 @@ void QC_LoadContext(const char *file);
 void QC_MeasureRemoteQASMFile(const char *dir, const char *file,
                               int *qbit_ptns, double *n_ptns, int buflen, 
                               int *n_shots);
-
+void QC_MeasureRemoteQASMStringREST(const char *url, const char *token,
+                                    const char *qasm, int qc_type,
+                                    const char *rem,
+                                    int shots, int poll_ms, int poll_max,
+                                    int transpiler,
+                                    char *out, int maxout, int *olen);
 void IGate(qint target_qubit);
 void XGate(qint target_qubit);
 void YGate(qint target_qubit);
