@@ -53,7 +53,7 @@ Define qc_rpc_rest_qasm_strig(/* input */
     *ret = -INT_MAX;
     
     *ret = *olen = snprintf(output, olenmax - 1,
-			    "ret: %d: '%s':'%s':'%s':'%s', "
+			    "ret: max %d: '%s':'%s':'%s':'%s', "
 			    "'%d', '%d', '%d', '%d', '%d'",
 			    olenmax, url, token, qasm, rem,
 			    qc_type, shots, poll_ms, poll_max, transpiler);
