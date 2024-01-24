@@ -47,7 +47,7 @@ qcrex_qasm_rest.c:	qcrex_qasm_rest.idl
 
 qcrex_qasm_rest.rex:	qcrex_qasm_rest.lo
 	$(RM) -f $@ .libs/lt-$@ .libs/$@
-	$(LTLINK_CC) -o $@ $< $(DEP_LIBS) $(REST_LIB) $(LDFLAGS)
+	$(LTLINK_CC) -o $@ $< $(DEP_LIBS) $(LDFLAGS)
 endif
 
 register::	qcrex.rex
