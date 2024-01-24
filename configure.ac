@@ -348,6 +348,28 @@ fi
 AC_MSG_RESULT([${do_rest}.])
 AC_SUBST(USE_REST)
 
+## Python3
+USE_PYTHON=''
+do_python=''
+PYTHON_INC=''
+AC_ARG_ENABLE([python],
+	[AS_HELP_STRING([--enable-python], [Support qc-rpc Python binding [default: no]])],
+	[do_python="$enableval"], [do_python=no])
+AC_MSG_CHECKING([python])
+if test "x${do_qc_rpc}" != "xno" -a "x${do_python}" != "xno"; then
+    pinc=`python3-config --includes | awk '{ printf $1 }'`
+    if test ! -z "${pinc}"; then
+        PYTHON_INC=${pinc}
+	USE_PYTHON=yes
+        AC_DEFINE(USE_PYTHON)
+    else
+        do_python=no
+    fi
+fi
+AC_MSG_RESULT([${do_python}.])    
+AC_SUBST(USE_PYTHON)
+AC_SUBST(PYTHON_INC)
+
 QULACS_SRCDIR=''
 qulacs_dir=''
 AC_ARG_WITH([qulacs],
@@ -456,6 +478,7 @@ AC_CONFIG_FILES(
 	qcrpc/qcrex/qc-quri-wrapper.sh
 	qcrpc/qcrex/run_riqu.py
 	qcrpc/qcmeasure/Makefile
+	qcrpc/python/Makefile
 	test/call-test/Makefile
 	test/exec-test/Makefile
 	test/comm-test/Makefile

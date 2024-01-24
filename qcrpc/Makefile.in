@@ -4,5 +4,8 @@ MKRULESDIR      = @MKRULESDIR@
 include $(MKRULESDIR)/vars.mk
 
 DIRS	=	QC_API qcrex qcmeasure
+ifdef USE_PYTHON
+DIRS	+=	python
+endif
 
 include $(MKRULESDIR)/rules.mk

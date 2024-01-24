@@ -663,6 +663,8 @@ CPPREST_DIR
 QURI_DIR
 SLURM_DIR
 QULACS_SRCDIR
+PYTHON_INC
+USE_PYTHON
 USE_REST
 USE_QC_RPC
 home_reg_dir
@@ -796,6 +798,7 @@ with_mpi
 enable_homeshare
 enable_qcrpc
 enable_rest
+enable_python
 with_qulacs
 with_slurm
 with_quri
@@ -1446,6 +1449,7 @@ Optional Features:
   --enable-qcrpc          Support qc-rpc feature [default: no]
   --enable-rest           Support qc-rpc REST API backend feature in REX
                           [default: no]
+  --enable-python         Support qc-rpc Python binding [default: no]
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -19742,6 +19746,36 @@ fi
 printf "%s\n" "${do_rest}." >&6; }
 
 
+## Python3
+USE_PYTHON=''
+do_python=''
+PYTHON_INC=''
+# Check whether --enable-python was given.
+if test ${enable_python+y}
+then :
+  enableval=$enable_python; do_python="$enableval"
+else $as_nop
+  do_python=no
+fi
+
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking python" >&5
+printf %s "checking python... " >&6; }
+if test "x${do_qc_rpc}" != "xno" -a "x${do_python}" != "xno"; then
+    pinc=`python3-config --includes | awk '{ printf $1 }'`
+    if test ! -z "${pinc}"; then
+        PYTHON_INC=${pinc}
+	USE_PYTHON=yes
+        printf "%s\n" "#define USE_PYTHON 1" >>confdefs.h
+
+    else
+        do_python=no
+    fi
+fi
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: ${do_python}." >&5
+printf "%s\n" "${do_python}." >&6; }
+
+
+
 QULACS_SRCDIR=''
 qulacs_dir=''
 
@@ -19862,7 +19896,7 @@ GLOBUS_LIBS=''
 
 
 # emit.
-ac_config_files="$ac_config_files mk/vars.mk Makefile include/Makefile src/libomrpc/Makefile src/libomrpc/omrpc_defs.h src/omrpc-agent/Makefile src/omrpc-gen/Makefile src/omrpc-gen/omrpc-cc src/omrpc-gen/omrpc-fc src/omrpc-gen-mpi/Makefile src/omrpc-gen-mpi/omrpc-cc-mpi src/omrpc-gen-xmp/Makefile src/omrpc-gen-xmp/omrpc-cc-xmp src/omrpc-register/Makefile src/omrpc-register-yml/Makefile src/omrpc-register-yml/omrpc_reg_defs.h qcrpc/Makefile qcrpc/QC_API/Makefile qcrpc/qcrex/Makefile qcrpc/qcrex/qcrex_conf.h qcrpc/qcrex/qc-quri-wrapper.sh qcrpc/qcrex/run_riqu.py qcrpc/qcmeasure/Makefile test/call-test/Makefile test/exec-test/Makefile test/comm-test/Makefile test/stub-test/Makefile example/cpi/Makefile example/ep/Makefile example/knap/Makefile bin/Makefile"
+ac_config_files="$ac_config_files mk/vars.mk Makefile include/Makefile src/libomrpc/Makefile src/libomrpc/omrpc_defs.h src/omrpc-agent/Makefile src/omrpc-gen/Makefile src/omrpc-gen/omrpc-cc src/omrpc-gen/omrpc-fc src/omrpc-gen-mpi/Makefile src/omrpc-gen-mpi/omrpc-cc-mpi src/omrpc-gen-xmp/Makefile src/omrpc-gen-xmp/omrpc-cc-xmp src/omrpc-register/Makefile src/omrpc-register-yml/Makefile src/omrpc-register-yml/omrpc_reg_defs.h qcrpc/Makefile qcrpc/QC_API/Makefile qcrpc/qcrex/Makefile qcrpc/qcrex/qcrex_conf.h qcrpc/qcrex/qc-quri-wrapper.sh qcrpc/qcrex/run_riqu.py qcrpc/qcmeasure/Makefile qcrpc/python/Makefile test/call-test/Makefile test/exec-test/Makefile test/comm-test/Makefile test/stub-test/Makefile example/cpi/Makefile example/ep/Makefile example/knap/Makefile bin/Makefile"
 
 
 # emit and set executable attribute.
@@ -20976,6 +21010,7 @@ do
     "qcrpc/qcrex/qc-quri-wrapper.sh") CONFIG_FILES="$CONFIG_FILES qcrpc/qcrex/qc-quri-wrapper.sh" ;;
     "qcrpc/qcrex/run_riqu.py") CONFIG_FILES="$CONFIG_FILES qcrpc/qcrex/run_riqu.py" ;;
     "qcrpc/qcmeasure/Makefile") CONFIG_FILES="$CONFIG_FILES qcrpc/qcmeasure/Makefile" ;;
+    "qcrpc/python/Makefile") CONFIG_FILES="$CONFIG_FILES qcrpc/python/Makefile" ;;
     "test/call-test/Makefile") CONFIG_FILES="$CONFIG_FILES test/call-test/Makefile" ;;
     "test/exec-test/Makefile") CONFIG_FILES="$CONFIG_FILES test/exec-test/Makefile" ;;
     "test/comm-test/Makefile") CONFIG_FILES="$CONFIG_FILES test/comm-test/Makefile" ;;
