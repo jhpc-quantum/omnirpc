@@ -659,6 +659,7 @@ ac_subst_vars='LTLIBOBJS
 LIBOBJS
 GLOBUS_LIBS
 USE_GLOBUS
+CPPREST_DIR
 QURI_DIR
 SLURM_DIR
 QULACS_SRCDIR
@@ -796,6 +797,7 @@ enable_qcrpc
 with_qulacs
 with_slurm
 with_quri
+with_cpprest
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1456,6 +1458,7 @@ Optional Packages:
   --with-qulacs           Specify a top source directory of Qulacs.
   --with-slurm            Specify Slurm install directory.
   --with-quri             Specify QURI/riqu install directory.
+  --with-cpprest          Specify Microsoft C++ REST SDK install directory.
 
 Some influential environment variables:
   CC          C compiler command
@@ -19792,6 +19795,33 @@ else
 printf "%s\n" "no QURI/riqu" >&6; }
 fi
 
+
+### MS C++ REST SDK
+CPPREST_DIR=''
+cpprest_dir=''
+HAVE_CPPREST=''
+
+# Check whether --with-cpprest was given.
+if test ${with_cpprest+y}
+then :
+  withval=$with_cpprest; cpprest_dir="$withval"
+else $as_nop
+  cpprest_dir=''
+fi
+
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking Microsoft C++ REST SDK" >&5
+printf %s "checking Microsoft C++ REST SDK... " >&6; }
+if test "x${do_qc_rpc}" != "xno" -a "x${cpprest_dir}" != "x" -a -r "${cpprest_dir}/include/cpprest/version.h" -a -r "${cpprest_dir}/lib/libcpprest.so"; then
+    CPPREST_DIR=${cpprest_dir}
+    HAVE_CPPREST=yes
+    printf "%s\n" "#define HAVE_CPPREST 1" >>confdefs.h
+
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: ${CPPREST_DIR}" >&5
+printf "%s\n" "${CPPREST_DIR}" >&6; }
+else
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no C++ REST SDK." >&5
+printf "%s\n" "no C++ REST SDK." >&6; }
+fi
 
 
 ### Globus (deprecated)
