@@ -4,8 +4,8 @@ MKRULESDIR      = @MKRULESDIR@
 include $(MKRULESDIR)/vars.mk
 
 
-INSTALL_SBIN_EXE_TARGETS	=	qcrex.rex qcrex_qasm.rex \
-					qcrex_qasm_rest.rex
+INSTALL_SBIN_EXE_TARGETS	=	qcrex.rex qcrex_qasm.rex 
+
 ifdef QURI_DIR
 INSTALL_SBIN_EXE_TARGETS	+=	qc-quri-wrapper.sh run_riqu.py
 endif
@@ -19,7 +19,11 @@ ifdef SLURM_LIB
 LDFLAGS		+=	 $(SLURM_LIB)
 endif
 
-OBJS	=	qcrex.lo qcrex_qasm.lo qcrex_qasm_rest.lo
+OBJS	=	qcrex.lo qcrex_qasm.lo
+ifdef USE_REST
+OBJS	+=	qcrex_qasm_rest.lo
+INSTALL_SBIN_EXE_TARGETS	+=	qcrex_qasm_rest.rex
+endif
 
 all:: $(INSTALL_SBIN_EXE_TARGETS)
 
@@ -37,12 +41,14 @@ qcrex_qasm.rex:	qcrex_qasm.lo
 	$(RM) -f $@ .libs/lt-$@ .libs/$@
 	$(LTLINK_CC) -o $@ $< $(DEP_LIBS) $(LDFLAGS)
 
+ifdef USE_REST
 qcrex_qasm_rest.c:	qcrex_qasm_rest.idl
 	../../src/omrpc-gen/omrpc-gen $< $@
 
 qcrex_qasm_rest.rex:	qcrex_qasm_rest.lo
 	$(RM) -f $@ .libs/lt-$@ .libs/$@
-	$(LTLINK_CC) -o $@ $< $(DEP_LIBS) $(LDFLAGS)
+	$(LTLINK_CC) -o $@ $< $(DEP_LIBS) $(REST_LIB) $(LDFLAGS)
+endif
 
 register::	qcrex.rex
 	(cd .libs && ../../../src/omrpc-register/omrpc-register -register $<)
@@ -50,8 +56,10 @@ register::	qcrex.rex
 register::	qcrex_qasm.rex
 	(cd .libs && ../../../src/omrpc-register/omrpc-register -register $<)
 
+ifdef USE_REST
 register::	qcrex_qasm_rest.rex
 	(cd .libs && ../../../src/omrpc-register/omrpc-register -register $<)
+endif
 
 include $(MKRULESDIR)/rules.mk
 
