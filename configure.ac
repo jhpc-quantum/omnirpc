@@ -334,6 +334,20 @@ fi
 AC_MSG_RESULT([${do_qc_rpc}.])
 AC_SUBST(USE_QC_RPC)    
 
+### REST
+USE_REST=''
+do_rest=no
+AC_ARG_ENABLE([rest],
+	[AS_HELP_STRING([--enable-rest], [Support qc-rpc REST API backend feature in REX [default: no]])],
+	[do_rest="$enableval"], [do_rest=no])
+AC_MSG_CHECKING([rest])
+if test "x${do_qc_rpc}" != "xno" -a "x${do_rest}" != "xno"; then
+    USE_REST=yes
+    AC_DEFINE(USE_REST)
+fi
+AC_MSG_RESULT([${do_rest}.])
+AC_SUBST(USE_REST)
+
 QULACS_SRCDIR=''
 qulacs_dir=''
 AC_ARG_WITH([qulacs],
@@ -396,7 +410,7 @@ AC_ARG_WITH([cpprest],
 			[Specify Microsoft C++ REST SDK install directory.])],
 	[cpprest_dir="$withval"], [cpprest_dir=''])
 AC_MSG_CHECKING(Microsoft C++ REST SDK)
-if test "x${do_qc_rpc}" != "xno" -a "x${cpprest_dir}" != "x" -a -r "${cpprest_dir}/include/cpprest/version.h" -a -r "${cpprest_dir}/lib/libcpprest.so"; then
+if test "x${do_qc_rpc}" != "xno" -a "x${do_rest}" != "xno" -a "x${cpprest_dir}" != "x" -a -r "${cpprest_dir}/include/cpprest/version.h" -a -r "${cpprest_dir}/lib/libcpprest.so"; then
     CPPREST_DIR=${cpprest_dir}
     HAVE_CPPREST=yes
     AC_DEFINE(HAVE_CPPREST)
@@ -405,6 +419,11 @@ else
     AC_MSG_RESULT([no C++ REST SDK.])
 fi
 AC_SUBST(CPPREST_DIR)
+
+if test "x${do_rest}" != "xno" -a -z "${CPPREST_DIR}"; then
+    AC_MSG_ERROR([Enabling REST REX feature requires Microsoft C++ REST SDK installed.])
+    exit 1
+fi
 
 ### Globus (deprecated)
 USE_GLOBUS=''

@@ -663,6 +663,7 @@ CPPREST_DIR
 QURI_DIR
 SLURM_DIR
 QULACS_SRCDIR
+USE_REST
 USE_QC_RPC
 home_reg_dir
 USE_MPI
@@ -794,6 +795,7 @@ enable_libtool_lock
 with_mpi
 enable_homeshare
 enable_qcrpc
+enable_rest
 with_qulacs
 with_slurm
 with_quri
@@ -1442,6 +1444,8 @@ Optional Features:
   --disable-libtool-lock  avoid locking (might break parallel builds)
   --enable-homeshare      Support home directory sharing [default: no]
   --enable-qcrpc          Support qc-rpc feature [default: no]
+  --enable-rest           Support qc-rpc REST API backend feature in REX
+                          [default: no]
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -19716,6 +19720,28 @@ fi
 printf "%s\n" "${do_qc_rpc}." >&6; }
 
 
+### REST
+USE_REST=''
+do_rest=no
+# Check whether --enable-rest was given.
+if test ${enable_rest+y}
+then :
+  enableval=$enable_rest; do_rest="$enableval"
+else $as_nop
+  do_rest=no
+fi
+
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking rest" >&5
+printf %s "checking rest... " >&6; }
+if test "x${do_qc_rpc}" != "xno" -a "x${do_rest}" != "xno"; then
+    USE_REST=yes
+    printf "%s\n" "#define USE_REST 1" >>confdefs.h
+
+fi
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: ${do_rest}." >&5
+printf "%s\n" "${do_rest}." >&6; }
+
+
 QULACS_SRCDIR=''
 qulacs_dir=''
 
@@ -19811,7 +19837,7 @@ fi
 
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking Microsoft C++ REST SDK" >&5
 printf %s "checking Microsoft C++ REST SDK... " >&6; }
-if test "x${do_qc_rpc}" != "xno" -a "x${cpprest_dir}" != "x" -a -r "${cpprest_dir}/include/cpprest/version.h" -a -r "${cpprest_dir}/lib/libcpprest.so"; then
+if test "x${do_qc_rpc}" != "xno" -a "x${do_rest}" != "xno" -a "x${cpprest_dir}" != "x" -a -r "${cpprest_dir}/include/cpprest/version.h" -a -r "${cpprest_dir}/lib/libcpprest.so"; then
     CPPREST_DIR=${cpprest_dir}
     HAVE_CPPREST=yes
     printf "%s\n" "#define HAVE_CPPREST 1" >>confdefs.h
@@ -19823,6 +19849,11 @@ else
 printf "%s\n" "no C++ REST SDK." >&6; }
 fi
 
+
+if test "x${do_rest}" != "xno" -a -z "${CPPREST_DIR}"; then
+    as_fn_error $? "Enabling REST REX feature requires Microsoft C++ REST SDK installed." "$LINENO" 5
+    exit 1
+fi
 
 ### Globus (deprecated)
 USE_GLOBUS=''
