@@ -2,9 +2,24 @@
 #include <Python.h>
 
 #include "omni_platform.h"
-#include "qcs_api.hpp"
+#include "OmniRpc.h"
+
+#include "qcrpc_qasm_rest.h"
 
 static bool is_inited = false;
+static const char *submit_qasm_kwlist[] = {
+  "url",
+  "token",
+  "qasm",
+  "type",
+  "remark",
+  "shots",
+  "poll_interval",
+  "poll_count_max",
+  "transpile",
+  NULL
+};
+
 
 
 static PyObject *
@@ -24,21 +39,11 @@ qcrpc_submit_qasm(PyObject *self, PyObject *args, PyObject *kwargs) {
   int tmp_poll_max = -INT_MAX;
   int transpile = 0;
   int tmp_transpile = 0;
-  
-  static char *kwlist[] = {
-    "url",
-    "token",
-    "qasm",
-    "type",
-    "remark",
-    "shots",
-    "poll_interval",
-    "poll_count_max",
-    "transpile",
-    NULL
-  };
+
+  (void)self;
 
   if (PyArg_ParseTupleAndKeywords(args, kwargs, "sssi|siiii",
+                                  submit_qasm_kwlist,
                                   &url,
                                   &token,
                                   &qasm,
@@ -70,19 +75,19 @@ qcrpc_submit_qasm(PyObject *self, PyObject *args, PyObject *kwargs) {
           transpile = tmp_transpile;
         }
         qc_type = tmp_qc_type;
-        
-        QC_MeasureRemoteQASMStringREST(url,
-                                       token,
-                                       qasm,
-                                       qc_type,
-                                       rem,
-                                       shots,
-                                       poll_ms,
-                                       poll_max,
-                                       transpile,
-                                       retbuf,
-                                       sizeof(char) * MAX_RESPONSE_SIZE,
-                                       &retlen);
+
+        s_submit_qasm_rest(url,
+                           token,
+                           qasm,
+                           qc_type,
+                           rem,
+                           shots,
+                           poll_ms,
+                           poll_max,
+                           transpile,
+                           retbuf,
+                           sizeof(char) * MAX_RESPONSE_SIZE,
+                           &retlen);
         if (retlen > 0 && *retbuf != '\0') {
           retbuf[retlen] = '\0';
           ret = PyUnicode_FromString(retbuf);
@@ -96,7 +101,9 @@ qcrpc_submit_qasm(PyObject *self, PyObject *args, PyObject *kwargs) {
 }
 
 static PyMethodDef qcrpc_methods[] = {
-  { "submit_qasm", qcrpc_submit_qasm, METH_VARARGS | METH_KEYWORDS,
+  { "submit_qasm",
+    (PyCFunction)qcrpc_submit_qasm,
+    METH_VARARGS | METH_KEYWORDS,
     "Submit a QASM file measurement job at the specified URL "
     "with and the API token." },
   { NULL, NULL, 0, NULL }
@@ -114,7 +121,7 @@ static struct PyModuleDef qcrpc_module = {
 PyMODINIT_FUNC
 PyInit_qcrpc(void) {
   if (is_inited != true) {
-    QC_InitRemote(NULL, NULL);
+    OmniRpcInit(NULL, NULL);
     is_inited = true;
   }
   return PyModule_Create(&qcrpc_module);

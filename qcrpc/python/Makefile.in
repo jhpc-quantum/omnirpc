@@ -8,7 +8,7 @@ TARGET_LIB	=	libqcrpc.la
 TARGETS		=	qcrpc.so
 
 SRCS	=	qcrpc.c
-LDFLAGS	+=	$(QCS_LIB) $(OMRPC_CLIENTLIB)
+LDFLAGS	+=	$(OMRPC_CLIENTLIB)
 CPPFLAGS	+=	-I../QC_API $(PYTHON_INC)
 endif
 
