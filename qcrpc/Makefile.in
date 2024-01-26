@@ -3,10 +3,11 @@ MKRULESDIR      = @MKRULESDIR@
 
 include $(MKRULESDIR)/vars.mk
 
-DIRS	=	QC_API qcrex qcmeasure
+DIRS	=	QC_API
 ifdef USE_REST
 DIRS	+=	rest/src
 endif
+DIRS	+=	qcrex qcmeasure
 ifdef USE_PYTHON
 DIRS	+=	python
 endif

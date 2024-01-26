@@ -19,9 +19,10 @@ ifdef SLURM_LIB
 LDFLAGS		+=	 $(SLURM_LIB)
 endif
 
-OBJS	=	qcrex.lo qcrex_qasm.lo
+OBJS		=	qcrex.lo qcrex_qasm.lo
 ifdef USE_REST
-OBJS	+=	qcrex_qasm_rest.lo
+CPPFLAGS	+=	-I$(RQCREST_DIR)/include
+OBJS		+=	qcrex_qasm_rest.lo
 INSTALL_SBIN_EXE_TARGETS	+=	qcrex_qasm_rest.rex
 endif
 
@@ -47,7 +48,7 @@ qcrex_qasm_rest.c:	qcrex_qasm_rest.idl
 
 qcrex_qasm_rest.rex:	qcrex_qasm_rest.lo
 	$(RM) -f $@ .libs/lt-$@ .libs/$@
-	$(LTLINK_CC) -o $@ $< $(DEP_LIBS) $(LDFLAGS)
+	$(LTLINK_CC) -o $@ $< $(DEP_LIBS) $(RQCREST_LIB) $(LDFLAGS)
 endif
 
 register::	qcrex.rex
