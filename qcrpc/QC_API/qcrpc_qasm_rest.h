@@ -42,7 +42,7 @@ s_submit_qasm_rest(const char *url,
 
     *olen = -INT_MAX;
     OmniRpcRequest r =
-        OmniRpcCallAsync("qc_rpc_rest_qasm_strig",
+        OmniRpcCallAsync("qc_rpc_rest_qasm_string",
                          /* 00, 01 */ ulen, url,
                          /* 02, 03 */ tlen, token,
                          /* 04, 05 */ qlen, qasm,

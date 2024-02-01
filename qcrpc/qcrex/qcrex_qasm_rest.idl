@@ -7,27 +7,27 @@ Globals{
 #include "rexrest.h"
 }
 
-Define qc_rpc_rest_qasm_strig(/* input */
-			      /* 00 */ IN int ulen,
-			      /* 01 */ IN char url[ulen],
-			      /* 02 */ IN int tlen,
-			      /* 03 */ IN char token[tlen],
-			      /* 04 */ IN int qlen,
-			      /* 05 */ IN char qasm[qlen],
-			      /* 06 */ IN int qc_type, /* (enum) */
-			      /* 07 */ IN int rlen,
-			      /* 08 */ IN char rem[rlen],
-			      /* 09 */ IN int shots,
-			      /* 10 */ IN int poll_ms,
-			      /* 11 */ IN int poll_max,
-			      /* 12 */ IN int transpiler, /* (enum) */
+Define qc_rpc_rest_qasm_strnig(/* input */
+			       /* 00 */ IN int ulen,
+			       /* 01 */ IN char url[ulen],
+			       /* 02 */ IN int tlen,
+			       /* 03 */ IN char token[tlen],
+			       /* 04 */ IN int qlen,
+			       /* 05 */ IN char qasm[qlen],
+			       /* 06 */ IN int qc_type, /* (enum) */
+			       /* 07 */ IN int rlen,
+			       /* 08 */ IN char rem[rlen],
+			       /* 09 */ IN int shots,
+			       /* 10 */ IN int poll_ms,
+			       /* 11 */ IN int poll_max,
+			       /* 12 */ IN int transpiler, /* (enum) */
 
-			      /* output */
-			      /* 13 */ OUT int ret[],
-			      /* 14 */ IN int olenmax,
-			      /* 15 */ OUT char output[olenmax],
-			      /* 16 */ OUT int olen[])
-  "QC RPC QASM STRING STUB (for REST API backend)"
+			       /* output */
+			       /* 13 */ OUT int ret[],
+			       /* 14 */ IN int olenmax,
+			       /* 15 */ OUT char output[olenmax],
+			       /* 16 */ OUT int olen[])
+"QC RPC QASM STRING STUB (for REST API backend)"
 {
 #define VALID_OMNIRPC_STRING(ptr, len)					\
   (((len > 1) && (ptr != NULL) && (ptr[0] != '\0') && (ptr[len - 1] == '\0')) \
