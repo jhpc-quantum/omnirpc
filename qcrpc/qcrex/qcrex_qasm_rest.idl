@@ -7,7 +7,7 @@ Globals{
 #include "rexrest.h"
 }
 
-Define qc_rpc_rest_qasm_strnig(/* input */
+Define qc_rpc_rest_qasm_string(/* input */
 			       /* 00 */ IN int ulen,
 			       /* 01 */ IN char url[ulen],
 			       /* 02 */ IN int tlen,
