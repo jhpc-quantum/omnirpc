@@ -427,20 +427,33 @@ AC_SUBST(QURI_DIR)
 CPPREST_DIR=''
 cpprest_dir=''
 HAVE_CPPREST=''
+LIB64=''
+libOK=0
 AC_ARG_WITH([cpprest],
 	[AS_HELP_STRING([--with-cpprest],
 			[Specify Microsoft C++ REST SDK install directory.])],
 	[cpprest_dir="$withval"], [cpprest_dir=''])
 AC_MSG_CHECKING(Microsoft C++ REST SDK)
-if test "x${do_qc_rpc}" != "xno" -a "x${do_rest}" != "xno" -a "x${cpprest_dir}" != "x" -a -r "${cpprest_dir}/include/cpprest/version.h" -a -r "${cpprest_dir}/lib/libcpprest.so"; then
-    CPPREST_DIR=${cpprest_dir}
-    HAVE_CPPREST=yes
-    AC_DEFINE(HAVE_CPPREST)
-    AC_MSG_RESULT([${CPPREST_DIR}])
+if test "x${do_qc_rpc}" != "xno" -a "x${do_rest}" != "xno" -a "x${cpprest_dir}" != "x" -a -r "${cpprest_dir}/include/cpprest/version.h"; then
+    if test -r "${cpprest_dir}/lib64/libcpprest.so"; then
+        libOK=1
+        LIB64='64'
+    elif test -r "${cpprest_dir}/lib/libcpprest.so"; then
+        libOK=1
+    fi
+    if test ${libOK} -eq 1; then
+        CPPREST_DIR=${cpprest_dir}
+        HAVE_CPPREST=yes
+        AC_DEFINE(HAVE_CPPREST)
+        AC_MSG_RESULT([${CPPREST_DIR}])
+    else
+        AC_MSG_RESULT([no C++ REST SDK.])
+    fi
 else
     AC_MSG_RESULT([no C++ REST SDK.])
 fi
 AC_SUBST(CPPREST_DIR)
+AC_SUBST(LIB64)
 
 if test "x${do_rest}" != "xno" -a -z "${CPPREST_DIR}"; then
     AC_MSG_ERROR([Enabling REST REX feature requires Microsoft C++ REST SDK installed.])
