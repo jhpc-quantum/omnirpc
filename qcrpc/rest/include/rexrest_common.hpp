@@ -1,6 +1,8 @@
 #ifndef REXREST_COMMON_HPP_
 #define REXREST_COMMON_HPP_
 
+#include <vector>
+
 #include <cpprest/http_client.h>
 #include <cpprest/filestream.h>
 
@@ -29,6 +31,38 @@ private:
     unsigned short status_code_;
     std::string json_body_;
     std::string err_msg_;
+};
+
+class JsonResult {
+public:
+    JsonResult() : patterns_{}, probs_{}, size_(0) {}
+    ~JsonResult() {}
+
+    void AddResult(int pattern, float prob) {
+        patterns_.push_back(pattern);
+        probs_.push_back(prob);
+	size_++;
+    }
+    std::vector<int> GetPatterns() { return patterns_; };
+    std::vector<float> GetProbs() { return probs_; };
+    std::uint32_t GetSize() { return size_; };
+
+private:
+    std::vector<int> patterns_;
+    std::vector<float> probs_;
+    std::uint32_t size_;
+};
+
+class JsonParser {
+public:
+    JsonParser(const std::string& json_str, std::uint32_t shots) : json_str_(json_str), shots_(shots) {}
+    ~JsonParser() {}
+
+    virtual std::shared_ptr<JsonResult> Scrape() = 0;
+
+protected:
+    std::string json_str_;
+    std::uint32_t shots_;
 };
 
 }  // namespace rexrest

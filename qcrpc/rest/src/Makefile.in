@@ -3,7 +3,7 @@ MKRULESDIR      = @MKRULESDIR@
 
 include $(MKRULESDIR)/vars.mk
 
-SRCS	=	rexrest.cpp rqc_rest.cpp
+SRCS	=	ibmq_json.cpp ibmq_rest.cpp rexrest.cpp rqc_json.cpp rqc_rest.cpp
 
 CPPFLAGS	+=	-I../include -I$(CPPREST_DIR)/include
 LDFLAGS		+=	$(CPPREST_LIB)
