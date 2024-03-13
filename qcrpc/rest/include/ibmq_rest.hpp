@@ -1,11 +1,11 @@
-#ifndef RQC_REST_HPP_
-#define RQC_REST_HPP_
+#ifndef IBMQ_REST_HPP_
+#define IBMQ_REST_HPP_
 
 #include "rexrest_common.hpp"
 
 namespace rexrest {
 
-class RQCClient {
+class IBMQClient {
 public:
     static std::shared_ptr<JobResult> Calculate(const std::string& base_url, const std::string& token,
                                                 const std::string& qasm, const std::uint32_t shots,
@@ -23,45 +23,44 @@ private:
     static const std::uint32_t kMaxPollingCount;
 };
 
-enum class Transpiler : std::uint32_t {
+enum class IBMQTranspiler : std::uint32_t {
     NONE = 0,
-    PASS,
-    NORMAL
 };
 
-inline const std::string TranspilerToString(Transpiler transpiler) {
+inline const std::string IBMQTranspilerToString(IBMQTranspiler transpiler) {
   switch (transpiler) {
-    case Transpiler::NONE: { return "none"; }
-    case Transpiler::PASS: { return "pass"; }
-    case Transpiler::NORMAL: { return "normal"; }
+    case IBMQTranspiler::NONE: { return "none"; }
     default: { return "none"; }
   }
 }
 
-class RQCHttpClient {
+class IBMQHttpClient {
 public:
-    static const std::string kGetJobPath;
-    static const std::string kSubmitJobPath;
+    static const std::string kListJobDetailsPath;
+    static const std::string kListJobResultsPath;
+    static const std::string kRunJobPath;
     static const std::string kIDKey;
-    static const std::string kJobIDKey;
-    static const std::string kReasonKey;
     static const std::string kStatusKey;
-    static const std::string kStatusSuccessValue;
-    static const std::string kStatusFailureValue;
+    static const std::string kStatusCompletedValue;
+    static const std::string kStatusFailedValue;
+    static const std::string kStatusCancelledValue;
+    static const std::string kStateKey;
+    static const std::string kReasonKey;
 
-    static std::shared_ptr<RQCHttpClient> CreateHttpClient(const std::string& base_url);
+    static std::shared_ptr<IBMQHttpClient> CreateHttpClient(const std::string& base_url);
 
-    RQCHttpClient(const std::string& base_url) : base_url_(base_url), http_client_(base_url) {}
-    ~RQCHttpClient() {}
+    IBMQHttpClient(const std::string& base_url) : base_url_(base_url), http_client_(base_url) {}
+    ~IBMQHttpClient() {}
 
-    std::shared_ptr<JobResult> GetJob(const std::string& path, const std::string& token, const std::string& job_id);
-    std::shared_ptr<JobResult> SubmitJob(const std::string& path, const std::string& token, const std::string& qasm,
-                  const std::uint32_t shots, const std::string& transpiler, const std::string& remark);
+    std::shared_ptr<JobResult> ListJobDetails(const std::string& path, const std::string& token, const std::string& job_id);
+    std::shared_ptr<JobResult> ListJobResults(const std::string& path, const std::string& token, const std::string& job_id);
+    std::shared_ptr<JobResult> RunJob(const std::string& path, const std::string& token, const std::string& qasm,
+                                      const std::uint32_t shots, const std::string& transpiler, const std::string& remark);
     std::shared_ptr<JobResult> CancelJob(const std::string& path, const std::string& token, const std::string& job_id);
     std::shared_ptr<JobResult> DeleteJob(const std::string& path, const std::string& token, const std::string& job_id);
 
 private:
-    static const std::string kQApiTokenHeader;
+    static const std::string kAuthorizationHeader;
     static const std::string kContentTypeHeader;
 
     std::string base_url_;
@@ -70,5 +69,5 @@ private:
 
 }  // namespace rexrest
 
-#endif  // RQC_REST_HPP_
+#endif  // IBMQ_REST_HPP_
 

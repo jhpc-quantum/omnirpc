@@ -8,8 +8,8 @@ namespace rexrest {
 const std::uint32_t RQCClient::kPollingInterval = 1000;
 const std::uint32_t RQCClient::kMaxPollingCount = 60;
 
-const std::string RQCHttpClient::kGetJobPath = "/dev/api/jobs/";
-const std::string RQCHttpClient::kSubmitJobPath = "/dev/api/jobs";
+const std::string RQCHttpClient::kGetJobPath = "/api/jobs/";
+const std::string RQCHttpClient::kSubmitJobPath = "/api/jobs";
 const std::string RQCHttpClient::kQApiTokenHeader = "q-api-token";
 const std::string RQCHttpClient::kContentTypeHeader = "Content-Type";
 const std::string RQCHttpClient::kIDKey = "id";
@@ -25,7 +25,7 @@ std::shared_ptr<JobResult> RQCClient::Calculate(const std::string& base_url, con
                                                 std::uint32_t polling_interval, std::uint32_t max_polling_count) {
     // TODO: Add parameter checks
 
-    std::shared_ptr<RQCHttpClient> client = RQCHttpClient::CreateRQCHttpClient(base_url);
+    std::shared_ptr<RQCHttpClient> client = RQCHttpClient::CreateHttpClient(base_url);
 
     auto transpilerStr = TranspilerToString(static_cast<Transpiler>(transpiler));
 
@@ -66,10 +66,6 @@ std::shared_ptr<JobResult> RQCClient::Calculate(const std::string& base_url, con
     } else {
         return submitResult;
     }
-}
-
-std::shared_ptr<RQCHttpClient> RQCHttpClient::CreateRQCHttpClient(const std::string& base_url) {
-    return std::make_shared<RQCHttpClient>(base_url);
 }
 
 std::shared_ptr<JobResult> RQCHttpClient::GetJob(const std::string& path, const std::string& token,
@@ -179,6 +175,10 @@ std::shared_ptr<JobResult> RQCHttpClient::DeleteJob(const std::string& path, con
                                                     const std::string& job_id) {
     // Unsupported operation
     return std::make_shared<JobResult>(0, "", "Unsupported operation");
+}
+
+std::shared_ptr<RQCHttpClient> RQCHttpClient::CreateHttpClient(const std::string& base_url) {
+    return std::make_shared<RQCHttpClient>(base_url);
 }
 
 }  // namespace rexrest
