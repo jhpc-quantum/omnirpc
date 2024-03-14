@@ -61,6 +61,7 @@ int main(int argc, char *argv[])
     }
   } else {
     if (do_rest == true) {
+#ifdef USE_REST
       char *url = NULL;
       char *token = NULL;
       char *qasm = NULL;
@@ -102,7 +103,9 @@ int main(int argc, char *argv[])
         fprintf(stderr, "error: -rest flags requires at leaset"
                 "-url, -token, and -qasm options.\n");
       }
-
+#else
+      fprintf(stderr, "the REST support not enabled.\n");
+#endif /* USE_REST */
     } else if (dir != NULL && *dir != '\0' &&
                dir != NULL && *dir != '\0') {
       int max_shots = 1000;
