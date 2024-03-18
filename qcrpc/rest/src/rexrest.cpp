@@ -54,12 +54,17 @@ int calculate(uint32_t qc_type, const char *base_url, const char *token, const c
 int scrape_response(uint32_t qc_type, const char *resp, uint32_t shots, int **patterns,
                     float **probs, size_t *n_patterns) {
     std::shared_ptr<rexrest::JsonResult> result;
-    if (qc_type == 0) {
-        result = rexrest::RQCJsonParser::ScrapeResponse(resp, shots);
-    } else if (qc_type == 1) {
-        result = rexrest::IBMQJsonParser::ScrapeResponse(resp, shots);
-    } else {
-        fprintf(stderr, "Unsupported QC type.\n");
+    try {
+        if (qc_type == 0) {
+            result = rexrest::RQCJsonParser::ScrapeResponse(resp, shots);
+        } else if (qc_type == 1) {
+            result = rexrest::IBMQJsonParser::ScrapeResponse(resp, shots);
+        } else {
+            fprintf(stderr, "Unsupported QC type.\n");
+            return -1;
+        }
+    } catch (const std::exception& e) {
+        std::wcout << "JSON Parse Error: " << e.what() << std::endl;
         return -1;
     }
 
