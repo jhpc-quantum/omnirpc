@@ -22,15 +22,22 @@ int calculate(uint32_t qc_type, const char *base_url, const char *token, const c
 
     if (result->GetStatusCode() == web::http::status_codes::OK) {
         size_t result_len = result->GetJsonBody().length() + 1;
+        bool allocated = false;
         if (*output == NULL) {
             *output = (char *)malloc(sizeof(char) * result_len);
             if (*output == NULL) {
                 fprintf(stderr, "Failed to malloc.\n");
                 return -1;
             }
+            allocated = true;
         }
+
         int len = snprintf(*output, result_len, result->GetJsonBody().c_str());
         if (len < 0) {
+            if (allocated == true) {
+                free(*output);
+                *output = NULL;
+            }
             fprintf(stderr, "Failed to output results.\n");
             return -1;
         }
