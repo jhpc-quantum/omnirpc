@@ -38,8 +38,10 @@ s_submit_qasm_rest(const char *url,
       rlen = 0;
     }
 
+#if 0
     fprintf(stderr, "debug: rem %d, '%s'\n", rlen, rem);
-
+#endif
+    
     *olen = -INT_MAX;
     OmniRpcRequest r =
         OmniRpcCallAsync("qc_rpc_rest_qasm_string",
@@ -58,7 +60,10 @@ s_submit_qasm_rest(const char *url,
                          /* 16     */ &getlen);
     OmniRpcWait(r);
 
+#if 0
     fprintf(stderr, "debug: ret %d, getlen %d\n", ret, getlen);
+#endif
+    
     if (ret >= 0) {
       *olen = getlen;
     }

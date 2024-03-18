@@ -61,18 +61,31 @@ int main(int argc, char *argv[])
     }
   } else {
     if (do_rest == true) {
+#ifdef USE_REST
+#undef SHOTS
+#define SHOTS	1024
+      char *default_url =
+          "https://ffwzl80ntg.execute-api.ap-northeast-1.amazonaws.com/dev/";
       char *url = NULL;
-      char *token = NULL;
+      char *default_qasm =
+          "OPENQASM 3; include \"stdgates.inc\"; "
+          "qreg q[4]; creg c[4]; "
+          "h q[0]; h q[1]; ccx q[0], q[1], q[2]; cx q[0], q[3]; cx q[1],q[3]; "
+          "measure q[3] -> c[0]; measure q[2] -> c[1]; "
+          "measure q[1] -> c[2]; measure q[0] -> c[3]; ";
       char *qasm = NULL;
+      char *token = NULL;
       char *rem = NULL;
       int qc_type = 0;
-      int shots = 100;
+      int shots = SHOTS;
       int poll_ms = 1000;
-      int poll_max = 10;
-      int transpiler = 0;
-      char out[65536];
-      int olen = -INT_MAX;
+      int poll_max = 180;
+      int transpiler = 2;
+      int pattern[SHOTS];
+      float count[SHOTS];
+      int n_patterns = -INT_MAX;
       int i;
+      int tmp;
 
       for (i = 2; i < argc; i++) {
         if (strcmp(argv[i], "-url") == 0) {
@@ -87,22 +100,62 @@ int main(int argc, char *argv[])
         } else if (strcmp(argv[i], "-rem") == 0) {
           i++;
           rem = argv[i];
+        } else if (strcmp(argv[i], "-shots") == 0) {
+          i++;
+          tmp = atoi(argv[1]);
+          if (tmp < 1024 && tmp > 0) {
+            shots = tmp;
+          }
+        } else if (strcmp(argv[i], "-poll-interval") == 0) {
+          i++;
+          tmp = atoi(argv[1]);
+          if (tmp > 0) {
+            poll_ms = tmp;
+          }
+        } else if (strcmp(argv[i], "-poll-max") == 0) {
+          i++;
+          tmp = atoi(argv[i]);
+          if (tmp > 0) {
+            poll_max = tmp;
+          }
+        } else if (strcmp(argv[i], "-transpiler") == 0) {
+          i++;
+          tmp = atoi(argv[i]);
+          if (tmp >= 0) {
+            transpiler = tmp;
+          }
         }
+      }
+
+      if (url == NULL) {
+        url = default_url;
+      }
+      if (qasm == NULL) {
+        qasm = default_qasm;
       }
 
       if (url != NULL && *url != '\0' &&
           token != NULL && *token != '\0' &&
           qasm != NULL && *qasm != '\0') {
-        QC_MeasureRemoteQASMStringREST(url, token, qasm, qc_type, rem,
-                                       shots, poll_ms, poll_max, transpiler,
-                                       out, sizeof(out),
-                                       &olen);
-        fprintf(stdout, "%d\n%s\n", olen, out);
+        QC_MeasureRemoteQASMStringRESTArray(url, token, qasm, qc_type, rem,
+                                            shots, poll_ms, poll_max,
+                                            transpiler,
+                                            pattern, count, &n_patterns);
+        if (n_patterns > 0) {
+          for (i = 0; i < n_patterns; i++) {
+            fprintf(stdout, "%5d,\t%f\n", pattern[i], count[i]);
+          }
+        } else {
+          fprintf(stderr, "error: invalid result or any failures.\n");
+        }
       } else {
-        fprintf(stderr, "error: -rest flags requires at leaset"
-                "-url, -token, and -qasm options.\n");
+        fprintf(stderr, "error: -rest flags requires at leaset "
+                "-token option.\n");
       }
-
+#undef SHOTS
+#else
+      fprintf(stderr, "the REST support not enabled.\n");
+#endif /* USE_REST */
     } else if (dir != NULL && *dir != '\0' &&
                dir != NULL && *dir != '\0') {
       int max_shots = 1000;

@@ -10,7 +10,7 @@ all::	$(INSTALL_SBIN_EXE_TARGETS)
 
 SRCS	=	qcmeasure.c
 
-LDFLAGS	+=	$(QCS_LIB) $(OMRPC_CLIENTLIB)
+LDFLAGS	+=	$(QCS_LIB) $(RQCREST_LIB) $(OMRPC_CLIENTLIB)
 
 include $(MKRULESDIR)/rules.mk
 

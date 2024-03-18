@@ -4,6 +4,9 @@
 #include "qcs_qulacs.hpp"
 
 #include "OmniRpc.h"
+#ifdef USE_REST
+#include "rexrest.h"
+#endif /* USE_REST */
 
 #include "qcrpc_qasm_rest.h"
 
@@ -144,6 +147,7 @@ QC_MeasureRemoteQASMFile(const char *dir, const char *file,
     }
 }
 
+#ifdef USE_REST
 void
 QC_MeasureRemoteQASMStringREST(const char *url,
                                const char *token,
@@ -172,6 +176,52 @@ QC_MeasureRemoteQASMStringREST(const char *url,
                            olen);
     }
 }
+
+void
+QC_MeasureRemoteQASMStringRESTArray(const char *url, const char *token,
+                                    const char *qasm, int qc_type,
+                                    const char *rem,
+                                    int shots, int poll_ms, int poll_max,
+                                    int transpiler,
+                                    int *pattern, float *count,
+                                    int *n_patterns) {
+    if (s_is_rpc_inited == true) {
+        char out[256 * 1024];
+        int olen = -1;
+        s_submit_qasm_rest(url,
+                           token,
+                           qasm,
+                           qc_type,
+                           rem,
+                           shots,
+                           poll_ms,
+                           poll_max,
+                           transpiler,
+                           out,
+                           sizeof(out),
+                           &olen);
+        if (olen > 0) {
+            int *ptns = NULL;
+            float *cnts = NULL;
+            size_t n = 0;
+
+            if ((scrape_response((uint32_t)qc_type,
+                                 out,
+                                 (uint32_t)shots,
+                                 &ptns, &cnts, &n) == 0) &&
+                ptns != NULL && cnts != NULL && n > 0) {
+                int cplen = ((int)n < shots) ? (int)n : shots;
+                
+                (void)memcpy(pattern, ptns, cplen * sizeof(int));
+                (void)memcpy(count, cnts, cplen * sizeof(float));
+                free(ptns);
+                free(cnts);
+                *n_patterns = cplen;
+            }
+        }
+    }
+}
+#endif /* USE_REST */
 
 void
 QC_SaveContext(const char *file) {

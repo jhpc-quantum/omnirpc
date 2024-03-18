@@ -22,6 +22,7 @@ endif
 OBJS		=	qcrex.lo qcrex_qasm.lo
 ifdef USE_REST
 CPPFLAGS	+=	-I$(RQCREST_DIR)/include
+LDFLAGS		+=	$(RQCREST_LIB)
 OBJS		+=	qcrex_qasm_rest.lo
 INSTALL_SBIN_EXE_TARGETS	+=	qcrex_qasm_rest.rex
 endif
