@@ -64,8 +64,6 @@ int main(int argc, char *argv[])
 #ifdef USE_REST
 #undef SHOTS
 #define SHOTS	1024
-      char *default_url =
-          "https://ffwzl80ntg.execute-api.ap-northeast-1.amazonaws.com/dev/";
       char *url = NULL;
       char *default_qasm =
           "OPENQASM 3; include \"stdgates.inc\"; "
@@ -127,9 +125,6 @@ int main(int argc, char *argv[])
         }
       }
 
-      if (url == NULL) {
-        url = default_url;
-      }
       if (qasm == NULL) {
         qasm = default_qasm;
       }
