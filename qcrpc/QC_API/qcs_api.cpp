@@ -186,7 +186,7 @@ QC_MeasureRemoteQASMStringRESTArray(const char *url, const char *token,
                                     int *pattern, float *count,
                                     int *n_patterns) {
     if (s_is_rpc_inited == true) {
-        char out[65536];
+        char out[256 * 1024];
         int olen = -1;
         s_submit_qasm_rest(url,
                            token,
@@ -204,6 +204,7 @@ QC_MeasureRemoteQASMStringRESTArray(const char *url, const char *token,
             int *ptns = NULL;
             float *cnts = NULL;
             size_t n = 0;
+
             if ((scrape_response((uint32_t)qc_type,
                                  out,
                                  (uint32_t)shots,
