@@ -95,18 +95,24 @@ int main(int argc, char *argv[])
         } else if (strcmp(argv[i], "-qasm") == 0) {
           i++;
           qasm = argv[i];
+	} else if (strcmp(argv[i], "-qctype") == 0) {
+          i++;
+          tmp = atoi(argv[i]);
+          if (tmp >= 0) {
+            qc_type = tmp;
+          }
         } else if (strcmp(argv[i], "-rem") == 0) {
           i++;
           rem = argv[i];
         } else if (strcmp(argv[i], "-shots") == 0) {
           i++;
-          tmp = atoi(argv[1]);
+          tmp = atoi(argv[i]);
           if (tmp < 1024 && tmp > 0) {
             shots = tmp;
           }
         } else if (strcmp(argv[i], "-poll-interval") == 0) {
           i++;
-          tmp = atoi(argv[1]);
+          tmp = atoi(argv[i]);
           if (tmp > 0) {
             poll_ms = tmp;
           }
