@@ -39,7 +39,7 @@ std::shared_ptr<JobResult> IBMQClient::Calculate(const std::string& base_url, co
         auto jobId = runResJson[IBMQHttpClient::kIDKey].as_string();
 
         // for debug
-        std::wcout << runResult->GetJsonBody().c_str() << std::endl;
+        std::cerr << runResult->GetJsonBody().c_str() << std::endl;
 
         for (std::uint32_t i = 0; i < max_polling_count; i++) {
             std::shared_ptr<JobResult> detailsResult = client->ListJobDetails(IBMQHttpClient::kListJobDetailsPath, token, jobId);
@@ -48,21 +48,21 @@ std::shared_ptr<JobResult> IBMQClient::Calculate(const std::string& base_url, co
                 auto status = getResJson[IBMQHttpClient::kStatusKey].as_string();
 
                 // for debug
-                std::wcout << detailsResult->GetJsonBody().c_str() << std::endl;
+                std::cerr << detailsResult->GetJsonBody().c_str() << std::endl;
 
                 if (status == IBMQHttpClient::kStatusCompletedValue) {
                     return client->ListJobResults(IBMQHttpClient::kListJobResultsPath, token, jobId);
                 } else if (status == IBMQHttpClient::kStatusFailedValue) {
                     // for debug
-                    std::wcout << "Job Failed: " << getResJson[IBMQHttpClient::kStateKey][IBMQHttpClient::kReasonKey].as_string().c_str() << std::endl;
+                    std::cerr << "Job Failed: " << getResJson[IBMQHttpClient::kStateKey][IBMQHttpClient::kReasonKey].as_string().c_str() << std::endl;
                     return std::make_shared<JobResult>(0, "", getResJson[IBMQHttpClient::kStateKey][IBMQHttpClient::kReasonKey].as_string());
                 } else if (status == IBMQHttpClient::kStatusCancelledValue) {
                     // for debug
-                    std::wcout << "Job Cancelled" << std::endl;
+                    std::cerr << "Job Cancelled" << std::endl;
                     return std::make_shared<JobResult>(0, "", "Cancelled");
                 } else {
                     // for debug
-                    std::wcout << "Calculate Wait: " << i << std::endl;
+                    std::cerr << "Calculate Wait: " << i << std::endl;
 
                     std::this_thread::sleep_for(std::chrono::milliseconds(polling_interval));
                     continue;
@@ -102,23 +102,23 @@ std::shared_ptr<JobResult> IBMQHttpClient::ListJobDetails(const std::string& pat
         }
 
         case web::http::status_codes::Unauthorized: {
-            std::wcout << "ListJobDetails Error: " << res.status_code() << std::endl;
+            std::cerr << "ListJobDetails Error: " << res.status_code() << std::endl;
             return std::make_shared<JobResult>(res.status_code(), "", "Unauthorized");
         }
         case web::http::status_codes::Forbidden: {
-            std::wcout << "ListJobDetails Error: " << res.status_code() << std::endl;
+            std::cerr << "ListJobDetails Error: " << res.status_code() << std::endl;
             return std::make_shared<JobResult>(res.status_code(), "", "Forbidden");
         }
         case web::http::status_codes::NotFound: {
-            std::wcout << "ListJobDetails Error: " << res.status_code() << std::endl;
+            std::cerr << "ListJobDetails Error: " << res.status_code() << std::endl;
             return std::make_shared<JobResult>(res.status_code(), "", "Not Found");
         }
         case web::http::status_codes::InternalError: {
-            std::wcout << "ListJobDetails Error: " << res.status_code() << std::endl;
+            std::cerr << "ListJobDetails Error: " << res.status_code() << std::endl;
             return std::make_shared<JobResult>(res.status_code(), "", "Internal Error");
         }
         default: {
-            std::wcout << "ListJobDetails Error: " << res.status_code() << std::endl;
+            std::cerr << "ListJobDetails Error: " << res.status_code() << std::endl;
             return std::make_shared<JobResult>(res.status_code(), "", "Unknown status code");
         }
     }
@@ -147,31 +147,31 @@ std::shared_ptr<JobResult> IBMQHttpClient::ListJobResults(const std::string& pat
             return std::make_shared<JobResult>(res.status_code(), resString, "");
         }
         case web::http::status_codes::NoContent: {
-            std::wcout << "ListJobResults Error: " << res.status_code() << std::endl;
+            std::cerr << "ListJobResults Error: " << res.status_code() << std::endl;
             return std::make_shared<JobResult>(res.status_code(), "", "No Content");
         }
         case web::http::status_codes::BadRequest: {
-            std::wcout << "ListJobResults Error: " << res.status_code() << std::endl;
+            std::cerr << "ListJobResults Error: " << res.status_code() << std::endl;
             return std::make_shared<JobResult>(res.status_code(), "", "Bad Request");
         }
         case web::http::status_codes::Unauthorized: {
-            std::wcout << "ListJobDetails Error: " << res.status_code() << std::endl;
+            std::cerr << "ListJobDetails Error: " << res.status_code() << std::endl;
             return std::make_shared<JobResult>(res.status_code(), "", "Unauthorized");
         }
         case web::http::status_codes::Forbidden: {
-            std::wcout << "ListJobDetails Error: " << res.status_code() << std::endl;
+            std::cerr << "ListJobDetails Error: " << res.status_code() << std::endl;
             return std::make_shared<JobResult>(res.status_code(), "", "Forbidden");
         }
         case web::http::status_codes::NotFound: {
-            std::wcout << "ListJobDetails Error: " << res.status_code() << std::endl;
+            std::cerr << "ListJobDetails Error: " << res.status_code() << std::endl;
             return std::make_shared<JobResult>(res.status_code(), "", "Not Found");
         }
         case web::http::status_codes::InternalError: {
-            std::wcout << "ListJobDetails Error: " << res.status_code() << std::endl;
+            std::cerr << "ListJobDetails Error: " << res.status_code() << std::endl;
             return std::make_shared<JobResult>(res.status_code(), "", "Internal Error");
         }
         default: {
-            std::wcout << "ListJobDetails Error: " << res.status_code() << std::endl;
+            std::cerr << "ListJobDetails Error: " << res.status_code() << std::endl;
             return std::make_shared<JobResult>(res.status_code(), "", "Unknown status code");
         }
     }
@@ -219,27 +219,27 @@ std::shared_ptr<JobResult> IBMQHttpClient::RunJob(const std::string& path, const
             return std::make_shared<JobResult>(res.status_code(), resString, "");
         }
         case web::http::status_codes::BadRequest: {
-            std::wcout << "RunJob Error: " << res.status_code() << std::endl;
+            std::cerr << "RunJob Error: " << res.status_code() << std::endl;
             return std::make_shared<JobResult>(res.status_code(), "", "Bad Request");
         }
         case web::http::status_codes::Unauthorized: {
-            std::wcout << "RunJob Error: " << res.status_code() << std::endl;
+            std::cerr << "RunJob Error: " << res.status_code() << std::endl;
             return std::make_shared<JobResult>(res.status_code(), "", "Unauthorized");
         }
         case web::http::status_codes::NotFound: {
-            std::wcout << "RunJob Error: " << res.status_code() << std::endl;
+            std::cerr << "RunJob Error: " << res.status_code() << std::endl;
             return std::make_shared<JobResult>(res.status_code(), "", "Not Found");
         }
         case web::http::status_codes::Conflict: {
-            std::wcout << "RunJob Error: " << res.status_code() << std::endl;
+            std::cerr << "RunJob Error: " << res.status_code() << std::endl;
             return std::make_shared<JobResult>(res.status_code(), "", "Conflict");
         }
         case web::http::status_codes::InternalError: {
-            std::wcout << "RunJob Error: " << res.status_code() << std::endl;
+            std::cerr << "RunJob Error: " << res.status_code() << std::endl;
             return std::make_shared<JobResult>(res.status_code(), "", "Internal Error");
         }
         default: {
-            std::wcout << "RunJob Error: " << res.status_code() << std::endl;
+            std::cerr << "RunJob Error: " << res.status_code() << std::endl;
             return std::make_shared<JobResult>(res.status_code(), "", "Unknown status code");
         }
     }
