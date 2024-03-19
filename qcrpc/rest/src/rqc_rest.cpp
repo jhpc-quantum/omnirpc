@@ -36,7 +36,7 @@ std::shared_ptr<JobResult> RQCClient::Calculate(const std::string& base_url, con
         auto jobId = submitResJson[RQCHttpClient::kJobIDKey].as_string();
 
         // for debug
-        std::wcout << submitResult->GetJsonBody().c_str() << std::endl;
+        std::cerr << submitResult->GetJsonBody().c_str() << std::endl;
 
         for (std::uint32_t i = 0; i < max_polling_count; i++) {
             std::shared_ptr<JobResult> getResult = client->GetJob(RQCHttpClient::kSubmitJobPath, token, jobId);
@@ -45,13 +45,13 @@ std::shared_ptr<JobResult> RQCClient::Calculate(const std::string& base_url, con
                 auto status = getResJson[RQCHttpClient::kStatusKey].as_string();
 
                 // for debug
-                std::wcout << getResult->GetJsonBody().c_str() << std::endl;
+                std::cerr << getResult->GetJsonBody().c_str() << std::endl;
 
                 if (status == RQCHttpClient::kStatusSuccessValue || status == RQCHttpClient::kStatusFailureValue) {
                     return getResult;
                 } else {
                     // for debug
-                    std::wcout << "Calculate Wait: " << i << std::endl;
+                    std::cerr << "Calculate Wait: " << i << std::endl;
 
                     std::this_thread::sleep_for(std::chrono::milliseconds(polling_interval));
                     continue;
@@ -94,19 +94,19 @@ std::shared_ptr<JobResult> RQCHttpClient::GetJob(const std::string& path, const 
             return std::make_shared<JobResult>(res.status_code(), "", resJson[kReasonKey].as_string());
         }
         case web::http::status_codes::Unauthorized: {
-            std::wcout << "GetJob Error: " << res.status_code() << std::endl;
+            std::cerr << "GetJob Error: " << res.status_code() << std::endl;
             return std::make_shared<JobResult>(res.status_code(), "", "Unauthorized");
         }
         case web::http::status_codes::NotFound: {
-            std::wcout << "GetJob Error: " << res.status_code() << std::endl;
+            std::cerr << "GetJob Error: " << res.status_code() << std::endl;
             return std::make_shared<JobResult>(res.status_code(), "", "Not Found");
         }
         case web::http::status_codes::InternalError: {
-            std::wcout << "GetJob Error: " << res.status_code() << std::endl;
+            std::cerr << "GetJob Error: " << res.status_code() << std::endl;
             return std::make_shared<JobResult>(res.status_code(), "", "Internal Error");
         }
         default: {
-            std::wcout << "GetJob Error: " << res.status_code() << std::endl;
+            std::cerr << "GetJob Error: " << res.status_code() << std::endl;
             return std::make_shared<JobResult>(res.status_code(), "", "Unknown status code");
         }
     }
@@ -143,23 +143,23 @@ std::shared_ptr<JobResult> RQCHttpClient::SubmitJob(const std::string& path, con
             return std::make_shared<JobResult>(res.status_code(), resString, "");
         }
         case web::http::status_codes::BadRequest: {
-            std::wcout << "SubmitJob Error: " << res.status_code() << std::endl;
+            std::cerr << "SubmitJob Error: " << res.status_code() << std::endl;
             return std::make_shared<JobResult>(res.status_code(), "", "Bad Request");
         }
         case web::http::status_codes::Unauthorized: {
-            std::wcout << "SubmitJob Error: " << res.status_code() << std::endl;
+            std::cerr << "SubmitJob Error: " << res.status_code() << std::endl;
             return std::make_shared<JobResult>(res.status_code(), "", "Unauthorized");
         }
         case web::http::status_codes::NotFound: {
-            std::wcout << "SubmitJob Error: " << res.status_code() << std::endl;
+            std::cerr << "SubmitJob Error: " << res.status_code() << std::endl;
             return std::make_shared<JobResult>(res.status_code(), "", "Not Found");
         }
         case web::http::status_codes::InternalError: {
-            std::wcout << "SubmitJob Error: " << res.status_code() << std::endl;
+            std::cerr << "SubmitJob Error: " << res.status_code() << std::endl;
             return std::make_shared<JobResult>(res.status_code(), "", "Internal Error");
         }
         default: {
-            std::wcout << "SubmitJob Error: " << res.status_code() << std::endl;
+            std::cerr << "SubmitJob Error: " << res.status_code() << std::endl;
             return std::make_shared<JobResult>(res.status_code(), "", "Unknown status code");
         }
     }

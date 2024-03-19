@@ -64,7 +64,7 @@ int scrape_response(uint32_t qc_type, const char *resp, uint32_t shots, int **pa
             return -1;
         }
     } catch (const std::exception& e) {
-        std::wcout << "JSON Parse Error: " << e.what() << std::endl;
+        std::cerr << "JSON Parse Error: " << e.what() << std::endl;
         return -1;
     }
 
