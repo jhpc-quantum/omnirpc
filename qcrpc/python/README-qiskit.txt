@@ -26,8 +26,8 @@ run spack mentioned in a) and activate 'qiskit' venv to obey Python
 package scheme. Note that when you activate 'qiskit' venv, your prompt
 changes from "$" to "(qiskit) $."
 
-d) Refer to qcrpc/QC_API/README-rex-rest.txt, setup REST-enabled REX
-   based QC-RPC.
+d) Refer to qcrpc/README-rex-rest.txt, setup REST-enabled REX based
+   QC-RPC.
 
 
 2. Running a sample code
@@ -46,7 +46,7 @@ c) Run the sample
 	(qiskit) $ python ./sample.py
 
   The following is a result output sample, 2 qubit Bell states, run on
-a Fugaku login node:
+a Fugaku login node using QURI REST API:
 ---------------------------------------------------------------------
 {"job_id": "49c153e3-403c-4006-ab6a-6a3f09af687f"}
 {"id":"49c153e3-403c-4006-ab6a-6a3f09af687f","qasm":"OPENQASM 3.0;\ninclude \"stdgates.inc\";\nbit[2] c;\nqubit[2] q;\nh q[0];\ncx q[0], q[1];\nc[0] = measure q[0];\nc[1] = measure q[1];\n","shots":1024,"transpiler":"normal","status":"queued","result":"","transpiled_qasm":"","remark":"","in_queue":"2024-03-25 16:48:59","out_queue":"","created":"2024-03-25 16:48:59","ended":""}
