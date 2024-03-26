@@ -14,8 +14,8 @@ Remote Procedure Calls (RPCs), and login nodes accept them. This is
 because computational nodes are unable to accept online remote job
 execution methods such as SSH or RSH.
 
-Alod you need to load essencial packages needed to support the
-REST-based REX verison of QC-RPC by using spack.
+You need to load essential packages needed to support the
+REST-based REX version of QC-RPC by using spack.
 
 On Login node:
 	. /vol0004/apps/oss/spack/share/spack/setup-env.sh
@@ -39,7 +39,7 @@ following commands under the cloned Git directory:
 	$ ./script/build_gcc.sh
 	$ cd build && make shared
 
-c) Bulding Microsoft C++ REST SDK
+c) Building Microsoft C++ REST SDK
 
 On Fugaku, we prepared a specific patched version of the
 library. Contact administrators on how to use the library.
@@ -65,7 +65,7 @@ uffer_size) uint8_
 ================================================================
 Then build the library with following commands:
 
-	$ cd Reelase && mkdir build && cd build
+	$ cd Release && mkdir build && cd build
 	$ cmake -DCMAKE_INSTALL_PREFIX=<cpprest_dir> \
 	  -DBUILD_TESTS=OFF -DBUILD_SAMPLES=OFF ..
 	$ make install
@@ -106,7 +106,7 @@ node, each with different --prefix values.
 2. Sample code for newly added REST-based REX API
 
 The following is the portion of the newly added REST-based REX API,
-existig on qcrpc/QC_API/main.c:
+existing on qcrpc/QC_API/main.c:
 ----------------------------------------------------------------
 
 			:
@@ -214,7 +214,7 @@ existig on qcrpc/QC_API/main.c:
 
 Line 141, QC_MeasureRemoteQASMStringRESTArray() is the newly
 added. With this API, you can specify a circuit described in QASM on a
-specofied service URL with an API token issued by the service.
+specified service URL with an API token issued by the service.
 
 This is the prototype declaration of the API:
 
@@ -228,7 +228,7 @@ Where:
 url		A service URL.
 token		An API token.
 qasm		A quantum circuit description written in QASM.
-qc_type		An enumerator to specify a quntam computer model:
+qc_type		An enumerator to specify a quantum computer model:
 			0 ... RQC
 			1 ... IBM Q
 rem		A job remark.
@@ -303,7 +303,7 @@ section 2. This sample submits a QC job to RQC via QURI REST API.
 
 a) Make sure you run spack scripts.
 
-b) Acquire a flesh API token from QURI/riqu cloud frontend. Then stire
+b) Acquire a flesh API token from QURI/riqu cloud frontend. Then store
    the token in a file, e.g. ~/quri.token.txt.
 
 c) Make sure you already know QURI/riqu service URL. Store the URL in
