@@ -18,11 +18,13 @@ Alod you need to load essencial packages needed to support the
 REST-based REX verison of QC-RPC by using spack.
 
 On Login node:
+	. /vol0004/apps/oss/spack/share/spack/setup-env.sh
 	$ spack load gcc@12.2.0%gcc@8.4.1/bjidm56
 	$ spack load python@3.10.8%gcc@12.2.0/a5u7uck
 	$ spack load py-pip@23.0%gcc@12.2.0/wyuv6uh
 	$ spack load boost@1.80.0%gcc@12.2.0/lwfkszd
 On Computational node:
+	. /vol0004/apps/oss/spack/share/spack/setup-env.sh
 	$ spack load gcc@12.2.0%gcc@8.5.0/sxcx7km
 	$ spack load python@3.10.8%gcc@12.2.0/zcvnqre
 	$ spack load py-pip@23.0%fj@4.10.0/tgxupp6
@@ -62,6 +64,7 @@ uffer_size) uint8_
 #else
 ================================================================
 Then build the library with following commands:
+
 	$ cd Reelase && mkdir build && cd build
 	$ cmake -DCMAKE_INSTALL_PREFIX=<cpprest_dir> \
 	  -DBUILD_TESTS=OFF -DBUILD_SAMPLES=OFF ..
@@ -74,21 +77,17 @@ Then build the library with following commands:
 
 In the top directory of the source tree, run the configuration script:
 
-----------------------------------------------------------------------
-$ ./configure --prefix=/where/to/install \
-  --enable-qcrpc \
-  --enable-rest \
-  --enable-python \
-  --enable-homeshare \
-  --with-qulacs=<qulacs_srcdir> \
-  --with-cpprest=<cpprest_dir>
-----------------------------------------------------------------------
+	$ ./configure --prefix=%prefix% \
+	  --enable-qcrpc \
+	  --enable-rest \
+	  --enable-python \
+	  --enable-homeshare \
+	  --with-qulacs=<qulacs_srcdir> \
+	  --with-cpprest=<cpprest_dir>
 
 Use the following command to compile and install the software:
 
-----------------------------------------------------------------------
-$ make && make install
-----------------------------------------------------------------------
+	$ make && make install
 
 The --enable-homeshare option is used to separate ~/.omrpc_registry by
 host architectures by appending the uname -i output to the registry
@@ -217,50 +216,128 @@ Line 141, QC_MeasureRemoteQASMStringRESTArray() is the newly
 added. With this API, you can specify a circuit described in QASM on a
 specofied service URL with an API token issued by the service.
 
+This is the prototype declaration of the API:
 
-3. Quick hack for Fugaku
+void
+QC_MeasureRemoteQASMStringRESTArray(
+	const char *url, const char *token, const char *qasm, int qc_type,
+	const char *rem, int shots, int poll_ms, int poll_max, int transpiler,
+	int *pattern, float *count, int *n_patterns);
 
-Since the Microsoft C++ REST SDK uses Boost in runtime, 
+Where:
+url		A service URL.
+token		An API token.
+qasm		A quantum circuit description written in QASM.
+qc_type		An enumerator to specify a quntam computer model:
+			0 ... RQC
+			1 ... IBM Q
+rem		A job remark.
+shots		A # of shots.
+poll_ms		A # of job status polling interval in msec.
+poll_max	A # of the maximum poll count.
+transpiler	An enumerator to specify a transpiler type depending
+		on the qc_type.
+pattern		An array of qubit patterns that has at least one count
+		measurement.
+count		An array of measured counts per qubit pattern.
+n_patterns	A # of the qubit pattern.
 
-After the installation, you can test the functionality of RQC/QURI
-support on Fugaku by following these steps on the login node:
+count and pattern must be provided by the caller side and they must
+have at least # of shots elements.
 
------------------------------------------------------------------------
-$ %prefix%/bin/omrpc-register --register \
-  %prefix%/sbin/qcrex_qasm.rex
------------------------------------------------------------------------
 
-Next, edit the ~/.omrpc_registry.aarch64/hosts.xml file as follows:
+3. Environment setup
 
+As mentioned in a former section, Microsoft C++ REST SDK uses Boost in
+runtime, so Boost must also be load by spack at runtime of REX on
+Fugaku. In order to do this, following instructions are needed:
+
+a) Run:
+
+	$ %prefix%/bin/omrpc-register --register \
+		%prefix%/sbin/qcrex_qasm_redt.rex
+
+b) open ${HOME}/.omrpc_registry.<arch>/stubs with your favorite editor
+   and you can see line like this:
+----------------------------------------------------------------------
+qc_qasm_rest qc_rpc_rest_qasm_string %prefix%/sbin/qcrex_qasm_rest.rex
+----------------------------------------------------------------------
+
+c) Edit the line like this:
+----------------------------------------------------------------------
+qc_qasm_rest qc_rpc_rest_qasm_string %prefix%/sbin/qcrex_qasm_rest.sh
+----------------------------------------------------------------------
+(Change .rex to .sh, that's it.)
+
+d) Create %prefix%/sbin/qcrex_qasm_rest.sh like this:
+----------------------------------------------------------------------
+#!/bin/sh
+. /vol0004/apps/oss/spack/share/spack/setup-env.sh && \
+case `uname -i` in
+    x86_64)
+        spack load boost@1.80.0%gcc@12.2.0/lwfkszd ;;
+    aarch64)
+        spack load boost@1.80.0%fj@4.8.1/5iyob6y ;;
+esac
+exec %prefix%/sbin/qcrex_qasm_rest.rex ${1+"$@"}
+----------------------------------------------------------------------
+And
+	$ chmod 755 %prefix%/sbin/qcrex_qasm_rest.sh
+
+e) On Fugaku, REX runs only on login nodes. Edit
+${HOME}/.omrpc_registry.x86_64/hosts.xml like this:
 -----------------------------------------------------------------------
 <OmniRpcConfig>
   <Host name="login3">
-    <Agent invoker="ssh" path="%install_prefix_for_login_node%"/>
+    <Agent invoker="ssh" path="%login_node_install_prefix%"/>
   </Host>
 </OmniRpcConfig>
 -----------------------------------------------------------------------
 
-Replace %install_prefix_for_login_node% with the directory specified
-as --prefix for the login node configuration. "login3" is an RPC
-server, and you can change this hostname to your preference. Then,
-create a working directory under /data/<gid>/<uid>, and set up the
-necessary files as mentioned in qcrex/README-run_riqu.txt within the
-working directory.
 
-Now, launch an interactive session on a computational node and
-navigate to the top directory of the OmniRPC source tree. Then,
-execute the following commands:
+4. Running the sample application
 
+This section describes how to run the sample application,
+qcrpc/QC_API/apitest, which made from qcrpc/QC_API/main.c described in
+section 2. This sample submits a QC job to RQC via QURI REST API.
+
+a) Make sure you run spack scripts.
+
+b) Acquire a flesh API token from QURI/riqu cloud frontend. Then stire
+   the token in a file, e.g. ~/quri.token.txt.
+
+c) Make sure you already know QURI/riqu service URL. Store the URL in
+   a file, e.g. ~/quri.url.txt.
+
+d) Run:
+	$ cd qcrpc/QC_API
+	$ ./apitest -rest -url `cat ~/quri.url.txt` \
+		-token `cat ~/quri.token.txt` -qctype 0
+
+  You will have output like this if the job succeeded:
 -----------------------------------------------------------------------
-$ cd qcrpc/QC_API
-$ ./apitest -rq %working_dir% %qasm_file%
+{"job_id": "473db7ac-d5c3-40fc-8a3a-b6af8251ef9c"}
+{"id":"473db7ac-d5c3-40fc-8a3a-b6af8251ef9c","qasm":"OPENQASM 3; include \"stdgates.inc\"; qreg q[4]; creg c[4]; h q[0]; h q[1]; ccx q[0], q[1], q[2]; cx q[0], q[3]; cx q[1],q[3]; measure q[3] -\u003e c[0]; measure q[2] -\u003e c[1]; measure q[1] -\u003e c[2]; measure q[0] -\u003e c[3]; ","shots":1024,"transpiler":"normal","status":"queued","result":"","transpiled_qasm":"","remark":"","in_queue":"2024-03-26 10:26:47","out_queue":"","created":"2024-03-26 10:26:47","ended":""}
+Calculate Wait: 0
+{"id":"473db7ac-d5c3-40fc-8a3a-b6af8251ef9c","qasm":"OPENQASM 3; include \"stdgates.inc\"; qreg q[4]; creg c[4]; h q[0]; h q[1]; ccx q[0], q[1], q[2]; cx q[0], q[3]; cx q[1],q[3]; measure q[3] -\u003e c[0]; measure q[2] -\u003e c[1]; measure q[1] -\u003e c[2]; measure q[0] -\u003e c[3]; ","shots":1024,"transpiler":"normal","status":"queued","result":"","transpiled_qasm":"","remark":"","in_queue":"2024-03-26 10:26:47","out_queue":"","created":"2024-03-26 10:26:47","ended":""}
+Calculate Wait: 1
+{"id":"473db7ac-d5c3-40fc-8a3a-b6af8251ef9c","qasm":"OPENQASM 3; include \"stdgates.inc\"; qreg q[4]; creg c[4]; h q[0]; h q[1]; ccx q[0], q[1], q[2]; cx q[0], q[3]; cx q[1],q[3]; measure q[3] -\u003e c[0]; measure q[2] -\u003e c[1]; measure q[1] -\u003e c[2]; measure q[0] -\u003e c[3]; ","shots":1024,"transpiler":"normal","status":"queued","result":"","transpiled_qasm":"","remark":"","in_queue":"2024-03-26 10:26:47","out_queue":"","created":"2024-03-26 10:26:47","ended":""}
+Calculate Wait: 2
+{"id":"473db7ac-d5c3-40fc-8a3a-b6af8251ef9c","qasm":"OPENQASM 3; include \"stdgates.inc\"; qreg q[4]; creg c[4]; h q[0]; h q[1]; ccx q[0], q[1], q[2]; cx q[0], q[3]; cx q[1],q[3]; measure q[3] -\u003e c[0]; measure q[2] -\u003e c[1]; measure q[1] -\u003e c[2]; measure q[0] -\u003e c[3]; ","shots":1024,"transpiler":"normal","status":"queued","result":"","transpiled_qasm":"","remark":"","in_queue":"2024-03-26 10:26:47","out_queue":"","created":"2024-03-26 10:26:47","ended":""}
+Calculate Wait: 3
+{"id":"473db7ac-d5c3-40fc-8a3a-b6af8251ef9c","qasm":"OPENQASM 3; include \"stdgates.inc\"; qreg q[4]; creg c[4]; h q[0]; h q[1]; ccx q[0], q[1], q[2]; cx q[0], q[3]; cx q[1],q[3]; measure q[3] -\u003e c[0]; measure q[2] -\u003e c[1]; measure q[1] -\u003e c[2]; measure q[0] -\u003e c[3]; ","shots":1024,"transpiler":"normal","status":"preprocessing","result":"","transpiled_qasm":"","remark":"","in_queue":"2024-03-26 10:26:47","out_queue":"2024-03-26 01:26:51","created":"2024-03-26 10:26:47","ended":""}
+Calculate Wait: 4
+{"id":"473db7ac-d5c3-40fc-8a3a-b6af8251ef9c","qasm":"OPENQASM 3; include \"stdgates.inc\"; qreg q[4]; creg c[4]; h q[0]; h q[1]; ccx q[0], q[1], q[2]; cx q[0], q[3]; cx q[1],q[3]; measure q[3] -\u003e c[0]; measure q[2] -\u003e c[1]; measure q[1] -\u003e c[2]; measure q[0] -\u003e c[3]; ","shots":1024,"transpiler":"normal","status":"success","result":"{\n  \"counts\": {\n    \"0011\": 256,\n    \"0100\": 264,\n    \"1001\": 240,\n    \"1010\": 264\n  },\n  \"properties\": {\n    \"0\": {\n      \"qubit_index\": 0,\n      \"measurement_window_index\": 0\n    },\n    \"1\": {\n      \"qubit_index\": 1,\n      \"measurement_window_index\": 0\n    },\n    \"2\": {\n      \"qubit_index\": 2,\n      \"measurement_window_index\": 0\n    },\n    \"3\": {\n      \"qubit_index\": 3,\n      \"measurement_window_index\": 0\n    }\n  },\n  \"transpiler_info\": {\n    \"physical_virtual_mapping\": {\n      \"0\": 3,\n      \"1\": 1,\n      \"2\": 0,\n      \"3\": 2\n    }\n  },\n  \"message\": \"SUCCESS!\"\n}\n","transpiled_qasm":"// Mapped to device \"wako\"\n// Qubits: 64\n// Layout (physical --\u003e virtual):\n// \tq[0] --\u003e q[3]\n// \tq[1] --\u003e q[1]\n// \tq[2] --\u003e q[0]\n// \tq[3] --\u003e q[2]\n// \tq[4] --\u003e \n// \tq[5] --\u003e \n// \tq[6] --\u003e \n// \tq[7] --\u003e \n// \tq[8] --\u003e \n// \tq[9] --\u003e \n// \tq[10] --\u003e \n// \tq[11] --\u003e \n// \tq[12] --\u003e \n// \tq[13] --\u003e \n// \tq[14] --\u003e \n// \tq[15] --\u003e \n// \tq[16] --\u003e \n// \tq[17] --\u003e \n// \tq[18] --\u003e \n// \tq[19] --\u003e \n// \tq[20] --\u003e \n// \tq[21] --\u003e \n// \tq[22] --\u003e \n// \tq[23] --\u003e \n// \tq[24] --\u003e \n// \tq[25] --\u003e \n// \tq[26] --\u003e \n// \tq[27] --\u003e \n// \tq[28] --\u003e \n// \tq[29] --\u003e \n// \tq[30] --\u003e \n// \tq[31] --\u003e \n// \tq[32] --\u003e \n// \tq[33] --\u003e \n// \tq[34] --\u003e \n// \tq[35] --\u003e \n// \tq[36] --\u003e \n// \tq[37] --\u003e \n// \tq[38] --\u003e \n// \tq[39] --\u003e \n// \tq[40] --\u003e \n// \tq[41] --\u003e \n// \tq[42] --\u003e \n// \tq[43] --\u003e \n// \tq[44] --\u003e \n// \tq[45] --\u003e \n// \tq[46] --\u003e \n// \tq[47] --\u003e \n// \tq[48] --\u003e \n// \tq[49] --\u003e \n// \tq[50] --\u003e \n// \tq[51] --\u003e \n// \tq[52] --\u003e \n// \tq[53] --\u003e \n// \tq[54] --\u003e \n// \tq[55] --\u003e \n// \tq[56] --\u003e \n// \tq[57] --\u003e \n// \tq[58] --\u003e \n// \tq[59] --\u003e \n// \tq[60] --\u003e \n// \tq[61] --\u003e \n// \tq[62] --\u003e \n// \tq[63] --\u003e \nOPENQASM 3.0;\ninclude \"stdgates.inc\";\nqreg q[64];\ncreg c[64];\nrz(1.5707963267948921) q[3];\nsx q[3];\nrz(-2.3561944901923484) q[3];\nsx q[3];\nrz(1.5707963267948952) q[3];\ncx q[3],q[2];\nrz(-1.5707963267948986) q[3];\nsx q[3];\nrz(-2.3561944901923417) q[3];\nsx q[3];\nrz(-1.5707963267948952) q[3];\nrz(1.5707963267948921) q[1];\nsx q[1];\nrz(-2.3561944901923484) q[1];\nsx q[1];\nrz(1.5707963267948952) q[1];\ncx q[3],q[1];\nrz(1.5707963267948921) q[3];\nsx q[3];\nrz(-2.3561944901923484) q[3];\nsx q[3];\nrz(1.5707963267948952) q[3];\ncx q[3],q[2];\nrz(-1.5707963267948986) q[3];\nsx q[3];\nrz(-2.3561944901923417) q[3];\nsx q[3];\nrz(-1.5707963267948952) q[3];\ncx q[3],q[1];\nrz(1.5707963267948932) q[2];\nsx q[2];\nrz(2.3561944901923444) q[2];\ncx q[0],q[2];\nrz(1.5707963267948932) q[0];\nsx q[0];\nrz(1.5707963267948966) q[0];\ncx q[0],q[1];\nrz(1.5707963267948932) q[0];\nsx q[0];\nrz(1.5707963267948966) q[0];\ncx q[0],q[2];\nrz(1.5707963267948932) q[0];\nsx q[0];\nrz(1.5707963267948966) q[0];\nrz(0.7853981633974455) q[2];\nsx q[2];\nrz(1.5707963267948966) q[2];\ncx q[0],q[2];\nrz(1.5707963267948932) q[0];\nsx q[0];\nrz(1.5707963267948966) q[0];\nrz(1.5707963267948932) q[2];\nsx q[2];\nrz(1.5707963267948966) q[2];\ncx q[0],q[2];\nrz(1.5707963267948932) q[0];\nsx q[0];\nrz(1.5707963267948966) q[0];\ncx q[0],q[1];\nrz(1.5707963267948932) q[0];\nsx q[0];\nrz(1.5707963267948966) q[0];\ncx q[0],q[2];\nrz(1.5707963267948932) q[1];\nsx q[1];\nrz(1.5707963267948966) q[1];\nc[0] = measure q[0];\nc[3] = measure q[3];\nc[1] = measure q[1];\nc[2] = measure q[2];\n\n","remark":"","in_queue":"2024-03-26 10:26:47","out_queue":"2024-03-26 01:26:51","created":"2024-03-26 10:26:47","ended":"2024-03-26 01:26:51"}
+    3,	256.000000
+    4,	264.000000
+    9,	240.000000
+   10,	264.000000
+read: Success
+read: No child processes
 -----------------------------------------------------------------------
 
-Replace %working_dir% with the actual working directory, and
-%qasm_file% with the path to a QASM source file located within the
-working directory.
 
-4. Compiling Applications
+5. Compiling applications
 
 All the necessary headers are installed in ${prefix}/include, and the
 required libraries are located in ${prefix}/lib directory. To link
@@ -273,7 +350,7 @@ For example, in Makefile:
 LIBDIR = $(PREFIX)/lib
 CPPFLAGS += -I$(PREFIX)/include
 LDFLAGS += -Wl,-rpath -Wl,$(LIBDIR) -L$(LIBDIR) \
-           -lqcs -lomrpc_client -lomrpc_io
+           -lqcs -lomrpc_client -lomrpc_io -lrqcrest
 -----------------------------------------------------------------------
 
 Ensure that your Makefile or build configuration includes these

@@ -5,18 +5,22 @@ QC-RPC Provider for Qiskit How-To on Fugaku
 
 a) Load python, pip, and boost via spack
    on Login node:
+	. /vol0004/apps/oss/spack/share/spack/setup-env.sh
 	$ spack load python@3.10.8%gcc@12.2.0/a5u7uck
 	$ spack load py-pip@23.0%gcc@12.2.0/wyuv6uh
 	$ spack load boost@1.80.0%gcc@12.2.0/lwfkszd
    on Computational node:
+	. /vol0004/apps/oss/spack/share/spack/setup-env.sh
 	$ spack load python@3.10.8%gcc@12.2.0/zcvnqre
 	$ spack load py-pip@23.0%fj@4.10.0/tgxupp6
 	$ spack load boost@1.80.0%fj@4.8.1/5iyob6y
+
 b) Create a python venv for Qiskit under /data/<gid>/<uid>
 	$ cd /data/<gid>/<uid>
 	$ mkdir python-venv.<arch> && cd python-venv.<arch>
 		... where <arch> is `uname -s`
 	$ python -m venv qiskit
+
 c) Enter/Activate the venv and install qiskit
 	$ . /data/<gid>/<uid>/python-venv.<arch>/qiskit/bin/activate
 	(qiskit) $ pip install qiskit
