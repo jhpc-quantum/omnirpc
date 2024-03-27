@@ -303,7 +303,7 @@ section 2. This sample submits a QC job to RQC via QURI REST API.
 
 a) Make sure you run spack scripts.
 
-b) Acquire a flesh API token from QURI/riqu cloud frontend. Then store
+b) Acquire a fresh API token from QURI/riqu cloud frontend. Then store
    the token in a file, e.g. ~/quri.token.txt.
 
 c) Make sure you already know QURI/riqu service URL. Store the URL in
