@@ -307,6 +307,159 @@ if test ! -z "${mpi_flavor}"; then
 fi
 AC_SUBST(USE_MPI)
 
+### homeshare
+do_homeshare='no'
+home_reg_dir='.omrpc_registry'
+AC_ARG_ENABLE([homeshare],
+	[AS_HELP_STRING([--enable-homeshare], [Support home directory sharing [default: no]])],
+	[do_homeshare="$enableval"], [do_homeshare=no])
+AC_MSG_CHECKING([home shareing])
+if test "x${do_homeshare}" != "xno"; then
+    home_reg_dir="${home_reg_dir}.${CPU}"
+fi
+AC_MSG_RESULT([${do_homeshare}.])
+AC_SUBST(home_reg_dir)
+
+### qc-rpc
+USE_QC_RPC=''
+do_qc_rpc=no
+AC_ARG_ENABLE([qcrpc],
+	[AS_HELP_STRING([--enable-qcrpc], [Support qc-rpc feature [default: no]])],
+	[do_qc_rpc="$enableval"], [do_qc_rpc=no])
+AC_MSG_CHECKING([qc-rpc])
+if test "x${do_qc_rpc}" != "xno"; then
+    USE_QC_RPC=yes
+    AC_DEFINE(USE_QC_RPC)
+fi
+AC_MSG_RESULT([${do_qc_rpc}.])
+AC_SUBST(USE_QC_RPC)    
+
+### REST
+USE_REST=''
+do_rest=no
+AC_ARG_ENABLE([rest],
+	[AS_HELP_STRING([--enable-rest], [Support qc-rpc REST API backend feature in REX [default: no]])],
+	[do_rest="$enableval"], [do_rest=no])
+AC_MSG_CHECKING([rest])
+if test "x${do_qc_rpc}" != "xno" -a "x${do_rest}" != "xno"; then
+    USE_REST=yes
+    AC_DEFINE(USE_REST)
+fi
+AC_MSG_RESULT([${do_rest}.])
+AC_SUBST(USE_REST)
+
+## Python3
+USE_PYTHON=''
+do_python=''
+PYTHON_INC=''
+AC_ARG_ENABLE([python],
+	[AS_HELP_STRING([--enable-python], [Support qc-rpc Python binding [default: no]])],
+	[do_python="$enableval"], [do_python=no])
+AC_MSG_CHECKING([python])
+if test "x${do_qc_rpc}" != "xno" -a "x${do_python}" != "xno"; then
+    pinc=`python3-config --includes | awk '{ printf $1 }'`
+    if test ! -z "${pinc}"; then
+        PYTHON_INC=${pinc}
+	USE_PYTHON=yes
+        AC_DEFINE(USE_PYTHON)
+    else
+        do_python=no
+    fi
+fi
+AC_MSG_RESULT([${do_python}.])    
+AC_SUBST(USE_PYTHON)
+AC_SUBST(PYTHON_INC)
+
+QULACS_SRCDIR=''
+qulacs_dir=''
+AC_ARG_WITH([qulacs],
+	[AS_HELP_STRING([--with-qulacs], [Specify a top source directory of Qulacs.])],
+	[qulacs_dir="$withval"], [qulacs_dir=''])
+AC_MSG_CHECKING(qulacs)
+if test "x${do_qc_rpc}" != "xno" -a -d ${qulacs_dir}/include -a -d ${qulacs_dir}/lib; then
+    QULACS_SRCDIR=${qulacs_dir}
+fi
+AC_MSG_RESULT([${QULACS_SRCDIR}])
+AC_SUBST(QULACS_SRCDIR)
+if test "x${do_qc_rpc}" != "xno" -a -z "${QULACS_SRCDIR}"; then
+    AC_MSG_ERROR([Qulacs source directory must be specified when --enable-qcrpc.])
+    exit 1
+fi
+
+### Slurm
+SLURM_DIR=''
+slurm_dir=''
+HAVE_SLURM=''
+AC_ARG_WITH([slurm],
+	[AS_HELP_STRING([--with-slurm], [Specify Slurm install directory.])],
+	[slurm_dir="$withval"], [slurm_dir=''])
+AC_MSG_CHECKING(slurm)
+if test "x${do_qc_rpc}" != "xno" -a "x${slurm_dir}" != "x" -a -d ${slurm_dir}/include -a -d ${slurm_dir}/lib; then
+    HAVE_SLURM=yes
+    AC_DEFINE(HAVE_SLURM)
+    SLURM_DIR=${slurm_dir}
+    AC_MSG_RESULT([${SLURM_DIR}])
+else
+    AC_MSG_RESULT([no slurm])
+fi
+AC_SUBST(SLURM_DIR)
+
+### QURI/riqu
+QURI_DIR=''
+quri_dir=''
+HAVE_QURI=''
+AC_ARG_WITH([quri],
+	[AS_HELP_STRING([--with-quri],
+			[Specify QURI/riqu install directory.])],
+	[quri_dir="$withval"], [quri_dir=''])
+AC_MSG_CHECKING(QURI/riqu)
+if test "x${do_qc_rpc}" != "xno" -a "x${quri_dir}" != "x" -a -d "${quri_dir}/lib/python3.10/site-packages/quri_parts"; then
+    QURI_DIR=${quri_dir}
+    HAVE_QURI=yes
+    AC_DEFINE(HAVE_QURI)
+    AC_MSG_RESULT([${QURI_DIR}])
+else
+    AC_MSG_RESULT([no QURI/riqu])
+fi
+AC_SUBST(QURI_DIR)
+
+### MS C++ REST SDK
+CPPREST_DIR=''
+cpprest_dir=''
+HAVE_CPPREST=''
+LIB64=''
+libOK=0
+AC_ARG_WITH([cpprest],
+	[AS_HELP_STRING([--with-cpprest],
+			[Specify Microsoft C++ REST SDK install directory.])],
+	[cpprest_dir="$withval"], [cpprest_dir=''])
+AC_MSG_CHECKING(Microsoft C++ REST SDK)
+if test "x${do_qc_rpc}" != "xno" -a "x${do_rest}" != "xno" -a "x${cpprest_dir}" != "x" -a -r "${cpprest_dir}/include/cpprest/version.h"; then
+    if test -r "${cpprest_dir}/lib64/libcpprest.so"; then
+        libOK=1
+        LIB64='64'
+    elif test -r "${cpprest_dir}/lib/libcpprest.so"; then
+        libOK=1
+    fi
+    if test ${libOK} -eq 1; then
+        CPPREST_DIR=${cpprest_dir}
+        HAVE_CPPREST=yes
+        AC_DEFINE(HAVE_CPPREST)
+        AC_MSG_RESULT([${CPPREST_DIR}])
+    else
+        AC_MSG_RESULT([no C++ REST SDK.])
+    fi
+else
+    AC_MSG_RESULT([no C++ REST SDK.])
+fi
+AC_SUBST(CPPREST_DIR)
+AC_SUBST(LIB64)
+
+if test "x${do_rest}" != "xno" -a -z "${CPPREST_DIR}"; then
+    AC_MSG_ERROR([Enabling REST REX feature requires Microsoft C++ REST SDK installed.])
+    exit 1
+fi
+
 ### Globus (deprecated)
 USE_GLOBUS=''
 GLOBUS_LIBS=''
@@ -331,6 +484,15 @@ AC_CONFIG_FILES(
 	src/omrpc-register/Makefile
 	src/omrpc-register-yml/Makefile
 	src/omrpc-register-yml/omrpc_reg_defs.h
+	qcrpc/Makefile
+	qcrpc/QC_API/Makefile
+	qcrpc/qcrex/Makefile
+	qcrpc/qcrex/qcrex_conf.h
+	qcrpc/qcrex/qc-quri-wrapper.sh
+	qcrpc/qcrex/run_riqu.py
+	qcrpc/qcmeasure/Makefile
+	qcrpc/rest/src/Makefile
+	qcrpc/python/Makefile
 	test/call-test/Makefile
 	test/exec-test/Makefile
 	test/comm-test/Makefile
@@ -338,6 +500,7 @@ AC_CONFIG_FILES(
 	example/cpi/Makefile
 	example/ep/Makefile
 	example/knap/Makefile
+	bin/Makefile
 )
 
 # emit and set executable attribute.

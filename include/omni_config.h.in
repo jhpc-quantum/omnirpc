@@ -59,5 +59,11 @@
 #undef SIZEOF_PTHREAD_T
 
 #undef USE_MPI
+#undef USE_QC_RPC
+#undef USE_REST
+#undef USE_PYTHON
+#undef HAVE_SLURM
+#undef HAVE_QURI
+#undef HAVE_CPPREST
 
 #endif /* ! __OMNI_CONFIG_H__ */

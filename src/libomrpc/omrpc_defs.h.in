@@ -33,7 +33,7 @@
 
 //#define OMRPC_DIR "/usr/local/omrpc"	/* default install directory */
 #define OMRPC_DIR "@prefix@"
-#define HOME_REG_DIR ".omrpc_registry"
+#define HOME_REG_DIR "@home_reg_dir@"
 #define REGISTRY_FILE "stubs"
 #define HOST_FILE "hosts.xml"
 

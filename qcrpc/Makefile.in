@@ -1,0 +1,15 @@
+TOPDIR          = @TOPDIR@
+MKRULESDIR      = @MKRULESDIR@
+
+include $(MKRULESDIR)/vars.mk
+
+DIRS	=
+ifdef USE_REST
+DIRS	+=	rest/src
+endif
+DIRS	+=	QC_API qcrex qcmeasure
+ifdef USE_PYTHON
+DIRS	+=	python
+endif
+
+include $(MKRULESDIR)/rules.mk

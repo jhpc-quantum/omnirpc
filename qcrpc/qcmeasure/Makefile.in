@@ -1,0 +1,19 @@
+TOPDIR          = @TOPDIR@
+MKRULESDIR      = @MKRULESDIR@
+
+include $(MKRULESDIR)/vars.mk
+
+TARGET_EXE			=	qcmeasure
+INSTALL_SBIN_EXE_TARGETS	=	$(TARGET_EXE)
+
+all::	$(INSTALL_SBIN_EXE_TARGETS)
+
+SRCS	=	qcmeasure.c
+
+LDFLAGS	+=	$(QCS_LIB) $(RQCREST_LIB) $(OMRPC_CLIENTLIB)
+
+include $(MKRULESDIR)/rules.mk
+
+clean::
+	$(RM) $(INSTALL_LIB) $(TARGET_EXE) *.o *lo *~
+

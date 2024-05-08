@@ -22,13 +22,17 @@ include $(MKRULESDIR)/vars.mk
 
 DIRS	=	./include ./src/libomrpc ./src/omrpc-gen \
 		./src/omrpc-register ./src/omrpc-agent
-
 ifdef USE_XMP
 DIRS	+=	./src/omrpc-gen-xmp 
 endif
 ifdef USE_MPI
 DIRS	+=	./src/omrpc-gen-mpi
 endif
+ifdef USE_QC_RPC
+DIRS	+=	./qcrpc
+endif
+
+DIRS	+=	./bin
 
 TESTDIRS	=	./test/exec-test ./test/call-test ./test/stub-test
 EXAMPLEDIRS	=	./example/ep ./example/cpi ./example/knap

@@ -1,0 +1,16 @@
+TOPDIR          = @TOPDIR@
+MKRULESDIR      = @MKRULESDIR@
+
+include $(MKRULESDIR)/vars.mk
+
+SRCS	=	ibmq_json.cpp ibmq_rest.cpp rexrest.cpp rqc_json.cpp rqc_rest.cpp
+
+CPPFLAGS	+=	-I../include -I$(CPPREST_DIR)/include
+LDFLAGS		+=	$(CPPREST_LIB)
+
+TARGET_LIB	=	librqcrest.la
+INSTALL_LIB_TARGETS	=	$(TARGET_LIB)
+
+all::	$(INSTALL_LIB_TARGETS)
+
+include $(MKRULESDIR)/rules.mk

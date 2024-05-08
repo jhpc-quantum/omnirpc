@@ -235,10 +235,22 @@ $(TARGET_LIB):	$(OBJS)
 	$(LTLIB_CC) -o $@ $(OBJS) $(LDFLAGS) $(DEP_LIBS)
 endif
 
+ifdef TARGET_LIB_CXX
+$(TARGET_LIB_CXX):	$(OBJS)
+	$(RM) -f $@ .libs/$(@F:.la=.*)
+	$(LTLINK_CXX) -o $@ $(OBJS) $(LDFLAGS) $(DEP_LIBS)
+endif
+
 ifdef TARGET_EXE
 $(TARGET_EXE):	$(OBJS)
 	$(RM) -f $@ .libs/lt-$@ .libs/$@
 	$(LTLINK_CC) -o $@ $(OBJS) $(DEP_LIBS) $(LDFLAGS) 
+endif
+
+ifdef TARGET_EXE_CXX
+$(TARGET_EXE_CXX):	$(OBJS)
+	$(RM) -f $@ .libs/lt-$@ .libs/$@
+	$(LTLINK_CXX) -o $@ $(OBJS) $(DEP_LIBS) $(LDFLAGS) 
 endif
 
 submodules::	$(SUBMODULES)

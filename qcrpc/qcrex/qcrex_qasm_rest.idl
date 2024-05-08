@@ -1,0 +1,89 @@
+Module qc_qasm_rest;
+
+Globals{
+#include "omni_platform.h"
+#include "qcs_api.hpp"
+#include "qcrex_conf.h"  
+#include "rexrest.h"
+}
+
+Define qc_rpc_rest_qasm_string(/* input */
+			       /* 00 */ IN int ulen,
+			       /* 01 */ IN char url[ulen],
+			       /* 02 */ IN int tlen,
+			       /* 03 */ IN char token[tlen],
+			       /* 04 */ IN int qlen,
+			       /* 05 */ IN char qasm[qlen],
+			       /* 06 */ IN int qc_type, /* (enum) */
+			       /* 07 */ IN int rlen,
+			       /* 08 */ IN char rem[rlen],
+			       /* 09 */ IN int shots,
+			       /* 10 */ IN int poll_ms,
+			       /* 11 */ IN int poll_max,
+			       /* 12 */ IN int transpiler, /* (enum) */
+
+			       /* output */
+			       /* 13 */ OUT int ret[],
+			       /* 14 */ IN int olenmax,
+			       /* 15 */ OUT char output[olenmax],
+			       /* 16 */ OUT int olen[])
+"QC RPC QASM STRING STUB (for REST API backend)"
+{
+#define VALID_OMNIRPC_STRING(ptr, len)					\
+  (((len > 1) && (ptr != NULL) && (ptr[0] != '\0') && (ptr[len - 1] == '\0')) \
+   ? true : false)
+
+#if 0
+  fprintf(stderr,
+	  "stub qc_rpc_rest_qasm_string():%s: started.\n", __func__);
+
+  fprintf(stderr, "debug: url:\t\t%d, '%s'\n", ulen, url);
+  fprintf(stderr, "debug: token:\t\t%d, '%s'\n", tlen, token);
+  fprintf(stderr, "debug: qasm:\t\t%d, '%s'\n", qlen, qasm);
+  fprintf(stderr, "debug: rem:\t\t%d, '%s'\n", rlen, rem);
+#endif
+
+  if ((VALID_OMNIRPC_STRING(url, ulen) == true) &&
+      (VALID_OMNIRPC_STRING(token, tlen) == true) &&
+      (VALID_OMNIRPC_STRING(qasm, qlen) == true) &&
+      ((VALID_OMNIRPC_STRING(rem, rlen) == true) || (rlen == 0)) &&
+      qc_type >= 0 &&
+      shots > 0 && poll_ms > 0 && poll_max >= 0 &&
+      transpiler >= 0 &&
+      ret != NULL &&
+      olenmax >= 2 && output != NULL &&
+      olen != NULL) {
+    *ret = -INT_MAX;
+
+    if (strncasecmp(url, "http", 4) == 0) {
+      char *respons = NULL;
+      size_t reslen = 0;
+      
+      *ret = calculate(qc_type, url, token, qasm,
+		       shots, transpiler, rem, poll_ms, poll_max,
+		       &respons, &reslen);
+      if (*ret == 0) {
+#if 0
+	fprintf(stderr, "stub qc_rpc_rest_qasm_string():%s: responce:\n\n");
+	fprintf(stderr, "\tgot %d(max %d):\n\t'%s'\n\n",
+		reslen, olenmax, respons);
+#endif
+	*olen = ((olenmax - 1) < reslen) ? (olenmax - 1) : reslen;
+	snprintf(output, olenmax - 1, "%s", respons);
+	free(respons);
+      }
+    } else {
+      *ret = 0;
+      *olen = snprintf(output, olenmax - 1,
+		       "ret: max %d: '%s':'%s':'%s':'%s', "
+		       "'%d', '%d', '%d', '%d', '%d'",
+		       olenmax, url, token, qasm, rem,
+		       qc_type, shots, poll_ms, poll_max, transpiler);
+    }
+  }
+#if 0
+  fprintf(stderr,
+	  "stub qc_rpc_rest_qasm_string():%s: finished, return code %d.\n",
+          __func__, *ret);
+#endif
+}

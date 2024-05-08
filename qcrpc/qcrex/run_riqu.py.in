@@ -1,0 +1,105 @@
+#!/usr/bin/env python3
+from argparse import ArgumentParser
+from quri_parts.circuit import QuantumCircuit
+from quri_parts.riqu.backend import RiquSamplingBackend
+from quri_parts.riqu.backend.sampling import RiquConfig
+
+import configparser
+import os
+import sys
+import traceback
+
+RIQU_FILE_NAME = 'riqu.conf'
+
+def read_config(config_path):
+    try:
+        config_parser = configparser.ConfigParser()
+        config_parser.read(config_path, 'UTF-8')
+        return RiquConfig(config_parser['default']['url'], config_parser['default']['api_token'])
+    except Exception as e:
+        traceback.print_exc(file=sys.stderr)
+        sys.exit(1)
+
+
+def read_qasm(qasm_path):
+    try:
+        file = open(qasm_path)
+        return file.read()
+    except Exception as e:
+        traceback.print_exc(file=sys.stderr)
+        sys.exit(1)
+
+
+def parse_opts():
+    parser = ArgumentParser(description='Sampling on riqu server')
+
+    parser.add_argument('-d',
+                        '--datadir',
+                        required=True,
+                        help="path to data directory")
+
+    parser.add_argument('-w',
+                        '--write',
+                        help="Result file name")
+
+    parser.add_argument('-q',
+                        '--qasmfile',
+                        required=True,
+                        help="QASM file name")
+
+    opts = parser.parse_args()
+    return parser, opts
+
+
+if __name__ == "__main__":
+    parser, opts = parse_opts()
+
+    riqu_config_path = f"{opts.datadir}/{RIQU_FILE_NAME}"
+    qasm_file_path = f"{opts.datadir}/{opts.qasmfile}"
+
+    if not os.path.exists(opts.datadir):
+        print(f"Data directory does not exist: {opts.datadir}", file=sys.stderr)
+        sys.exit(1)
+    elif not os.path.isdir(opts.datadir):
+        print(f"Data directory is not a directory: {opts.datadir}", file=sys.stderr)
+        sys.exit(1)
+    elif not os.path.exists(riqu_config_path):
+        print(f"riqu config file does not exist: {riqu_config_path}", file=sys.stderr)
+        sys.exit(1)
+    elif not os.path.exists(qasm_file_path):
+        print(f"QASM file does not exist: {qasm_file_path}", file=sys.stderr)
+        sys.exit(1)
+
+    config = read_config(riqu_config_path)
+    qasm_str = read_qasm(qasm_file_path)
+
+    result = None
+    try:
+        backend = RiquSamplingBackend(config)
+        job = backend.sample_qasm(qasm_str, n_shots=1000)
+
+        # for debug
+        print(f"Job ID: {job.id}")
+
+        result = job.result()
+    except Exception as e:
+        traceback.print_exc(file=sys.stderr)
+        sys.exit(1)
+
+    if opts.write is None:
+        print(result.counts)
+    else:
+        try:
+            # for debug
+            print(result.counts)
+
+            file = open(f"{opts.datadir}/{opts.write}", 'w')
+
+            file.write(f"{len(result.counts.keys())}\n")
+            for key in result.counts.keys():
+                file.write(f"{key} {result.counts[key]}\n")
+
+            file.close()
+        except Exception as e:
+            traceback.print_exc(file=sys.stderr)
+            sys.exit(1)

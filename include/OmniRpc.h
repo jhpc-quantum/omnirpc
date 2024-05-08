@@ -2,6 +2,8 @@
  * prototype for API
  * $Id: OmniRpc.h,v 1.1.1.1 2004-11-03 21:01:36 yoshihiro Exp $
  */
+#pragma once
+
 #include "omni_platform.h"
 
 #define OMRPC_OK 0
@@ -11,6 +13,15 @@
 
 /* low-level and no-MT API */
 typedef void *OmniRpcExecHandle;
+
+/* RPC API */
+typedef void *OmniRpcRequest;
+
+typedef void *OmniRpcHandle;
+
+
+__BEGIN_DECLS
+
 
 void OmniRpcExecInit(int *argc, char **argv[]);
 void OmniRpcExecFinalize(void);
@@ -26,9 +37,6 @@ void OmniRpcExecTerminate(OmniRpcExecHandle handle);
 int OmniRpcModuleInit(char *module_name,...);
 void OmniRpcModuleInitV(char *module_name,va_list ap);
 
-/* RPC API */
-typedef void *OmniRpcRequest;
-
 void OmniRpcInit(int *argc, char **argv[]);
 void OmniRpcFinalize(void);
 
@@ -40,8 +48,6 @@ int OmniRpcWait(OmniRpcRequest req);
 int OmniRpcProbe(OmniRpcRequest req);
 int OmniRpcWaitAll(int n, OmniRpcRequest reqs[]);
 int OmniRpcWaitAny(int n, OmniRpcRequest reqs[]);
-
-typedef void *OmniRpcHandle;
 
 OmniRpcHandle OmniRpcCreateHandle(char *host_name, char *module_name);
 int OmniRpcCallByHandle(OmniRpcHandle handle,char *entry_name,...);
@@ -93,3 +99,6 @@ char *OmniRpcMpiGetPort(void *handle);
 void *OmniRpcCallAsyncMPI(char *entry_name,int nprocs,...);
 void *OmniRpcCallAsyncVMPI(char *entry_name,int nprocs,va_list ap);
 #endif /* USE_MPI */
+
+
+__END_DECLS

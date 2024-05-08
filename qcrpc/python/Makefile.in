@@ -1,0 +1,22 @@
+TOPDIR          = @TOPDIR@
+MKRULESDIR      = @MKRULESDIR@
+
+include $(MKRULESDIR)/vars.mk
+
+ifdef USE_PYTHON
+TARGET_LIB	=	libqcrpc.la
+TARGETS		=	qcrpc.so
+
+SRCS	=	qcrpc.c
+LDFLAGS	+=	$(OMRPC_CLIENTLIB)
+CPPFLAGS	+=	-I../QC_API $(PYTHON_INC)
+endif
+
+include $(MKRULESDIR)/rules.mk
+
+qcrpc.so:	$(TARGET_LIB)
+	@if test -r "./.libs/lib$@"; then \
+		$(RM) -f $@; \
+		ln -s "./.libs/lib$@" $@; \
+	fi
+

@@ -1,0 +1,16 @@
+#!/bin/sh
+
+if test -z "${1}"; then
+    exit 1
+fi
+
+#entry=`ssh -t ${1} sh -c '_tty=\`tty | sed s:^/dev/:: 2>/dev/null\` ; who | grep \`whoami\` | grep "${_tty} "' 2>/dev/null` 2>/dev/null
+
+#ip_addr=`echo ${entry} | awk '{ print $NF }' | sed -e 's:(::' -e 's:)::' 2>/dev/null`
+
+ip_addr=`ssh ${1} 'echo \${SSH_CLIENT}' 2>/dev/null | awk '{ print $1 }'`
+
+echo "OMRPC_HOSTNAME=${ip_addr}"
+echo "export OMRPC_HOSTNAME"
+
+exit 0

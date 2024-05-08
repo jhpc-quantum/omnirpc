@@ -58,27 +58,44 @@ static void dumpBuffer(char *, int, char *);
 /* prototype */
 static omrpc_io_port_t *omrpc_new_port(int size,char type);
 
-void omrpc_io_init()
+/* If the server stub is launched vua ssh, SSH_CLIENT environment
+ * variable should be set and it could be usable when the client host
+ * is unknown. */
+static bool
+get_ssh_client_hostname(char *buf, size_t bufsz) {
+    char *e = NULL;
+    if ((e = getenv("SSH_CLIENT")) != NULL) {
+        snprintf(buf, bufsz, "%s", e);
+        if ((e = strchr(buf, ' ')) != NULL) {
+            *e = '\0';
+        }
+    }
+}
+
+void omrpc_io_init(void)
 {
     int r;
+    char *me;
     char hostname[MAXHOSTNAMELEN];
     struct hostent *hp;
 
-    if((omrpc_my_hostname = getenv("OMRPC_HOSTNAME")) == NULL){
+    if((me = getenv("OMRPC_HOSTNAME")) == NULL){
       /* get client host name */
-      r = gethostname(hostname,MAXHOSTNAMELEN);
+      r = gethostname(hostname ,MAXHOSTNAMELEN);
       if(r < 0){
           perror("hostname");
           exit(1);
       }
 
-      /* copy offical host name */
+      /* check FQDN and use it if any */
       hp = gethostbyname(hostname);
-      if(hp == NULL){
-          perror("gethostbyname");
-          omrpc_fatal("gethostbyname");
+      if (hp != NULL && hp->h_name != NULL && *(hp->h_name) != '\0') {
+        omrpc_my_hostname = strdup(hp->h_name);
+      } else {
+        omrpc_my_hostname = strdup(hostname);
       }
-      omrpc_my_hostname = strdup(hp->h_name);
+    } else {
+      omrpc_my_hostname = strdup(me);
     }
 
     /* initialize variable */
@@ -551,8 +568,8 @@ int omrpc_io_socket(unsigned short *port)
 
     hp = gethostbyname(omrpc_my_hostname);
     if(hp == NULL){
-        perror("gethostbyname");
-        omrpc_fatal("gethostbyname");
+        herror("gethostbyname");
+        omrpc_fatal("gethostbyname failure");
     }
 
     sin.sin_addr.s_addr = htonl(INADDR_ANY);
@@ -626,30 +643,38 @@ int omrpc_io_connect(char *host, unsigned short port)
     struct hostent *hp;
     int fd;
     int one = 1;
+    char hostname[MAXHOSTNAMELEN];
 
     memset(&sin, 0, sizeof(sin));
     sin.sin_family = AF_INET;
     sin.sin_port = htons(port);
 
-    if(host == NULL){
-#if 0
-        r = gethostname(hostname,MAXHOSTNAMELEN);
-        if(r < 0){
-            perror("hostname");
-            omrpc_fatal("hostname");
+    if (host == NULL) {
+        if ((r = gethostname(hostname, MAXHOSTNAMELEN)) == 0) {
+            /* then assume launched by local host and avoiding to ssh
+             * publey confusion, try hostname 1st. */
+            host = hostname;
+        } else {
+            /* finally, use "localhost" */
+            host = "localhost";
         }
-        host = hostname;
-#endif
-        host = "localhost";
     }
 
     if(omrpc_debug_flag) omrpc_prf("connect host=%s:%d\n",host,port);
 
     hp = gethostbyname(host);
-    if(hp == NULL){
-        perror("gethostbyname");
-        omrpc_fatal("gethostname host='%s'",host);
+    if (hp == NULL) {
+        if (get_ssh_client_hostname(hostname, sizeof(hostname)) == true) {
+            host = hostname;
+            hp = gethostbyname(host);
+            if (hp != NULL) {
+                goto got_addr;
+            }
+        }
+        herror("gethostbyname");
+        omrpc_fatal("gethostbyname failure, gethostname host='%s'",host);
     }
+    got_addr:
 
     bcopy(hp->h_addr,&sin.sin_addr.s_addr,hp->h_length);
 

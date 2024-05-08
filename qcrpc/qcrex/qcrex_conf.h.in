@@ -1,0 +1,8 @@
+#ifdef HAVE_SLURM
+#define SLURM_CONF	"@SLURM_DIR@/etc/slurm.conf"
+#endif /* HAVE_SLURM */
+
+#define QCMEASURE	"@prefix@/sbin/qcmeasure"
+
+#define QURIWRAPPER	"@prefix@/sbin/qc-quri-wrapper.sh"
+#define QURIWRAPPER_OUT	"counts.out"

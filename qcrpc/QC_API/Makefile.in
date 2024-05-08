@@ -1,0 +1,25 @@
+TOPDIR          = @TOPDIR@
+MKRULESDIR      = @MKRULESDIR@
+
+include $(MKRULESDIR)/vars.mk
+
+SRCS		=	qcs_qulacs.cpp qcs_api.cpp
+
+ifdef USE_REST
+CPPFLAGS	+=	-I$(RQCREST_DIR)/include
+endif
+LDFLAGS		+=	$(QULACS_LIBS) $(RQCREST_LIB)
+
+TARGET_LIB	=	libqcs.la
+INSTALL_LIB_TARGETS	=	$(TARGET_LIB)
+
+all::	$(INSTALL_LIB_TARGETS) apitest
+
+apitest:	main.o
+	$(LTLINK_CXX) -o $@ $< -R $(PWD)/.libs -L$(PWD)/.libs -lqcs $(RQCREST_LIB) $(OMRPC_CLIENTLIB)
+
+include $(MKRULESDIR)/rules.mk
+
+clean::
+	$(RM) $(INSTALL_LIB) apitest *.o *~
+

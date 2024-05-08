@@ -1,0 +1,3 @@
+qulacs:
+    virtual void add_P0_gate(UINT target_index);
+    virtual void add_P1_gate(UINT target_index);
