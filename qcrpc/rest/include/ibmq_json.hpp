@@ -7,9 +7,9 @@ namespace rexrest {
 
 class IBMQJsonParser : JsonParser {
 public:
-    static const std::string kQuasiDists;
-    static const std::string kMetadata;
-    static const std::string kShots;
+    static const std::string kResults;
+    static const std::string kData;
+    static const std::string kSamples;
 
     IBMQJsonParser(const std::string& json_str, std::uint32_t shots) : JsonParser(json_str, shots) {}
     ~IBMQJsonParser() {}
